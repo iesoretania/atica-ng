@@ -42,9 +42,9 @@ twig:
     form_themes:
         - 'bootstrap_3_horizontal_layout.html.twig'
     globals:
-        app_name:     '%app.name%'
+        app_name:     'ÁTICA'
         app_repository: 'https://github.com/iesoretania/atica-ng'
-        app_version:  '%app.version%'
+        app_version:  '6.0'
 
 # Doctrine Configuration
 doctrine:
