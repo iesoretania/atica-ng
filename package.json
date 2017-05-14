@@ -1,0 +1,24 @@
+{
+  "name": "atica-ng",
+  "version": "1.0.0",
+  "description": "Aplicación telemática para la intranet de centros educativos",
+  "dependencies": {
+    "autoprefixer": "^6.1.0",
+    "bootstrap-sass": "^3.3.7",
+    "font-awesome": "^4.7.0",
+    "gulp": "^3.9.0",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-clean-css": "^3",
+    "gulp-concat": "^2.6.0",
+    "gulp-load-plugins": "^1.1.0",
+    "gulp-sass": "^2.1.0",
+    "jquery": "^1.10",
+    "select2": "^4.0.3",
+    "select2-bootstrap-theme": "0.1.0-beta.10"
+  },
+  "scripts": {
+    "test": "phpunit -c app/"
+  },
+  "author": "Luis Ramón López López",
+  "license": "AGPL-3.0"
+}

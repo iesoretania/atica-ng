@@ -2,7 +2,7 @@
     "name": "iesoretania/atica-ng",
     "license": "AGPL-3.0",
     "type": "project",
-    "description": "Aplicación telemática para la intranet de centros educactivos",
+    "description": "Aplicación telemática para la intranet de centros educativos",
     "autoload": {
         "psr-4": {
             "AppBundle\\": "src/AppBundle"
@@ -66,7 +66,6 @@
         "symfony-assets-install": "relative",
         "incenteev-parameters": {
             "file": "app/config/parameters.yml"
-        },
-        "branch-alias": null
+        }
     }
 }
