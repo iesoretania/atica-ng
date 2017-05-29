@@ -20,6 +20,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -77,4 +78,17 @@ class Element
      * @var string
      */
     private $description;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Reference", mappedBy="source")
+     * @var Collection
+     */
+    private $references;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Element")
+     * @ORM\JoinTable(name="label")
+     * @var Collection
+     */
+    private $labels;
 }
