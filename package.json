@@ -20,5 +20,10 @@
     "test": "phpunit -c app/"
   },
   "author": "Luis Ramón López López",
-  "license": "AGPL-3.0"
+  "license": "AGPL-3.0",
+  "repository":
+    {
+      "type" : "git",
+      "url" : "https://github.com/iesoretania/atica-ng.git"
+    }
 }
