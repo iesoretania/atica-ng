@@ -20,6 +20,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -94,4 +95,10 @@ class User
      * @var \DateTime
      */
     private $blockedUntil;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Membership", mappedBy="user")
+     * @var Collection
+     */
+    private $memberships;
 }

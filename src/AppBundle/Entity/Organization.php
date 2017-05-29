@@ -20,6 +20,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -97,4 +98,9 @@ class Organization
      */
     private $description;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Membership", mappedBy="organization")
+     * @var Collection
+     */
+    private $memberships;
 }
