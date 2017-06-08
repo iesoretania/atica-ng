@@ -23,6 +23,7 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity
@@ -367,5 +368,22 @@ class User
     public function getMemberships()
     {
         return $this->memberships;
+    }
+
+
+    /**
+     * @Assert\Callback
+     */
+    public function validate(ExecutionContextInterface $context)
+    {
+        // comprobar si se ha especificado al menos el nombre de usuario o el correo electrónico
+        if (!$this->getUsername() && !$this->getEmailAddress()) {
+            $context->buildViolation('user.id.not_found')
+                ->atPath('loginUsername')
+                ->addViolation();
+            $context->buildViolation('user.id.not_found')
+                ->atPath('email')
+                ->addViolation();
+        }
     }
 }
