@@ -96,6 +96,12 @@ class User implements AdvancedUserInterface
      * @ORM\Column(type="datetime", nullable=true)
      * @var \DateTime
      */
+    private $tokenExpiration;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     * @var \DateTime
+     */
     private $lastAccess;
 
     /**
@@ -316,6 +322,31 @@ class User implements AdvancedUserInterface
     public function getToken()
     {
         return $this->token;
+    }
+
+
+    /**
+     * Set tokenExpiration
+     *
+     * @param \DateTime $tokenExpiration
+     *
+     * @return User
+     */
+    public function setTokenExpiration($tokenExpiration)
+    {
+        $this->tokenExpiration = $tokenExpiration;
+
+        return $this;
+    }
+
+    /**
+     * Get tokenExpiration
+     *
+     * @return \DateTime
+     */
+    public function getTokenExpiration()
+    {
+        return $this->tokenExpiration;
     }
 
     /**
