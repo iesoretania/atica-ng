@@ -91,4 +91,234 @@ class Element
      * @var Collection
      */
     private $labels;
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->references = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->labels = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return Element
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set left
+     *
+     * @param integer $left
+     *
+     * @return Element
+     */
+    public function setLeft($left)
+    {
+        $this->left = $left;
+
+        return $this;
+    }
+
+    /**
+     * Get left
+     *
+     * @return integer
+     */
+    public function getLeft()
+    {
+        return $this->left;
+    }
+
+    /**
+     * Set level
+     *
+     * @param integer $level
+     *
+     * @return Element
+     */
+    public function setLevel($level)
+    {
+        $this->level = $level;
+
+        return $this;
+    }
+
+    /**
+     * Get level
+     *
+     * @return integer
+     */
+    public function getLevel()
+    {
+        return $this->level;
+    }
+
+    /**
+     * Set right
+     *
+     * @param integer $right
+     *
+     * @return Element
+     */
+    public function setRight($right)
+    {
+        $this->right = $right;
+
+        return $this;
+    }
+
+    /**
+     * Get right
+     *
+     * @return integer
+     */
+    public function getRight()
+    {
+        return $this->right;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     *
+     * @return Element
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set organization
+     *
+     * @param Organization $organization
+     *
+     * @return Element
+     */
+    public function setOrganization(Organization $organization)
+    {
+        $this->organization = $organization;
+
+        return $this;
+    }
+
+    /**
+     * Get organization
+     *
+     * @return Organization
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
+    }
+
+    /**
+     * Add reference
+     *
+     * @param Reference $reference
+     *
+     * @return Element
+     */
+    public function addReference(Reference $reference)
+    {
+        $this->references[] = $reference;
+
+        return $this;
+    }
+
+    /**
+     * Remove reference
+     *
+     * @param Reference $reference
+     */
+    public function removeReference(Reference $reference)
+    {
+        $this->references->removeElement($reference);
+    }
+
+    /**
+     * Get references
+     *
+     * @return Collection
+     */
+    public function getReferences()
+    {
+        return $this->references;
+    }
+
+    /**
+     * Add label
+     *
+     * @param Element $label
+     *
+     * @return Element
+     */
+    public function addLabel(Element $label)
+    {
+        $this->labels[] = $label;
+
+        return $this;
+    }
+
+    /**
+     * Remove label
+     *
+     * @param Element $label
+     */
+    public function removeLabel(Element $label)
+    {
+        $this->labels->removeElement($label);
+    }
+
+    /**
+     * Get labels
+     *
+     * @return Collection
+     */
+    public function getLabels()
+    {
+        return $this->labels;
+    }
 }

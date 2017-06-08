@@ -20,9 +20,7 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -54,4 +52,100 @@ class Reference
      * @var bool
      */
     private $mandatory;
+
+    /**
+     * Set multiple
+     *
+     * @param boolean $multiple
+     *
+     * @return Reference
+     */
+    public function setMultiple($multiple)
+    {
+        $this->multiple = $multiple;
+
+        return $this;
+    }
+
+    /**
+     * Get multiple
+     *
+     * @return boolean
+     */
+    public function getMultiple()
+    {
+        return $this->multiple;
+    }
+
+    /**
+     * Set mandatory
+     *
+     * @param boolean $mandatory
+     *
+     * @return Reference
+     */
+    public function setMandatory($mandatory)
+    {
+        $this->mandatory = $mandatory;
+
+        return $this;
+    }
+
+    /**
+     * Get mandatory
+     *
+     * @return boolean
+     */
+    public function getMandatory()
+    {
+        return $this->mandatory;
+    }
+
+    /**
+     * Set source
+     *
+     * @param Element $source
+     *
+     * @return Reference
+     */
+    public function setSource(Element $source)
+    {
+        $this->source = $source;
+
+        return $this;
+    }
+
+    /**
+     * Get source
+     *
+     * @return Element
+     */
+    public function getSource()
+    {
+        return $this->source;
+    }
+
+    /**
+     * Set target
+     *
+     * @param Element $target
+     *
+     * @return Reference
+     */
+    public function setTarget(Element $target)
+    {
+        $this->target = $target;
+
+        return $this;
+    }
+
+    /**
+     * Get target
+     *
+     * @return Element
+     */
+    public function getTarget()
+    {
+        return $this->target;
+    }
 }

@@ -103,4 +103,295 @@ class Organization
      * @var Collection
      */
     private $memberships;
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->memberships = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return Organization
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set shortName
+     *
+     * @param string $shortName
+     *
+     * @return Organization
+     */
+    public function setShortName($shortName)
+    {
+        $this->shortName = $shortName;
+
+        return $this;
+    }
+
+    /**
+     * Get shortName
+     *
+     * @return string
+     */
+    public function getShortName()
+    {
+        return $this->shortName;
+    }
+
+    /**
+     * Set code
+     *
+     * @param string $code
+     *
+     * @return Organization
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    /**
+     * Get code
+     *
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
+     * Set address
+     *
+     * @param string $address
+     *
+     * @return Organization
+     */
+    public function setAddress($address)
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * Get address
+     *
+     * @return string
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * Set city
+     *
+     * @param string $city
+     *
+     * @return Organization
+     */
+    public function setCity($city)
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    /**
+     * Get city
+     *
+     * @return string
+     */
+    public function getCity()
+    {
+        return $this->city;
+    }
+
+    /**
+     * Set phoneNumber
+     *
+     * @param string $phoneNumber
+     *
+     * @return Organization
+     */
+    public function setPhoneNumber($phoneNumber)
+    {
+        $this->phoneNumber = $phoneNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get phoneNumber
+     *
+     * @return string
+     */
+    public function getPhoneNumber()
+    {
+        return $this->phoneNumber;
+    }
+
+    /**
+     * Set faxNumber
+     *
+     * @param string $faxNumber
+     *
+     * @return Organization
+     */
+    public function setFaxNumber($faxNumber)
+    {
+        $this->faxNumber = $faxNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get faxNumber
+     *
+     * @return string
+     */
+    public function getFaxNumber()
+    {
+        return $this->faxNumber;
+    }
+
+    /**
+     * Set emailAddress
+     *
+     * @param string $emailAddress
+     *
+     * @return Organization
+     */
+    public function setEmailAddress($emailAddress)
+    {
+        $this->emailAddress = $emailAddress;
+
+        return $this;
+    }
+
+    /**
+     * Get emailAddress
+     *
+     * @return string
+     */
+    public function getEmailAddress()
+    {
+        return $this->emailAddress;
+    }
+
+    /**
+     * Set webSite
+     *
+     * @param string $webSite
+     *
+     * @return Organization
+     */
+    public function setWebSite($webSite)
+    {
+        $this->webSite = $webSite;
+
+        return $this;
+    }
+
+    /**
+     * Get webSite
+     *
+     * @return string
+     */
+    public function getWebSite()
+    {
+        return $this->webSite;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     *
+     * @return Organization
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Add membership
+     *
+     * @param Membership $membership
+     *
+     * @return Organization
+     */
+    public function addMembership(Membership $membership)
+    {
+        $this->memberships[] = $membership;
+
+        return $this;
+    }
+
+    /**
+     * Remove membership
+     *
+     * @param Membership $membership
+     */
+    public function removeMembership(Membership $membership)
+    {
+        $this->memberships->removeElement($membership);
+    }
+
+    /**
+     * Get memberships
+     *
+     * @return Collection
+     */
+    public function getMemberships()
+    {
+        return $this->memberships;
+    }
 }

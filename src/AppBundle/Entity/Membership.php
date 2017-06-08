@@ -60,4 +60,110 @@ class Membership
      * @var \DateTime
      */
     private $validUntil;
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set validFrom
+     *
+     * @param \DateTime $validFrom
+     *
+     * @return Membership
+     */
+    public function setValidFrom($validFrom)
+    {
+        $this->validFrom = $validFrom;
+
+        return $this;
+    }
+
+    /**
+     * Get validFrom
+     *
+     * @return \DateTime
+     */
+    public function getValidFrom()
+    {
+        return $this->validFrom;
+    }
+
+    /**
+     * Set validUntil
+     *
+     * @param \DateTime $validUntil
+     *
+     * @return Membership
+     */
+    public function setValidUntil($validUntil)
+    {
+        $this->validUntil = $validUntil;
+
+        return $this;
+    }
+
+    /**
+     * Get validUntil
+     *
+     * @return \DateTime
+     */
+    public function getValidUntil()
+    {
+        return $this->validUntil;
+    }
+
+    /**
+     * Set user
+     *
+     * @param User $user
+     *
+     * @return Membership
+     */
+    public function setUser(User $user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Set organization
+     *
+     * @param Organization $organization
+     *
+     * @return Membership
+     */
+    public function setOrganization(Organization $organization)
+    {
+        $this->organization = $organization;
+
+        return $this;
+    }
+
+    /**
+     * Get organization
+     *
+     * @return Organization
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
+    }
 }
