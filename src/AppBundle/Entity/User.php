@@ -109,6 +109,15 @@ class User implements AdvancedUserInterface
      * @var Collection
      */
     private $memberships;
+
+    /**
+     * Convertir usuario en cadena
+     */
+    public function __toString()
+    {
+        return $this->getFirstName() . ' ' . $this->getLastName();
+    }
+
     /**
      * Constructor
      */
@@ -360,11 +369,11 @@ class User implements AdvancedUserInterface
     /**
      * Add membership
      *
-     * @param \AppBundle\Entity\Membership $membership
+     * @param Membership $membership
      *
      * @return User
      */
-    public function addMembership(\AppBundle\Entity\Membership $membership)
+    public function addMembership(Membership $membership)
     {
         $this->memberships[] = $membership;
 
@@ -374,9 +383,9 @@ class User implements AdvancedUserInterface
     /**
      * Remove membership
      *
-     * @param \AppBundle\Entity\Membership $membership
+     * @param Membership $membership
      */
-    public function removeMembership(\AppBundle\Entity\Membership $membership)
+    public function removeMembership(Membership $membership)
     {
         $this->memberships->removeElement($membership);
     }

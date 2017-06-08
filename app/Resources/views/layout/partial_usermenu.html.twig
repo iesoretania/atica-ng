@@ -6,14 +6,14 @@
             <li><a href=""><i class="fa fa-cog"></i> {{ 'user.profile'|trans }}</a></li>
             {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
                 <li class="divider"></li>
-                <li><a href="{#{ path('frontpage', {'_switch_user': '_exit'}) }#}"><i class="fa fa-user-secret"></i> {{ 'user.impersonate.exit'|trans }}</a></li>
+                <li><a href="{{ path('frontpage', {'_switch_user': '_exit'}) }}"><i class="fa fa-user-secret"></i> {{ 'user.impersonate.exit'|trans }}</a></li>
             {% endif %}
             {% if is_granted('ROLE_ADMIN') %}
                 <li class="divider"></li>
                 <li><a href=""><i class="fa fa-wrench"></i> {{ 'user.administrate'|trans }}</a></li>
             {% endif %}
             <li class="divider"></li>
-            <li><a href=""><i class="fa fa-power-off"></i> {{ 'user.logout'|trans }}</a></li>
+            <li><a href="{{ path('logout') }}"><i class="fa fa-power-off"></i> {{ 'user.logout'|trans }}</a></li>
         </ul>
     </li>
 </ul>
