@@ -4,7 +4,7 @@ var plugins = require('gulp-load-plugins')();
 gulp.task('default', function() {
 
     // procesar SCSS
-    gulp.src(['node_modules/select2/dist/css/select2.css', 'web/css/**/*.scss', 'web/css/lato/css/fonts.css', 'web/css/atica.css'])
+    gulp.src(['node_modules/select2/dist/css/select2.css', 'web/css/**/*.scss', 'web/css/lato/css/fonts.css', 'node_modules/font-awesome-animation/dist/font-awesome-animation.css', 'web/css/atica.css'])
         .pipe(plugins.sass())
         .pipe(plugins.autoprefixer({
             browsers: [
