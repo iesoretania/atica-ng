@@ -247,7 +247,7 @@ class User implements AdvancedUserInterface
      */
     public function setEnabled($enabled)
     {
-        $this->active = $enabled;
+        $this->enabled = $enabled;
 
         return $this;
     }
