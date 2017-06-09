@@ -121,7 +121,7 @@ class User implements AdvancedUserInterface
      */
     public function __toString()
     {
-        return $this->getFirstName() . ' ' . $this->getLastName();
+        return $this->getFirstName().' '.$this->getLastName();
     }
 
     /**
@@ -522,7 +522,7 @@ class User implements AdvancedUserInterface
      * and populated in any number of different ways when the user object
      * is created.
      *
-     * @return (Role|string)[] The user roles
+     * @return string[] The user roles
      */
     public function getRoles()
     {

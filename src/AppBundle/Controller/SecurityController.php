@@ -104,7 +104,7 @@ class SecurityController extends Controller
 
                     // calcular fecha de expiración del token
                     $validity = new \DateTime();
-                    $validity->add(new \DateInterval('PT' . $expire . 'M'));
+                    $validity->add(new \DateInterval('PT'.$expire.'M'));
                     $user->setTokenExpiration($validity);
 
                     // enviar correo
