@@ -646,9 +646,9 @@
       "resolved": "https://registry.npmjs.org/gulp-autoprefixer/-/gulp-autoprefixer-3.1.1.tgz"
     },
     "gulp-clean-css": {
-      "version": "3.4.0",
-      "from": "gulp-clean-css@3.4.0",
-      "resolved": "https://registry.npmjs.org/gulp-clean-css/-/gulp-clean-css-3.4.0.tgz"
+      "version": "3.4.1",
+      "from": "gulp-clean-css@3.4.1",
+      "resolved": "https://registry.npmjs.org/gulp-clean-css/-/gulp-clean-css-3.4.1.tgz"
     },
     "gulp-concat": {
       "version": "2.6.1",
@@ -915,9 +915,9 @@
       "resolved": "https://registry.npmjs.org/jodid25519/-/jodid25519-1.0.2.tgz"
     },
     "jquery": {
-      "version": "1.12.4",
-      "from": "jquery@1.12.4",
-      "resolved": "https://registry.npmjs.org/jquery/-/jquery-1.12.4.tgz"
+      "version": "3.2.1",
+      "from": "jquery@3.2.1",
+      "resolved": "https://registry.npmjs.org/jquery/-/jquery-3.2.1.tgz"
     },
     "jquery-mousewheel": {
       "version": "3.1.13",
