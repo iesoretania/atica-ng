@@ -27,7 +27,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadUserPersonData extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
+class LoadInitialUserData extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
 {
     /**
      * @var ContainerInterface
@@ -43,6 +43,7 @@ class LoadUserPersonData extends AbstractFixture implements OrderedFixtureInterf
             ->setLastName('Admin')
             ->setGender(User::GENDER_NEUTRAL)
             ->setEnabled(true)
+            ->setGlobalAdministrator(true)
             ->setPassword($this->container->get('security.password_encoder')->encodePassword($userAdmin, 'admin'));
 
         $manager->persist($userAdmin);
