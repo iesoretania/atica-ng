@@ -4,6 +4,6 @@ languages:
   PHP: true
   Python: true
 exclude_paths:
-- "app/SymfonyRequirements.php"
+- "var/SymfonyRequirements.php"
 - "web/app*.php"
 - "web/config.php"
