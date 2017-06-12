@@ -72,7 +72,7 @@ class Reference
      *
      * @return boolean
      */
-    public function getMultiple()
+    public function isMultiple()
     {
         return $this->multiple;
     }
@@ -96,7 +96,7 @@ class Reference
      *
      * @return boolean
      */
-    public function getMandatory()
+    public function isMandatory()
     {
         return $this->mandatory;
     }
