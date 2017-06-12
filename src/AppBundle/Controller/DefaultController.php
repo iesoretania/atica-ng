@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/", name="frontpage")
+     * @Route("/", name="frontpage", methods={"GET"})
      */
     public function indexAction()
     {
