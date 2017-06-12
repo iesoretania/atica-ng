@@ -7,6 +7,10 @@ form.login.password.reset: ¿Olvidó la contraseña?
 form.login.footer: Esta aplicación es {{ link }} con licencia AGPL3
 form.login.footer.link.caption: software libre
 
+form.login.organization.title: Seleccione centro
+form.login.organization.submit: Entrar en el centro seleccionado
+form.login.error.no_membership: El usuario no pertenece actualmente a ningún centro educativo. Por favor contacte con la dirección de su centro.
+
 form.reset.title: Restablecimiento de contraseña
 form.reset.submit: COMENZAR PROCESO
 form.reset.back: Volver al formulario de entrada

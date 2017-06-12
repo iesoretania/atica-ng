@@ -20,6 +20,8 @@
 
 namespace AppBundle\DataFixtures\ORM;
 
+use AppBundle\Entity\Membership;
+use AppBundle\Entity\Organization;
 use AppBundle\Entity\User;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
@@ -36,6 +38,13 @@ class LoadInitialUserData extends AbstractFixture implements OrderedFixtureInter
 
     public function load(ObjectManager $manager)
     {
+        $organization = new Organization();
+        $organization
+            ->setName('I.E.S. Test')
+            ->setShortName('test');
+
+        $manager->persist($organization);
+
         $userAdmin = new User();
         $userAdmin
             ->setUserName('admin')
@@ -47,6 +56,14 @@ class LoadInitialUserData extends AbstractFixture implements OrderedFixtureInter
             ->setPassword($this->container->get('security.password_encoder')->encodePassword($userAdmin, 'admin'));
 
         $manager->persist($userAdmin);
+
+        $membership = new Membership();
+        $membership
+            ->setOrganization($organization)
+            ->setUser($userAdmin)
+            ->setValidFrom(new \DateTime('2001/01/01 00:00:00'));
+
+        $manager->persist($membership);
 
         $manager->flush();
     }

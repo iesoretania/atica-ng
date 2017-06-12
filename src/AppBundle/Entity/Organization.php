@@ -25,7 +25,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OrganizationRepository")
  */
 class Organization
 {
@@ -50,7 +50,7 @@ class Organization
     private $shortName;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      * @var string
      */
     private $code;
@@ -103,12 +103,23 @@ class Organization
      * @var Collection
      */
     private $memberships;
+
     /**
      * Constructor
      */
     public function __construct()
     {
         $this->memberships = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Returns the organization name
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getName();
     }
 
     /**

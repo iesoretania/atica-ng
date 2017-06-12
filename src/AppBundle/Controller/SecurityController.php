@@ -20,12 +20,16 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Organization;
+use AppBundle\Entity\OrganizationRepository;
 use AppBundle\Entity\User;
 use AppBundle\Service\MailerService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SecurityController extends Controller
@@ -200,4 +204,44 @@ class SecurityController extends Controller
             ]
         );
     }
+
+    /**
+     * @Route("/organizacion", name="login_organization", methods={"GET", "POST"})
+     */
+    public function organizationAction(Request $request)
+    {
+        /** @var Session $session */
+        $session = $this->get('session');
+
+        $data = ['organization' => $this->getUser()->getDefaultOrganization()];
+
+        $form = $this->createFormBuilder($data)
+            ->add('organization', EntityType::class, [
+                'expanded' => !$this->getUser()->isGlobalAdministrator(),
+                'class' => Organization::class,
+                'query_builder' => function(OrganizationRepository $er) {
+                    return $er->getMembershipByUserQueryBuilder($this->getUser());
+                }
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        // ¿se ha seleccionado una organización?
+        if ($form->isValid() && $form->isSubmitted()) {
+
+            $session->set('organization_id', $form->get('organization')->getData()->getId());
+            $this->getUser()->setDefaultOrganization($form->get('organization')->getData());
+            $this->getDoctrine()->getManager()->flush();
+
+            $url = $session->get('_security.organization.target_path', $this->generateUrl('frontpage'));
+            $session->remove('_security.organization.target_path');
+            return new RedirectResponse($url);
+        }
+        return $this->render('security/login_organization.html.twig', [
+                'form' => $form->createView()
+            ]
+        );
+    }
+
 }

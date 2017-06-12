@@ -123,6 +123,13 @@ class User implements AdvancedUserInterface
     private $memberships;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Organization")
+     * @ORM\JoinColumn(nullable=true)
+     * @var Organization|null
+     */
+    protected $defaultOrganization;
+
+    /**
      * Convertir usuario en cadena
      */
     public function __toString()
@@ -462,6 +469,29 @@ class User implements AdvancedUserInterface
         return $this->memberships;
     }
 
+    /**
+     * Set defaultOrganization
+     *
+     * @param Organization $defaultOrganization
+     *
+     * @return User
+     */
+    public function setDefaultOrganization(Organization $defaultOrganization = null)
+    {
+        $this->defaultOrganization = $defaultOrganization;
+
+        return $this;
+    }
+
+    /**
+     * Get defaultOrganization
+     *
+     * @return Organization|null
+     */
+    public function getDefaultOrganization()
+    {
+        return $this->defaultOrganization;
+    }
 
     /**
      * @Assert\Callback
