@@ -50,11 +50,11 @@ class MailerService
      * @param User[] $users
      * @param array $subject
      * @param array $body
-     * @param string|null $translation_domain
+     * @param string|null $translationDomain
      *
      * @return int
      */
-    public function sendEmail($users, $subject, $body, $translation_domain = null)
+    public function sendEmail($users, $subject, $body, $translationDomain = null)
     {
         // convertir array de usuarios en lista de correos
         $to = [];
@@ -66,10 +66,10 @@ class MailerService
          * @var \Swift_Message
          */
         $msg = $this->mailer->createMessage()
-            ->setSubject($this->prefix.$this->translator->trans($subject['id'], $subject['parameters'], $translation_domain))
+            ->setSubject($this->prefix.$this->translator->trans($subject['id'], $subject['parameters'], $translationDomain))
             ->setFrom($this->from)
             ->setTo($to)
-            ->setBody($this->translator->trans($body['id'], $body['parameters'], $translation_domain));
+            ->setBody($this->translator->trans($body['id'], $body['parameters'], $translationDomain));
 
         return $this->mailer->send($msg);
     }
