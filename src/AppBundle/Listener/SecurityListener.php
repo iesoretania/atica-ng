@@ -63,7 +63,7 @@ class SecurityListener implements EventSubscriberInterface
                 ->getQuery()
                 ->getSingleScalarResult();
 
-            switch($membershipCount) {
+            switch ($membershipCount) {
                 case 0:
                     throw new CustomUserMessageAuthenticationException('form.login.error.no_membership');
                 case 1:

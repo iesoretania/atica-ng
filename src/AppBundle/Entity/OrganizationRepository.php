@@ -24,6 +24,10 @@ use Doctrine\ORM\EntityRepository;
 
 class OrganizationRepository extends EntityRepository
 {
+    /**
+     * @param User $user
+     * @return \Doctrine\ORM\QueryBuilder
+     */
     public function getMembershipByUserQueryBuilder(User $user)
     {
         if ($user->isGlobalAdministrator()) {

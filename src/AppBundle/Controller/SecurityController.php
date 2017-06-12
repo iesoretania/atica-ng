@@ -153,7 +153,7 @@ class SecurityController extends Controller
     public function passwordResetAction(Request $request, $userId, $token)
     {
         /**
-         * @var User|null
+         * @var User
          */
         $user = $this->getDoctrine()->getManager()->getRepository('AppBundle:User')->findOneBy([
             'id' => $userId,
@@ -210,6 +210,10 @@ class SecurityController extends Controller
      */
     public function organizationAction(Request $request)
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('login');
+        }
+
         /** @var Session $session */
         $session = $this->get('session');
 
@@ -228,7 +232,7 @@ class SecurityController extends Controller
         $form->handleRequest($request);
 
         // ¿se ha seleccionado una organización?
-        if ($form->isValid() && $form->isSubmitted()) {
+        if ($form->isSubmitted() && $form->isValid()) {
 
             $session->set('organization_id', $form->get('organization')->getData()->getId());
             $this->getUser()->setDefaultOrganization($form->get('organization')->getData());

@@ -7,15 +7,15 @@ services:
     #service_name:
     #    class: AppBundle\Directory\ClassName
     #    arguments: ['@another_service_name', 'plain_value', '%parameter_name%']
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
     AppBundle\Service\MailerService:
+        autowire: false
         arguments: ["%notification.prefix%", "%notification.email_from%", "@mailer", "@translator"]
 
-    AppBundle\Listener\SecurityListener:
-        autowire: true
-        tags:
-            - { name: kernel.event_listener, event: security.interactive_login, method: onSecurityInteractiveLogin }
+    AppBundle\Listener\SecurityListener: ~
 
-    AppBundle\Listener\RequestListener:
-        autowire: true
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+    AppBundle\Listener\RequestListener: ~
