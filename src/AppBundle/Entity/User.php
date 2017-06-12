@@ -74,6 +74,12 @@ class User implements AdvancedUserInterface
     private $enabled;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $globalAdministrator;
+
+    /**
      * @ORM\Column(type="string", unique=true, nullable=true)
      * @Assert\Email
      * @var string
@@ -250,6 +256,31 @@ class User implements AdvancedUserInterface
         $this->enabled = $enabled;
 
         return $this;
+    }
+
+
+    /**
+     * Set globalAdmin
+     *
+     * @param boolean $globalAdministrator
+     *
+     * @return User
+     */
+    public function setGlobalAdministrator($globalAdministrator)
+    {
+        $this->globalAdministrator = $globalAdministrator;
+
+        return $this;
+    }
+
+    /**
+     * Get globalAdmin
+     *
+     * @return boolean
+     */
+    public function isGlobalAdministrator()
+    {
+        return $this->globalAdministrator;
     }
 
     /**
