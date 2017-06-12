@@ -28,10 +28,9 @@ Para facilitar el desarrollo se proporciona un entorno [Vagrant] con todas las d
 - Ejecutar `gulp`. [Gulp.js] se instala automáticamente con los comandos anteriores.
 - Configurar el sitio de Apache2 para que el `DocumentRoot` sea la carpeta `web/` dentro de la carpeta de instalación.
 - Modificar el fichero `parameters.yml` con los datos de acceso al sistema gestor de bases de datos deseados y otros parámetros de configuración globales que considere interesantes.
-- Ejecutar `app/console assets:install` para completar la instalación de los recursos en la carpeta `web/`.
 - Para crear la base de datos: `bin/console doctrine:database:create`.
 - Para crear las tablas: `bin/console doctrine:schema:create`.
-- Para insertar los datos iniciales: `bin/console doctrine:fixtures:load`.
+- Para insertar los datos iniciales: `bin/console doctrine:fixtures:load -n` (¡cuidado! Esto elimina todos los datos existentes en la base de datos).
 
 ## Entorno de desarrollo
 
