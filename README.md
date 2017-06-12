@@ -1,6 +1,7 @@
 # ÁTICA 
 [![Build Status](https://travis-ci.org/iesoretania/atica-fct.svg?branch=master)](https://travis-ci.org/iesoretania/atica-ng)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/iesoretania/atica-ng/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/iesoretania/atica-ng/?branch=master)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/7257a728-0aa7-42f7-978b-e46c8414f492/mini.png)](https://insight.sensiolabs.com/projects/7257a728-0aa7-42f7-978b-e46c8414f492)
 
 Evolución de la aplicación web para la gestión interna de centros educativos (en desarrollo, aún no está lista para producción).
 
