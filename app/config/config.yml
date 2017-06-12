@@ -43,7 +43,7 @@ twig:
     globals:
         app_name:     'ÁTICA'
         app_repository: 'https://github.com/iesoretania/atica-ng'
-        app_version:  '6.0'
+        app_version:  'ng'
 
 # Doctrine Configuration
 doctrine:
