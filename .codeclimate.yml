@@ -4,6 +4,19 @@ languages:
   PHP: true
   Python: true
 exclude_paths:
-- "var/SymfonyRequirements.php"
-- "web/app*.php"
-- "web/config.php"
+  - "var/SymfonyRequirements.php"
+  - "web/app*.php"
+  - "web/config.php"
+engines:
+  csslint:
+    enabled: true
+    checks:
+      important:
+        enabled: false
+  phpmd:
+    enabled: true
+    checks:
+      Naming/ShortVariable:
+        enabled: false
+      CleanCode/ElseExpression:
+        enabled: false
