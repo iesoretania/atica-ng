@@ -211,7 +211,7 @@ class SecurityController extends Controller
     public function organizationAction(Request $request)
     {
         // si no hay usuario activo, volver
-        if (!$this->getUser()) {
+        if (null === $this->getUser()) {
             return $this->redirectToRoute('login');
         }
 
