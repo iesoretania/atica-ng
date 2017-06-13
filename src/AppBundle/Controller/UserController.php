@@ -31,7 +31,8 @@ use Symfony\Component\HttpFoundation\Request;
 class UserController extends Controller
 {
     /**
-     * @Route("/perfil", name="user_profile_form", methods={"GET", "POST"})
+     * @Route("/admin", name="admin_menu", methods={"GET", "POST"})
+     * @Route("/datos", name="user_data", methods={"GET", "POST"})
      */
     public function userProfileFormAction(Request $request)
     {
@@ -72,8 +73,14 @@ class UserController extends Controller
             }
         }
 
+        $menus = $this->get('app.menu_builders_chain')->getPathByRouteName('frontpage');
+
         return $this->render('user/profile_form.html.twig', [
-            'title' => $this->get('translator')->trans('user.profile', [], 'layout'),
+            'menu_path' => $menus,
+            'breadcrumb' => [
+                ['caption' => 'menu.user_data']
+            ],
+            'title' => $this->get('translator')->trans('user.data', [], 'layout'),
             'form' => $form->createView(),
             'user' => $user
         ]);

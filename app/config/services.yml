@@ -12,6 +12,15 @@ services:
         autowire: true
         autoconfigure: true
 
+    _instanceof:
+            AppBundle\Service\MenuBuilderInterface:
+                tags: [app.menu]
+
+    app.menu_builders_chain:
+        class: AppBundle\Service\MenuBuilderChain
+
+    AppBundle\Service\CoreMenu:
+
     AppBundle\Service\MailerService:
         autowire: false
         arguments: ["%notification.prefix%", "%notification.email_from%", "@mailer", "@translator"]

@@ -33,7 +33,7 @@
         </div>
     </nav>
     <div class="container">
-        {% if menu_item is defined and menu_item is not empty %}
+        {% if menu_path is defined and menu_path is not empty %}
             {% include 'layout/partial_breadcrumb.html.twig' %}
         {% endif %}
         {% if title is defined %}

@@ -4,5 +4,5 @@ hint.close: Cerrar
 user.logged.as: Conectado como {{ user }}
 user.impersonate.exit: Volver al usuario normal
 user.logout: Desconectar
-user.profile: Ver datos personales
+user.data: Ver datos personales
 user.administrate: Administrar
