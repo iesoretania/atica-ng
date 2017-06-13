@@ -1,0 +1,14 @@
+form.user_name: Nombre de usuario
+form.first_name: Nombre
+form.last_name: Apellidos
+form.email_address: Correo electrónico
+form.gender: Sexo
+form.gender.neutral: No especificado
+form.gender.male: Hombre
+form.gender.female: Mujer
+
+form.save: Guardar cambios
+form.back: Volver a la portada
+
+message.saved: Datos personales actualizados con éxito.
+message.error: No se han podido actualizar los datos personales.
