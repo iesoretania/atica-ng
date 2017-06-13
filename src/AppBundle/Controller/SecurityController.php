@@ -87,7 +87,7 @@ class SecurityController extends Controller
 
             /** @var User $user */
             // comprobar que está asociada a un usuario
-            $user = $this->getDoctrine()->getManager()->getRepository('AppBundle:User')->findOneByEmailAddress($email);
+            $user = $this->getDoctrine()->getManager()->getRepository('AppBundle:User')->findOneBy(['emailAddress' => $email]);
 
             if (null === $user) {
                 $error = $this->get('translator')->trans('form.reset.notfound', [], 'security');
@@ -210,6 +210,7 @@ class SecurityController extends Controller
      */
     public function organizationAction(Request $request)
     {
+        // si no hay usuario activo, volver
         if (!$this->getUser()) {
             return $this->redirectToRoute('login');
         }
@@ -221,10 +222,10 @@ class SecurityController extends Controller
 
         $form = $this->createFormBuilder($data)
             ->add('organization', EntityType::class, [
-                'expanded' => !$this->getUser()->isGlobalAdministrator(),
+                'expanded' => $this->getDoctrine()->getManager()->getRepository('AppBundle:Organization')->countOrganizationsByUser($this->getUser(), new \DateTime()) < 5,
                 'class' => Organization::class,
                 'query_builder' => function(OrganizationRepository $er) {
-                    return $er->getMembershipByUserQueryBuilder($this->getUser());
+                    return $er->getMembershipByUserQueryBuilder($this->getUser(), new \DateTime());
                 }
             ])
             ->getForm();

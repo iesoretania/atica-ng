@@ -20,7 +20,6 @@
 
 namespace AppBundle\Listener;
 
-use AppBundle\Entity\Membership;
 use AppBundle\Entity\User;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -47,34 +46,35 @@ class SecurityListener implements EventSubscriberInterface
 
         $em = $this->doctrine->getManager();
 
+        // comprobar si es administrador global y, en ese caso, devolver todas las organizaciones
         if ($user->isGlobalAdministrator()) {
-            $organizationCount = $em->getRepository('AppBundle:Organization')->count();
-            if ($organizationCount > 1) {
+            $organizationsCount = $em->getRepository('AppBundle:Organization')
+                ->countOrganizationsByUser($user);
+
+            if ($organizationsCount > 1) {
                 $this->session->set('_security.organization.target_path', $this->session->get('_security.main.target_path'));
             } else {
-                $organization = $em->getRepository('AppBundle:Organization')->findOneBy([]);
+                $organization = $em->getRepository('AppBundle:Organization')->findFirstByUserOrNull($user);
                 $this->session->set('organization_id', $organization->getId());
             }
-        } else {
-            $membershipCount = $em->getRepository('AppBundle:Membership')
-                ->createQueryBuilder('m')
-                ->select('count(m.organization)')
-                ->andWhere('m.user = :user')
-                ->setParameter('user', $user)
-                ->getQuery()
-                ->getSingleScalarResult();
 
-            switch ($membershipCount) {
-                case 0:
-                    throw new CustomUserMessageAuthenticationException('form.login.error.no_membership');
-                case 1:
-                    /** @var Membership $membership */
-                    $membership = $em->getRepository('AppBundle:Membership')->findOneBy(['user' => $user]);
-                    $this->session->set('organization_id', $membership->getOrganization()->getId());
-                    break;
-                default:
-                    $this->session->set('_security.organization.target_path', $this->session->get('_security.main.target_path'));
-            }
+            return;
+        }
+
+        // no es administrador global, consultar las pertenencias activas
+        $date = new \DateTime;
+        $organizationsCount = $em->getRepository('AppBundle:Organization')
+            ->countOrganizationsByUser($user, $date);
+
+        switch ($organizationsCount) {
+            case 0:
+                throw new CustomUserMessageAuthenticationException('form.login.error.no_membership');
+            case 1:
+                $organization = $em->getRepository('AppBundle:Organization')->findFirstByUserOrNull($user, $date);
+                $this->session->set('organization_id', $organization->getId());
+                break;
+            default:
+                $this->session->set('_security.organization.target_path', $this->session->get('_security.main.target_path'));
         }
     }
 

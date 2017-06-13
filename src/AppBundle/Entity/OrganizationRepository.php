@@ -25,21 +25,67 @@ use Doctrine\ORM\EntityRepository;
 class OrganizationRepository extends EntityRepository
 {
     /**
+     * Devuelve las organizaciones a las que pertenece el usuario en la fecha indicada.
+     * Si no se especifica fecha, se devuelven todas a las que pertenece.
+     *
      * @param User $user
+     * @param \DateTime $date
      * @return \Doctrine\ORM\QueryBuilder
      */
-    public function getMembershipByUserQueryBuilder(User $user)
+    public function getMembershipByUserQueryBuilder(User $user, \DateTime $date = null)
     {
         if ($user->isGlobalAdministrator()) {
             return $this->createQueryBuilder('o')
                 ->orderBy('o.name');
         }
 
-        return $this->createQueryBuilder('o')
-            ->join('o.memberships', 'm')
-            ->where('m.user = :user')
+        $query = $this->createQueryBuilder('o')
+            ->join('o.memberships', 'm');
+
+        if ($date) {
+            $query = $query
+                ->andWhere('m.validUntil >= :date')
+                ->orWhere('m.validUntil IS NULL')
+                ->andWhere('m.validFrom <= :date')
+                ->setParameter('date', $date);
+        }
+        return $query
+            ->andWhere('m.user = :user')
             ->setParameter('user', $user)
             ->orderBy('o.name');
+
+    }
+
+    /**
+     * Devuelve la primera organización a la que pertenece el usuario indicado en la fecha pasada
+     * como parámetro.
+     *
+     * @param User $user
+     * @param \DateTime $date
+     * @return Organization|null
+     */
+    public function findFirstByUserOrNull(User $user, \DateTime $date = null)
+    {
+        $query = $this->getMembershipByUserQueryBuilder($user, $date);
+        return $query
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * Devuelve el número de organizaciones a las que pertenece un usuario en una fecha determinada.
+     *
+     * @param User $user
+     * @param \DateTime $date
+     * @return int
+     */
+    public function countOrganizationsByUser(User $user, \DateTime $date = null)
+    {
+        $query = $this->getMembershipByUserQueryBuilder($user, $date);
+        return $query
+            ->select('COUNT(o)')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     public function count() {

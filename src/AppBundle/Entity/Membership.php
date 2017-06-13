@@ -23,7 +23,7 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="MembershipRepository")
  */
 class Membership
 {
@@ -50,13 +50,13 @@ class Membership
     private $organization;
 
     /**
-     * @ORM\Column(type="date", nullable=false)
+     * @ORM\Column(type="datetime", nullable=false)
      * @var \DateTime
      */
     private $validFrom;
 
     /**
-     * @ORM\Column(type="date", nullable=true)
+     * @ORM\Column(type="datetime", nullable=true)
      * @var \DateTime
      */
     private $validUntil;
