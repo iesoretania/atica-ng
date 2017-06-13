@@ -45,6 +45,7 @@ class User implements AdvancedUserInterface
 
     /**
      * @ORM\Column(type="string", unique=true, nullable=true)
+     * @Assert\Regex(pattern="/[@ ]{1,}/", match=false, message="login_username.invalid_chars", htmlPattern=false)
      * @var string
      */
     private $userName;
@@ -57,12 +58,14 @@ class User implements AdvancedUserInterface
 
     /**
      * @ORM\Column(type="string")
+     * @Assert\NotBlank
      * @var string
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string")
+     * @Assert\NotBlank
      * @var string
      */
     private $lastName;
@@ -501,10 +504,10 @@ class User implements AdvancedUserInterface
         // comprobar si se ha especificado al menos el nombre de usuario o el correo electrónico
         if (!$this->getUsername() && !$this->getEmailAddress()) {
             $context->buildViolation('user.id.not_found')
-                ->atPath('loginUsername')
+                ->atPath('userName')
                 ->addViolation();
             $context->buildViolation('user.id.not_found')
-                ->atPath('email')
+                ->atPath('emailAddress')
                 ->addViolation();
         }
     }

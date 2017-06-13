@@ -6,9 +6,20 @@ form.gender: Sexo
 form.gender.neutral: No especificado
 form.gender.male: Hombre
 form.gender.female: Mujer
+form.enabled: Acceso
+form.enabled.no: El acceso a la aplicación le está denegado
+form.enabled.yes: El acceso a la aplicación le está permitido
+form.global_administrator: El usuario puede administrar todos los centros
+
 
 form.save: Guardar cambios
 form.back: Volver a la portada
 
+form.old_password: Contraseña actual
+form.new_password: Nueva contraseña
+form.new_password_repeat: Repetir contraseña
+form.change_password: Guardar cambios y cambiar la contraseña
+
 message.saved: Datos personales actualizados con éxito.
+message.password_changed: Datos personales y contraseña actualizados con éxito.
 message.error: No se han podido actualizar los datos personales.

@@ -20,10 +20,12 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Form\Type\OwnUserType;
+use AppBundle\Entity\User;
+use AppBundle\Form\Type\UserType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
 
 class UserController extends Controller
@@ -33,17 +35,36 @@ class UserController extends Controller
      */
     public function userProfileFormAction(Request $request)
     {
+        /** @var User $user */
         $user = $this->getUser();
 
-        $form = $this->createForm(OwnUserType::class, $user);
+        if (null === $user) {
+            return $this->redirectToRoute('frontpage');
+        }
+
+        $form = $this->createForm(UserType::class, $user, [
+            'own' => true,
+            'admin' => $user->isGlobalAdministrator()
+        ]);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $translator = $this->get('translator');
+
+            // Si es solicitado, cambiar la contraseña
+            $passwordSubmit = $form->get('changePassword');
+            if (($passwordSubmit instanceof SubmitButton) && $passwordSubmit->isClicked()) {
+                $user->setPassword($this->get('security.password_encoder')
+                    ->encodePassword($user, $form->get('newPassword')->get('first')->getData()));
+                $message = $this->get('translator')->trans('message.password_changed', [], 'user');
+            } else {
+                $message = $this->get('translator')->trans('message.saved', [], 'user');
+            }
+
             try {
                 $this->getDoctrine()->getManager()->flush();
-                $this->addFlash('success', $translator->trans('message.saved', [], 'user'));
+                $this->addFlash('success', $message);
                 return $this->redirectToRoute('frontpage');
             }
             catch (Exception $e) {
