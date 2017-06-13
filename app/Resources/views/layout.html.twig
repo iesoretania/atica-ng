@@ -6,7 +6,7 @@
     {% if title is defined and title is not empty %}
         {{ title }} -
     {% endif %}
-    {{- app_name }}
+    {{ user_extension.currentOrganization.name }}
 {%- endblock %}
 
 {% block body %}
@@ -20,7 +20,7 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="">
-                    {% block navbartitle %}{{ app_name }}{% endblock %}
+                    {% block navbartitle %}{{ user_extension.currentOrganization.name ?? app_name }}{% endblock %}
                 </a>
             </div>
             <div class="collapse navbar-collapse" id="navbar-main">

@@ -19,3 +19,5 @@ services:
     AppBundle\Listener\SecurityListener: ~
 
     AppBundle\Listener\RequestListener: ~
+
+    AppBundle\Service\UserExtensionService: ~

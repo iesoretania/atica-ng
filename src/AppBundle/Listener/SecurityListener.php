@@ -52,7 +52,8 @@ class SecurityListener implements EventSubscriberInterface
             if ($organizationCount > 1) {
                 $this->session->set('_security.organization.target_path', $this->session->get('_security.main.target_path'));
             } else {
-                $this->session->set('organization_id', $em->getRepository('AppBundle:Organization')->findOneBy([]));
+                $organization = $em->getRepository('AppBundle:Organization')->findOneBy([]);
+                $this->session->set('organization_id', $organization->getId());
             }
         } else {
             $membershipCount = $em->getRepository('AppBundle:Membership')

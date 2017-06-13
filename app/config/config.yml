@@ -44,6 +44,7 @@ twig:
         app_name:     'ÁTICA'
         app_repository: 'https://github.com/iesoretania/atica-ng'
         app_version:  'ng'
+        user_extension: '@AppBundle\Service\UserExtensionService'
 
 # Doctrine Configuration
 doctrine:
