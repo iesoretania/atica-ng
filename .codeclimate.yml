@@ -1,8 +1,5 @@
-languages:
-  Ruby: true
-  JavaScript: true
-  PHP: true
-  Python: true
+ratings:
+  - ".php"
 exclude_paths:
   - "var/SymfonyRequirements.php"
   - "web/app*.php"
