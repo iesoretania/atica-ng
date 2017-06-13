@@ -88,7 +88,7 @@ class UserType extends AbstractType
                     'attr' => ['class' => 'btn btn-success']
                 ]);
 
-            if (!$options['admin'] && $options['own']) {
+            if ($options['own']) {
                 $builder
                     ->add('oldPassword', PasswordType::class, [
                         'label' => 'form.old_password',
