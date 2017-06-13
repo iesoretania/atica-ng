@@ -35,9 +35,12 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class UserType extends AbstractType
 {
     /**
-     * {@inheritdoc}
+     * Formulario base
+     *
+     * @param FormBuilderInterface $builder
+     * @param array $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    private function buildBaseForm(FormBuilderInterface $builder)
     {
         $builder
             ->add('userName', null, [
@@ -61,6 +64,14 @@ class UserType extends AbstractType
                     'form.gender.female' => User::GENDER_FEMALE
                 ]
             ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $this->buildBaseForm($builder);
 
         if ($options['admin']) {
             $builder
