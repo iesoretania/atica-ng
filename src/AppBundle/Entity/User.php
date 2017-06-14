@@ -590,7 +590,11 @@ class User implements AdvancedUserInterface
      */
     public function getRoles()
     {
-        return ['ROLE_USER'];
+        $roles = ['ROLE_USER'];
+        if ($this->isGlobalAdministrator()) {
+            $roles[] = 'ROLE_ADMIN';
+        }
+        return $roles;
     }
 
     /**
