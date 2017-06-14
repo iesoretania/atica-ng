@@ -30,7 +30,7 @@ class MenuBuilderChain
     private $menuBuilders;
 
     /**
-     * @var MenuItem[]|null
+     * @var MenuItem|null
      */
     private $menuCache;
 
@@ -87,11 +87,15 @@ class MenuBuilderChain
      * Búsqueda recursiva de una ruta
      *
      * @param $route
-     * @param MenuItem $item
+     * @param MenuItem|null $item
      * @return MenuItem|null
      */
-    private function checkMenuRouteName($route, MenuItem $item)
+    private function checkMenuRouteName($route, MenuItem $item = null)
     {
+        if (null === $item) {
+            return null;
+        }
+
         if ($item->getRouteName() === $route) {
             return $item;
         }

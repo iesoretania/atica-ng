@@ -31,6 +31,9 @@ class CoreMenu implements MenuBuilderInterface
         $this->userExtension = $userExtension;
     }
 
+    /**
+     * @return array|null
+     */
     public function getMenuStructure()
     {
         $isLocalAdministrator = $this->userExtension->isUserLocalAdministrator();

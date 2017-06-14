@@ -246,7 +246,10 @@ class MenuItem
      */
     public function removeChild(MenuItem $child)
     {
-        $this->children->remove($child);
+        $index = $this->children->indexOf($child);
+        if (false !== $index) {
+            $this->children->remove($index);
+        }
         return $this;
     }
 

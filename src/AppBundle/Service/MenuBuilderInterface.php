@@ -20,12 +20,10 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Menu\MenuItem;
-
 interface MenuBuilderInterface
 {
     /**
-     * @return MenuItem[]|null
+     * @return array|null
      */
     public function getMenuStructure();
 }

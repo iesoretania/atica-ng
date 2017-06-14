@@ -38,7 +38,6 @@ class UserType extends AbstractType
      * Formulario base
      *
      * @param FormBuilderInterface $builder
-     * @param array $options
      */
     private function buildBaseForm(FormBuilderInterface $builder)
     {
