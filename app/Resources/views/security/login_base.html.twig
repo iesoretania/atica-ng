@@ -4,10 +4,10 @@
 
 {% block body %}
     <section class="login-form">
-        <h1 class="text-center">
+        <h2 class="center-align">
             <span class="app-name">{{ app_name }} </span>
             <span class="app-version">{{ app_version }}</span>
-        </h1>
+        </h2>
         <div class="panel panel-default">
             <div class="panel-heading">{% block login_title %}{% endblock %}</div>
             <div class="panel-body">
@@ -25,5 +25,5 @@
     </section>
 
     <hr/>
-    <p class="text-muted text-center">{{ 'form.login.footer'|trans({'{{ link }}': '<a href="' ~ app_repository ~ '">' ~ ('form.login.footer.link.caption'|trans) ~ '</a>'}) | raw }}</p>
+    <p class="text-muted center-align">{{ 'form.login.footer'|trans({'{{ link }}': '<a href="' ~ app_repository ~ '">' ~ ('form.login.footer.link.caption'|trans) ~ '</a>'}) | raw }}</p>
 {% endblock %}

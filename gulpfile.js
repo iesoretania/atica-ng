@@ -29,9 +29,9 @@ gulp.task('default', function() {
     gulp.src('node_modules/jquery/dist/*.min.js')
         .pipe(gulp.dest('web/dist/js/jquery'));
 
-    // copiar Javascript de Bootstrap
-    gulp.src('node_modules/bootstrap-sass/assets/javascripts/*.min.js')
-        .pipe(gulp.dest('web/dist/js/bootstrap'));
+    // copiar Javascript de Materialize
+    gulp.src('node_modules/materialize-css/dist/js/*.min.js')
+        .pipe(gulp.dest('web/dist/js/materialize-css'));
 
     // copiar Javascript de Select2
     gulp.src('node_modules/select2/dist/js/*')

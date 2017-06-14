@@ -4,9 +4,8 @@
   "description": "Aplicación telemática para la intranet de centros educativos",
   "dependencies": {
     "autoprefixer": "^6.1.0",
-    "bootstrap-sass": "^3.3.7",
-    "font-awesome": "^4.7.0",
     "font-awesome-animation": "0.0.10",
+    "font-awesome": "^4.7",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-clean-css": "^3",
@@ -14,8 +13,8 @@
     "gulp-load-plugins": "^1.1.0",
     "gulp-sass": "^2.1.0",
     "jquery": "^3.0",
-    "select2": "^4.0.3",
-    "select2-bootstrap-theme": "0.1.0-beta.10"
+    "materialize-css": "^0.98.2",
+    "select2": "^4.0.3"
   },
   "scripts": {
     "test": "phpunit -c app/"
