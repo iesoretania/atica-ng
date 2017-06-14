@@ -228,7 +228,7 @@ class MenuItem
         $this->children->add($child);
 
         $iterator = $this->children->getIterator();
-        $iterator->uasort(function (MenuItem $a, MenuItem $b) {
+        $iterator->uasort(function(MenuItem $a, MenuItem $b) {
             if ($a->getPriority() == $b->getPriority()) {
                 return $a->getName() < $b->getName() ? -1 : 1;
             }
@@ -297,7 +297,7 @@ class MenuItem
         $path = [];
         $current = $this;
 
-        while(null !== $current) {
+        while (null !== $current) {
             array_unshift($path, $current);
             $current = $current->getParent();
         }

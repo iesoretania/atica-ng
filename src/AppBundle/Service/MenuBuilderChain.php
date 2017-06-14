@@ -64,10 +64,10 @@ class MenuBuilderChain
             ->setColor('teal')
             ->setIcon('home');
 
-        foreach($this->menuBuilders as $menuBuilder) {
+        foreach ($this->menuBuilders as $menuBuilder) {
             $menuStructure = $menuBuilder->getMenuStructure();
             if ($menuStructure) {
-                foreach($menuStructure as $menuItem) {
+                foreach ($menuStructure as $menuItem) {
                     $root->addChild($menuItem);
                 }
             }
@@ -100,11 +100,11 @@ class MenuBuilderChain
             return $item;
         }
 
-        foreach($item->getChildren() as $child) {
-           $ret = $this->checkMenuRouteName($route, $child);
-           if (null !== $ret) {
-               return $ret;
-           }
+        foreach ($item->getChildren() as $child) {
+            $ret = $this->checkMenuRouteName($route, $child);
+            if (null !== $ret) {
+                return $ret;
+            }
         }
         return null;
     }

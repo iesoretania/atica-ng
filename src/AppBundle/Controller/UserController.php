@@ -67,8 +67,7 @@ class UserController extends Controller
                 $this->getDoctrine()->getManager()->flush();
                 $this->addFlash('success', $message);
                 return $this->redirectToRoute('frontpage');
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
                 $this->addFlash('error', $translator->trans('message.error', [], 'user'));
             }
         }

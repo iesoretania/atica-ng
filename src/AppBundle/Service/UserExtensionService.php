@@ -54,9 +54,7 @@ class UserExtensionService
         if ($this->session->has('organization_id')) {
             return $this->em->getRepository('AppBundle:Organization')->find($this->session->get('organization_id'));
         }
-        else {
-            return null;
-        }
+        return null;
     }
 
     public function isUserGlobalAdministrator()
