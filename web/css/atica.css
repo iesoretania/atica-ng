@@ -19,6 +19,7 @@
 html {
     position: relative;
     min-height: 100%;
+    overflow-x: hidden;
 }
 
 body {
@@ -34,6 +35,10 @@ body {
     height: 45px;
     background-color: #f5f5f5;
     text-align: center;
+}
+
+.footer p {
+    margin: 0;
 }
 
 /* Formulario de entrada */

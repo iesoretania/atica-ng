@@ -27,6 +27,12 @@
         $('select').select2({
             theme: "bootstrap"
         });
+        var trigger = $('[data-toggle="offcanvas"], nav .sidebar-nav li');
+
+        trigger.click(function () {
+            $('#wrapper').toggleClass('toggled');
+            $('#sidebar').toggleClass('collapsed');
+        });
     </script>
 </body>
 </html>
