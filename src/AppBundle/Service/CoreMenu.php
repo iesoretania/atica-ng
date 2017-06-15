@@ -41,8 +41,8 @@ class CoreMenu implements MenuBuilderInterface
         $root = [];
 
         if ($isLocalAdministrator) {
-            $menu = new MenuItem();
-            $menu
+            $menu1 = new MenuItem();
+            $menu1
                 ->setName('admin')
                 ->setRouteName('admin_menu')
                 ->setCaption('menu.admin')
@@ -50,9 +50,31 @@ class CoreMenu implements MenuBuilderInterface
                 ->setColor('teal')
                 ->setIcon('wrench');
 
-            $root[] = $menu;
+            $root[] = $menu1;
         }
 
+        $menu = new MenuItem();
+        $menu
+            ->setName('user_data')
+            ->setRouteName('user_data')
+            ->setCaption('menu.user_data')
+            ->setDescription('menu.user_data.detail')
+            ->setColor('purple')
+            ->setIcon('cog')
+            ->setPriority(9999);
+
+        $root[] = $menu;
+        $menu = new MenuItem();
+        $menu
+            ->setName('logout')
+            ->setRouteName('logout')
+            ->setCaption('menu.logout')
+            ->setDescription('menu.logout.detail')
+            ->setColor('gray')
+            ->setIcon('power-off')
+            ->setPriority(10000);
+
+        $root[] = $menu;
         return $root;
     }
 }
