@@ -1,4 +1,5 @@
-navbar.expand: Desplegar navegación
+title.welcome: ¡Bienvenido!
+navbar.expand: Desplegar barra de navegación
 hint.close: Cerrar
 
 user.logged.as: Conectado como {{ user }}
