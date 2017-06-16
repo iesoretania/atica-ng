@@ -3,7 +3,7 @@
 @import "flatly/variables";
 $link-color: $brand-info;
 $link-hover-color: lighten($brand-info, 15%);
-$navbar-default-link-hover-color: lighten($brand-info, 15%);
+$navbar-default-link-hover-color: darken($navbar-default-link-color, 15%);
 $navbar-default-color: #aaa;
 $breadcrumb-separator: ">";
 @import "../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
@@ -136,6 +136,7 @@ li.sidebar-brand {
 
 .sidebar-nav>li>a:hover {
   background-color: $brand-primary;
+  color: $navbar-default-link-color;
 }
 
 li.sidebar-brand>a {
@@ -146,7 +147,7 @@ li.sidebar-brand>a {
 }
 
 .nav>li>a {
-  color: lighten($brand-primary, 55%);
+  color: $navbar-default-link-color;
 }
 
 .nav>li.active {
