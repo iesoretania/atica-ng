@@ -19,14 +19,7 @@
                     {% block navbartitle %}{{ user_extension.currentOrganization.name ?? app_name }}{% endblock %}
                 </a>
             </li>
-            {% for item in menu_extension.menu.children %}
-                <li{% if item.routeName == app.request.get('_route') %} class="active"{% endif %}>
-                    <a href="{{ path(item.routeName, item.routeParams|default([])) }}">
-                        {% if item.icon %}<i class="fa fa-{{ item.icon }}"></i>&nbsp;{% endif %}
-                        {{ item.caption | trans([], 'menu') }}
-                    </a>
-                </li>
-            {% endfor %}
+            {% include 'layout/partial_sidebar.html.twig' %}
         </ul>
     </nav>
 
@@ -41,6 +34,9 @@
                         <span class="icon-bar"></span>
                         <span class="sr-only">{{ 'navbar.expand'|trans }}</span>
                     </button>
+                    {% if menu_path is defined and menu_path is not empty %}
+                        {% include 'layout/partial_breadcrumb.html.twig' %}
+                    {% endif %}
                 </div>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
@@ -54,9 +50,6 @@
             </div>
         </nav>
         <div class="container">
-            {% if menu_path is defined and menu_path is not empty %}
-                {% include 'layout/partial_breadcrumb.html.twig' %}
-            {% endif %}
             {% if title is defined %}
                 <h1 class="well">{{ title }}</h1>
             {% endif %}

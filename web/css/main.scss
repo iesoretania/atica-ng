@@ -4,12 +4,19 @@
 $link-color: $brand-info;
 $link-hover-color: lighten($brand-info, 15%);
 $navbar-default-link-hover-color: lighten($brand-info, 15%);
+$navbar-default-color: #aaa;
 $breadcrumb-separator: ">";
 @import "../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 @import "flatly/bootswatch";
 @import "../../node_modules/select2-bootstrap-theme/src/select2-bootstrap";
 @import "../../node_modules/font-awesome/scss/font-awesome";
 
+.separator:before {
+  content: '>';
+  padding-left: 0.1em;
+  padding-right: 0.1em;
+  color: darken($breadcrumb-color, 30%);
+}
 
 /* Icono de hamburguesa animado */
 .navbar-toggle {
@@ -138,6 +145,10 @@ li.sidebar-brand>a {
   }
 }
 
+.nav>li>a {
+  color: lighten($brand-primary, 55%);
+}
+
 .nav>li.active {
   background-color: lighten($brand-primary, 15%);
 }
@@ -146,6 +157,10 @@ li.sidebar-brand>a {
   float: left;
   margin-right: 0;
   margin-left: 15px;
+}
+
+.navbar-link:hover {
+  text-decoration: none;
 }
 
 @media (min-width: 768px) {
