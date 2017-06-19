@@ -1,13 +1,9 @@
 // Colocar aquí personalizaciones de Bootstrap y Fontawesome
 
-@import "flatly/variables";
-$link-color: $brand-info;
-$link-hover-color: lighten($brand-info, 15%);
-$navbar-default-link-hover-color: darken($navbar-default-link-color, 15%);
-$navbar-default-color: #aaa;
+@import "lumen/variables";
 $breadcrumb-separator: ">";
 @import "../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
-@import "flatly/bootswatch";
+@import "lumen/bootswatch";
 @import "../../node_modules/select2-bootstrap-theme/src/select2-bootstrap";
 @import "../../node_modules/font-awesome/scss/font-awesome";
 
@@ -70,6 +66,11 @@ $breadcrumb-separator: ">";
   }
 }
 
+/* Barra de búsqueda */
+input[type="search"]{
+  font-family: "FontAwesome", $font-family-sans-serif;
+}
+
 /* Botones adaptativos */
 @media (max-width: $screen-sm-min) {
   .btn-sm-block {
@@ -106,7 +107,6 @@ th.calendar-month {
   margin-left: -220px;
   overflow-y: auto;
   overflow-x: hidden;
-  background: darken($brand-primary, 15%);
   transition: all 0.5s ease;
 }
 
@@ -131,16 +131,16 @@ th.calendar-month {
 li.sidebar-brand {
   padding: 0;
   font-size: 125%;
-  color: $body-bg;
+  color: $brand-primary;
 }
 
 .sidebar-nav>li>a:hover {
-  background-color: $brand-primary;
-  color: $navbar-default-link-color;
+  background-color: lighten($navbar-default-color, 15%);
+  color: lighten($navbar-default-link-color, 15%);
 }
 
-li.sidebar-brand>a {
-  color: $body-bg;
+.nav>li.sidebar-brand>a {
+  color:  $brand-primary;
   &:hover {
     background-color: transparent;
   }
@@ -151,7 +151,8 @@ li.sidebar-brand>a {
 }
 
 .nav>li.active {
-  background-color: lighten($brand-primary, 15%);
+  background-color: $navbar-default-color;
+  text-decoration: none;
 }
 
 .navbar-toggle {

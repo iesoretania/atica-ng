@@ -4,7 +4,7 @@ var plugins = require('gulp-load-plugins')();
 gulp.task('default', function() {
 
     // procesar SCSS
-    gulp.src(['node_modules/select2/dist/css/select2.css', 'web/css/**/*.scss', 'web/css/lato/css/fonts.css', 'node_modules/font-awesome-animation/dist/font-awesome-animation.css', 'web/css/atica.css'])
+    gulp.src(['node_modules/select2/dist/css/select2.css', 'web/css/**/*.scss', 'web/css/source-sans-pro/css/fonts.css', 'node_modules/font-awesome-animation/dist/font-awesome-animation.css', 'web/css/atica.css'])
         .pipe(plugins.sass())
         .pipe(plugins.autoprefixer({
             browsers: [
@@ -38,6 +38,6 @@ gulp.task('default', function() {
         .pipe(gulp.dest('web/dist/js/select2'));
 
     // copiar fuentes
-    gulp.src(['node_modules/font-awesome/fonts/*', 'web/css/lato/fonts/**'])
+    gulp.src(['node_modules/font-awesome/fonts/*', 'web/css/source-sans-pro/fonts/**'])
         .pipe(gulp.dest('web/dist/fonts'));
 });
