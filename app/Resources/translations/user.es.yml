@@ -23,3 +23,21 @@ form.change_password: Guardar cambios y cambiar la contraseña
 message.saved: Datos personales actualizados con éxito.
 message.password_changed: Datos personales y contraseña actualizados con éxito.
 message.error: No se han podido actualizar los datos personales.
+
+
+title.new: Nuevo usuario
+title.edit: Datos del usuario
+
+title.list: Listado de usuarios
+table.total: "{1} Encontrado un único resultado|]1,Inf[ Encontrados %count% resultados"
+table.no_users: No hay usuarios
+table.new: Nuevo usuario
+table.filter: Filtrar...
+
+header.username: Nombre de usuario
+header.name: Nombre completo
+header.email: Correo-e
+header.profiles: Perfiles
+header.last_login: Últ. conexión
+
+role.global_administrator: Administrador global

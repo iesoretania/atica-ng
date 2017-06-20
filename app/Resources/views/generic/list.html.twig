@@ -1,0 +1,78 @@
+{% trans_default_domain domain %}
+{% extends 'layout.html.twig' %}
+{% import 'macros.html.twig' as m %}
+
+{% block content %}
+    <div class="form-group col-md-5">
+        <input type="search" id="search" class="form-control" autofocus="autofocus" placeholder="&#xF002; {{ 'table.filter'|trans }}" autocomplete="off" value="{{ q }}">
+        <span id="search-clear" class="fa fa-remove"></span>
+    </div>
+    {% block new_action %}
+    <div class="form-group col-md-5">
+        <a href="{% block path_new %}{% endblock %}" class="btn btn-success"><i class="fa fa-plus"></i> {{ 'table.new'|trans }}</a>
+    </div>
+    {% endblock %}
+    <div id="table" class="col-md-12 table-responsive">
+        <table id="list" class="table table-bordered table-hover table-striped">
+            <thead>
+            <tr>
+                {% block table_header %}{% endblock %}
+            </tr>
+            </thead>
+            <tbody>
+            {% block table_body %}{% endblock %}
+            </tbody>
+        </table>
+        {% if pager and pager.count %}
+            <h4>{{ 'table.total'|transchoice(pager.count) }}</h4>
+        {% endif %}
+        {% if pager and pager.haveToPaginate %}
+            <div class="pagerfanta">
+                {{ pagerfanta(pager, 'twitter_bootstrap3_translated') }}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/jquery-throttle-debounce/jquery.ba-throttle-debounce.min.js') }}"></script>
+    <script>
+        var reload = function() {
+            var url = '{% block path_list %}{% endblock %}';
+            var q = $('input#search').val();
+            if (q) {
+                url = url + '?q='+encodeURIComponent(q);
+            }
+            $('table#list').addClass('loading');
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(html) {
+                    $('table#list').removeClass('loading');
+                    $('div#table').replaceWith(
+                        $(html).find('div#table')
+                    );
+                    $(".clickable-row").click(function() {
+                        window.document.location = $(this).data("href");
+                    });
+                },
+                error: function() {
+                    window.location.replace(url);
+                }
+            });
+        };
+
+        $('input#search').on("change paste keyup", $.debounce(500, reload));
+
+        $("#search-clear").click(function(){
+            $('input#search').val('');
+            reload();
+        });
+
+        jQuery(document).ready(function($) {
+            $(".clickable-row").click(function() {
+                window.document.location = $(this).data("href");
+            });
+        });
+    </script>
+{% endblock %}

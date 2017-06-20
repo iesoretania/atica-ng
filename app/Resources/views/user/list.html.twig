@@ -1,0 +1,33 @@
+{% trans_default_domain 'user' %}
+{% extends 'generic/list.html.twig' %}
+
+{% block path_new %}{{ path('admin_user_form_new') }}{% endblock %}
+{% block path_list %}{{ path('admin_user_list') }}{% endblock %}
+
+{% block table_header %}
+    <th class="col-sm-3">{{ 'header.username'|trans }}</th>
+    <th class="col-sm-4">{{ 'header.name'|trans }}</th>
+    <th class="col-sm-3">{{ 'header.email'|trans }}</th>
+    <th class="col-sm-2">{{ 'header.profiles'|trans }}</th>
+{% endblock %}
+
+{% block table_body %}
+            {% for user in users %}
+                {% set url = path('admin_user_form_edit', {'id': user.id}) %}
+                <tr class="clickable-row" data-href="{{ url }}">
+                    <td><a href="{{ url }}">{{ user.userName }}</a></td>
+                    <td>
+                        {{ user.firstName }} {{ user.lastName }}
+                    </td>
+                    <td>
+                        {{ user.emailAddress }}
+                    <td>
+                        {{ user.globalAdministrator ? 'role.global_administrator'|trans }}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">{{ 'table.no_users'|trans }}</td>
+                </tr>
+            {% endfor %}
+{% endblock %}

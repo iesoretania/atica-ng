@@ -447,9 +447,26 @@ label.control-label.required:after {
     color: red;
 }
 
-@media print
-{
-    .no-print {
-        display: none !important;
-    }
+/* Listados dinámicos */
+tr.clickable-row {
+    cursor: pointer;
+}
+
+span#search-clear {
+    position: absolute;
+    right: 25px;
+    top: 0;
+    bottom: 0;
+    height: 14px;
+    margin: auto;
+    font-size: 14px;
+    cursor: pointer;
+    color: #ccc;
+}
+
+.loading {
+    background-color: white;
+    opacity: 0.2;
+    transition: opacity 0.1s linear;
+    pointer-events: none;
 }

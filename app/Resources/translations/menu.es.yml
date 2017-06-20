@@ -1,6 +1,8 @@
 
 menu.admin: Administración
 menu.admin.detail: Gestionar el centro educativo
+menu.admin.user: Usuarios
+menu.admin.user.detail: Administrar usuarios del centro
 
 menu.frontpage: Portada
 menu.user_data: Datos personales

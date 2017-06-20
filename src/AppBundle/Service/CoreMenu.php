@@ -44,13 +44,24 @@ class CoreMenu implements MenuBuilderInterface
             $menu1 = new MenuItem();
             $menu1
                 ->setName('admin')
-                ->setRouteName('admin_menu')
+                ->setRouteName('admin')
                 ->setCaption('menu.admin')
                 ->setDescription('menu.admin.detail')
                 ->setColor('teal')
                 ->setIcon('wrench');
 
             $root[] = $menu1;
+
+            $menu2 = new MenuItem();
+            $menu2
+                ->setName('admin_user')
+                ->setRouteName('admin_user_list')
+                ->setCaption('menu.admin.user')
+                ->setDescription('menu.admin.user.detail')
+                ->setColor('purple')
+                ->setIcon('id-badge');
+
+            $menu1->addChild($menu2);
         }
 
         $menu = new MenuItem();
