@@ -618,4 +618,28 @@ class User implements AdvancedUserInterface
     public function eraseCredentials()
     {
     }
+
+    /** @see \Serializable::serialize() */
+    public function serialize()
+    {
+        return serialize(array(
+            $this->id,
+            $this->userName,
+            $this->emailAddress,
+            $this->password,
+            $this->enabled
+        ));
+    }
+
+    /** @see \Serializable::unserialize() */
+    public function unserialize($serialized)
+    {
+        list (
+            $this->id,
+            $this->userName,
+            $this->emailAddress,
+            $this->password,
+            $this->enabled
+            ) = unserialize($serialized);
+    }
 }
