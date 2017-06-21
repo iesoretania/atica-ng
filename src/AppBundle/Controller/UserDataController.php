@@ -72,10 +72,8 @@ class UserDataController extends Controller
             }
         }
 
-        $menus = $this->get('app.menu_builders_chain')->getPathByRouteName('frontpage');
-
         return $this->render('user/profile_form.html.twig', [
-            'menu_path' => $menus,
+            'menu_path' => 'frontpage',
             'breadcrumb' => [
                 ['caption' => 'menu.user_data']
             ],

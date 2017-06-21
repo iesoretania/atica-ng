@@ -34,9 +34,23 @@
                         <span class="icon-bar"></span>
                         <span class="sr-only">{{ 'navbar.expand'|trans }}</span>
                     </button>
-                    {% if menu_path is defined and menu_path is not empty %}
-                        {% include 'layout/partial_breadcrumb.html.twig' %}
-                    {% endif %}
+                    {% set last_url = "" %}
+                    <p class="navbar-text" id="breadcrumb">
+                        {% for menu_item in menu_extension.pathByRouteName(menu_path|default(app.request.get('_route'))) %}
+                            {% if not loop.first %}<span class="separator"></span>{% endif %}
+                            {% if not loop.last or breadcrumb is defined %}{% set last_url = path(menu_item.routeName, menu_item.routeParams) %}<a href="{{ last_url }}" class="navbar-breadcrumb navbar-link">{% endif %}
+                            {%- if menu_item.icon %}<i class="fa fa-{{ menu_item.icon }}"></i> {% endif -%}
+                            {%- if not loop.first and menu_item.caption %}{{- menu_item.caption|trans({}, 'menu') -}}{% endif %}
+                            {% if not loop.last or breadcrumb is defined %}</a>{% endif %}
+                        {%- endfor -%}
+                        {% if breadcrumb is defined %}<span class="separator"></span>{% endif %}
+                        {% for item in breadcrumb|default([]) %}
+                            {%- if item.routeName is defined %}{% set last_url = path(item.routeName, item.routeParams ?: {}) %}<a href="{{ last_url }}" class="navbar-breadcrumb navbar-link">{% endif -%}
+                            {%- if item.icon is defined %}<i class="fa fa-{{ item.icon }}"></i> {% endif -%}
+                            {%- if item.caption is defined %}{{- item.caption|trans({}, 'menu') -}}{% endif %}{{- item.fixed|default('') -}}
+                            {%- if item.path is defined %}</a>{% endif -%}
+                        {%- endfor %}
+                    </p>
                 </div>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">

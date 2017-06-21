@@ -13,7 +13,7 @@ form.global_administrator: El usuario puede administrar todos los centros
 
 
 form.save: Guardar cambios
-form.back: Volver a la portada
+form.back: Volver
 
 form.old_password: Contraseña actual
 form.new_password: Nueva contraseña

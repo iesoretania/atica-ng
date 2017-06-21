@@ -50,7 +50,8 @@ class UserController extends Controller
 
         $form = $this->createForm(UserType::class, $user, [
             'own' => $this->getUser()->getId() === $user->getId(),
-            'admin' => $user->isGlobalAdministrator()
+            'admin' => $this->getUser()->isGlobalAdministrator(),
+            'new' => $user->getId() === null
         ]);
 
         $form->handleRequest($request);
@@ -85,10 +86,8 @@ class UserController extends Controller
             $breadcrumb[] = ['fixed' => $this->get('translator')->trans('title.new', [], 'user')];
         }
 
-        $menus = $this->get('app.menu_builders_chain')->getPathByRouteName('admin_user_list');
-
         return $this->render('user/profile_form.html.twig', [
-            'menu_path' => $menus,
+            'menu_path' => 'admin_user_list',
             'breadcrumb' => $breadcrumb,
             'title' => $title,
             'form' => $form->createView(),
@@ -126,7 +125,10 @@ class UserController extends Controller
             ->setMaxPerPage($this->getParameter('page.size'))
             ->setCurrentPage($page);
 
+        $title = $this->get('translator')->trans('title.list', [], 'user');
+
         return $this->render('user/list.html.twig', [
+            'title' => $title,
             'users' => $pager->getIterator(),
             'pager' => $pager,
             'q' => $q,

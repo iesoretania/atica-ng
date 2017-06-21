@@ -134,6 +134,13 @@ li.sidebar-brand {
   color: $brand-primary;
 }
 
+p#breadcrumb a.navbar-breadcrumb:hover {
+  color: darken($brand-primary, 15%);
+}
+
+p#breadcrumb a.navbar-breadcrumb {
+  color: $brand-primary;
+}
 
 .nav li>a {
   color: $navbar-default-link-color;
