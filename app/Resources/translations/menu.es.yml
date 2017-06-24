@@ -1,9 +1,10 @@
+menu.frontpage: Portada
 
 menu.admin: Administración
 menu.admin.detail: Gestionar el centro educativo
 menu.admin.user: Usuarios
 menu.admin.user.detail: Administrar usuarios del centro
-
-menu.frontpage: Portada
-menu.user_data: Datos personales
+menu.personal_data: Datos personales
+menu.personal_data.detail: Modificar los datos personales
 menu.logout: Desconectar
+menu.logout.detail: Salir de la aplicación

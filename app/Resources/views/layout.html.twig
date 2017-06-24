@@ -69,6 +69,9 @@
             {% endif %}
             {{ ml.flash_message('success', 'success') }}
             {{ ml.flash_message('error', 'danger') }}
+            {% if menu ?? false %}
+                {% include 'layout/partial_menu.html.twig' %}
+            {% endif %}
             {% block content %}{% endblock %}
         </div>
         <footer class="footer no-print" role="contentinfo">

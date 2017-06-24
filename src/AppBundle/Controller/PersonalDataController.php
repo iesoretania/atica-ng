@@ -31,8 +31,7 @@ use Symfony\Component\HttpFoundation\Request;
 class PersonalDataController extends Controller
 {
     /**
-     * @Route("/admin", name="admin", methods={"GET", "POST"})
-     * @Route("/datos", name="user_data", methods={"GET", "POST"})
+     * @Route("/datos", name="personal_data", methods={"GET", "POST"})
      */
     public function userProfileFormAction(Request $request)
     {
@@ -75,7 +74,7 @@ class PersonalDataController extends Controller
         return $this->render('user/personal_data_form.html.twig', [
             'menu_path' => 'frontpage',
             'breadcrumb' => [
-                ['caption' => 'menu.user_data']
+                ['caption' => 'menu.personal_data']
             ],
             'title' => $this->get('translator')->trans('user.data', [], 'layout'),
             'form' => $form->createView(),

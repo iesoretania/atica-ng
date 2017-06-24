@@ -66,10 +66,10 @@ class CoreMenu implements MenuBuilderInterface
 
         $menu = new MenuItem();
         $menu
-            ->setName('user_data')
-            ->setRouteName('user_data')
-            ->setCaption('menu.user_data')
-            ->setDescription('menu.user_data.detail')
+            ->setName('personal_data')
+            ->setRouteName('personal_data')
+            ->setCaption('menu.personal_data')
+            ->setDescription('menu.personal_data.detail')
             ->setColor('purple')
             ->setIcon('cog')
             ->setPriority(9999);
