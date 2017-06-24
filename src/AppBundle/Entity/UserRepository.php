@@ -41,12 +41,20 @@ class UserRepository extends EntityRepository implements UserLoaderInterface
         }
         return $this->getEntityManager()
             ->createQuery('SELECT u FROM AppBundle:User u
-                           WHERE u.userName = :username
+                           WHERE u.loginUsername = :username
                            OR u.emailAddress = :username')
             ->setParameters([
                 'username' => $username
             ])
             ->setMaxResults(1)
             ->getOneOrNullResult();
+    }
+
+    public function refreshUser(UserInterface $user) {
+        return $this->loadUserByUsername($user->getUsername());
+    }
+
+    public function supportsClass($class) {
+        return $class === User::class;
     }
 }

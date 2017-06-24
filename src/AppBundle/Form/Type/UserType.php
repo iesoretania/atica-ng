@@ -42,7 +42,7 @@ class UserType extends AbstractType
     private function buildBaseForm(FormBuilderInterface $builder)
     {
         $builder
-            ->add('userName', null, [
+            ->add('loginUsername', null, [
                 'label' => 'form.user_name'
             ])
             ->add('firstName', null, [

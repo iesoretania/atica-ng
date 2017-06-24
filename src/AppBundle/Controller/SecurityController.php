@@ -93,7 +93,7 @@ class SecurityController extends Controller
                 $error = $this->get('translator')->trans('form.reset.notfound', [], 'security');
             } else {
                 // almacenar como último correo electrónico el indicado
-                $this->get('session')->set('_security.last_username', $user->getUserName());
+                $this->get('session')->set('_security.last_username', $user->getEmailAddress());
 
                 // obtener tiempo de expiración del token
                 $expire = (int) $this->getParameter('password_reset.expire');

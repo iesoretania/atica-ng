@@ -5,9 +5,8 @@
 {% block path_list %}{{ path('admin_user_list') }}{% endblock %}
 
 {% block table_header %}
-    <th class="col-sm-3">{{ 'header.username'|trans }}</th>
     <th class="col-sm-4">{{ 'header.name'|trans }}</th>
-    <th class="col-sm-3">{{ 'header.email'|trans }}</th>
+    <th class="col-sm-5">{{ 'header.username'|trans }}</th>
     <th class="col-sm-2">{{ 'header.profiles'|trans }}</th>
 {% endblock %}
 
@@ -15,12 +14,12 @@
             {% for user in users %}
                 {% set url = path('admin_user_form_edit', {'id': user.id}) %}
                 <tr class="clickable-row" data-href="{{ url }}">
-                    <td><a href="{{ url }}">{{ user.userName }}</a></td>
                     <td>
-                        {{ user.firstName }} {{ user.lastName }}
+                        <a href="{{ url }}">{{ user.firstName }} {{ user.lastName }}</a>
                     </td>
-                    <td>
-                        {{ user.emailAddress }}
+                    <td><a href="{{ url }}">
+                            {{ user.userNameAndEmailAddress }}
+                        </a></td>
                     <td>
                         {{ user.globalAdministrator ? 'role.global_administrator'|trans }}
                     </td>

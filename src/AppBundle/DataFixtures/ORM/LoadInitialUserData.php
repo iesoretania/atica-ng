@@ -47,7 +47,7 @@ class LoadInitialUserData extends AbstractFixture implements OrderedFixtureInter
 
         $userAdmin = new User();
         $userAdmin
-            ->setUserName('admin')
+            ->setLoginUsername('admin')
             ->setFirstName('Admin')
             ->setLastName('Admin')
             ->setGender(User::GENDER_NEUTRAL)

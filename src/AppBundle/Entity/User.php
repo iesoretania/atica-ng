@@ -48,7 +48,7 @@ class User implements AdvancedUserInterface
      * @Assert\Regex(pattern="/[@ ]{1,}/", match=false, message="login_username.invalid_chars", htmlPattern=false)
      * @var string
      */
-    private $userName;
+    private $loginUsername;
 
     /**
      * @ORM\Column(type="string", unique=true, nullable=true)
@@ -149,6 +149,13 @@ class User implements AdvancedUserInterface
     }
 
     /**
+     * @return string
+     */
+    public function getUsernameAndEmailAddress()
+    {
+        return $this->loginUsername . (($this->loginUsername && $this->emailAddress) ? ' - ' : '') . $this->emailAddress;
+    }
+    /**
      * Get id
      *
      * @return integer
@@ -161,13 +168,13 @@ class User implements AdvancedUserInterface
     /**
      * Set userName
      *
-     * @param string $userName
+     * @param string $loginUsername
      *
      * @return User
      */
-    public function setUserName($userName)
+    public function setLoginUsername($loginUsername)
     {
-        $this->userName = $userName;
+        $this->loginUsername = $loginUsername;
 
         return $this;
     }
@@ -177,9 +184,9 @@ class User implements AdvancedUserInterface
      *
      * @return string
      */
-    public function getUserName()
+    public function getLoginUsername()
     {
-        return $this->userName;
+        return $this->loginUsername;
     }
 
     /**
@@ -502,7 +509,7 @@ class User implements AdvancedUserInterface
     public function validate(ExecutionContextInterface $context)
     {
         // comprobar si se ha especificado al menos el nombre de usuario o el correo electrónico
-        if (!$this->getUsername() && !$this->getEmailAddress()) {
+        if (!$this->getLoginUsername() && !$this->getEmailAddress()) {
             $context->buildViolation('user.id.not_found')
                 ->atPath('userName')
                 ->addViolation();
@@ -510,6 +517,16 @@ class User implements AdvancedUserInterface
                 ->atPath('emailAddress')
                 ->addViolation();
         }
+    }
+
+    /**
+     * Returns the username used to authenticate the user.
+     *
+     * @return string The username
+     */
+    public function getUsername()
+    {
+        return $this->getLoginUsername() ?: $this->getEmailAddress();
     }
 
     /**
@@ -624,7 +641,7 @@ class User implements AdvancedUserInterface
     {
         return serialize(array(
             $this->id,
-            $this->userName,
+            $this->loginUsername,
             $this->emailAddress,
             $this->password,
             $this->enabled
@@ -636,7 +653,7 @@ class User implements AdvancedUserInterface
     {
         list (
             $this->id,
-            $this->userName,
+            $this->loginUsername,
             $this->emailAddress,
             $this->password,
             $this->enabled

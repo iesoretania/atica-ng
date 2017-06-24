@@ -34,7 +34,7 @@ table.no_users: No hay usuarios
 table.new: Nuevo usuario
 table.filter: Filtrar...
 
-header.username: Nombre de usuario
+header.username: Usuario y/o correo-e
 header.name: Nombre completo
 header.email: Correo-e
 header.profiles: Perfiles

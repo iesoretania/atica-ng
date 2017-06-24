@@ -111,7 +111,7 @@ class UserController extends Controller
         if ($q) {
             $queryBuilder
                 ->where('u.id = :q')
-                ->orWhere('u.userName LIKE :tq')
+                ->orWhere('u.loginUsername LIKE :tq')
                 ->orWhere('u.firstName LIKE :tq')
                 ->orWhere('u.lastName LIKE :tq')
                 ->orWhere('u.emailAddress LIKE :tq')
