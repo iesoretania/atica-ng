@@ -80,8 +80,8 @@ class UserType extends AbstractType
                     'required' => true,
                     'expanded' => true,
                     'choices' => [
-                        'form.enabled.no' => 0,
-                        'form.enabled.yes' => 1
+                        'form.enabled.yes' => 1,
+                        'form.enabled.no' => 0
                     ]
                 ])
                 ->add('globalAdministrator', null, [

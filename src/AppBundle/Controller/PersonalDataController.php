@@ -28,7 +28,7 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
 
-class UserDataController extends Controller
+class PersonalDataController extends Controller
 {
     /**
      * @Route("/admin", name="admin", methods={"GET", "POST"})
@@ -72,7 +72,7 @@ class UserDataController extends Controller
             }
         }
 
-        return $this->render('user/profile_form.html.twig', [
+        return $this->render('user/personal_data_form.html.twig', [
             'menu_path' => 'frontpage',
             'breadcrumb' => [
                 ['caption' => 'menu.user_data']

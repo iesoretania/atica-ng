@@ -18,7 +18,7 @@
   along with this program.  If not, see [http://www.gnu.org/licenses/].
 */
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\User;
 use AppBundle\Form\Type\UserType;
@@ -31,7 +31,7 @@ use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @Route("/usuarios")
+ * @Route("/admin/usuarios")
  */
 class UserController extends Controller
 {
@@ -86,7 +86,7 @@ class UserController extends Controller
             $breadcrumb[] = ['fixed' => $this->get('translator')->trans('title.new', [], 'user')];
         }
 
-        return $this->render('user/profile_form.html.twig', [
+        return $this->render('user/personal_data_form.html.twig', [
             'menu_path' => 'admin_user_list',
             'breadcrumb' => $breadcrumb,
             'title' => $title,
