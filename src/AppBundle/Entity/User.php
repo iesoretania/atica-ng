@@ -126,6 +126,13 @@ class User implements AdvancedUserInterface
     private $memberships;
 
     /**
+     * @ORM\ManyToMany(targetEntity="Organization", inversedBy="administrators")
+     * @ORM\JoinTable(name="organization_manager")
+     * @var Collection
+     */
+    private $managedOrganizations;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Organization")
      * @ORM\JoinColumn(nullable=true)
      * @var Organization|null
@@ -146,6 +153,7 @@ class User implements AdvancedUserInterface
     public function __construct()
     {
         $this->memberships = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->managedOrganizations = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -472,7 +480,7 @@ class User implements AdvancedUserInterface
     /**
      * Get memberships
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getMemberships()
     {
@@ -658,5 +666,39 @@ class User implements AdvancedUserInterface
             $this->password,
             $this->enabled
             ) = unserialize($serialized);
+    }
+
+    /**
+     * Add managedOrganization
+     *
+     * @param Organization $managedOrganization
+     *
+     * @return User
+     */
+    public function addManagedOrganization(Organization $managedOrganization)
+    {
+        $this->managedOrganizations[] = $managedOrganization;
+
+        return $this;
+    }
+
+    /**
+     * Remove managedOrganization
+     *
+     * @param Organization $managedOrganization
+     */
+    public function removeManagedOrganization(Organization $managedOrganization)
+    {
+        $this->managedOrganizations->removeElement($managedOrganization);
+    }
+
+    /**
+     * Get managedOrganizations
+     *
+     * @return Collection
+     */
+    public function getManagedOrganizations()
+    {
+        return $this->managedOrganizations;
     }
 }

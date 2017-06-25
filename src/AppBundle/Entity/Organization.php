@@ -105,11 +105,18 @@ class Organization
     private $memberships;
 
     /**
+     * @ORM\ManyToMany(targetEntity="User", mappedBy="managedOrganizations")
+     * @var Collection
+     */
+    private $administrators;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->memberships = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->administrators = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -404,5 +411,39 @@ class Organization
     public function getMemberships()
     {
         return $this->memberships;
+    }
+
+    /**
+     * Add administrator
+     *
+     * @param User $administrator
+     *
+     * @return Organization
+     */
+    public function addAdministrator(User $administrator)
+    {
+        $this->administrators[] = $administrator;
+
+        return $this;
+    }
+
+    /**
+     * Remove administrator
+     *
+     * @param User $administrator
+     */
+    public function removeAdministrator(User $administrator)
+    {
+        $this->administrators->removeElement($administrator);
+    }
+
+    /**
+     * Get administrators
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAdministrators()
+    {
+        return $this->administrators;
     }
 }

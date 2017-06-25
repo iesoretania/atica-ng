@@ -30,3 +30,5 @@ services:
     AppBundle\Listener\RequestListener: ~
 
     AppBundle\Service\UserExtensionService: ~
+
+    AppBundle\Security\OrganizationVoter: ~

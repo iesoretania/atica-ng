@@ -21,6 +21,7 @@
 namespace AppBundle\Service;
 
 
+use AppBundle\Security\OrganizationVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -65,6 +66,6 @@ class UserExtensionService
     public function isUserLocalAdministrator()
     {
         return $this->authorizationChecker->isGranted('ROLE_ADMIN')
-            || $this->authorizationChecker->isGranted('manage', $this->getCurrentOrganization());
+            || $this->authorizationChecker->isGranted(OrganizationVoter::MANAGE, $this->getCurrentOrganization());
     }
 }
