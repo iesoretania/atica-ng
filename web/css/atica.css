@@ -121,12 +121,12 @@ form.login button {
     padding: 1em;
 }
 
-.tile:hover {
+.tile:hover, .tile:active {
     background-color: #eee;
     box-shadow: 1px 1px 5px #888888 inset;
 }
 
-.tile a:hover {
+.tile a:hover, .tile a:active, .tile a:focus {
     text-decoration: none;
 }
 
