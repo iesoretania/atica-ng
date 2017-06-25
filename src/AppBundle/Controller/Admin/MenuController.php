@@ -18,15 +18,19 @@
   along with this program.  If not, see [http://www.gnu.org/licenses/].
 */
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Admin;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+/**
+ * @Security("is_granted('ROLE_ADMIN')")
+ */
 class MenuController extends Controller
 {
     /**
-     * @Route("/", name="frontpage", methods={"GET"})
+     * @Route("/admin", name="admin", methods={"GET"})
      */
     public function indexAction()
     {
