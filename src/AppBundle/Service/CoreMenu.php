@@ -72,7 +72,7 @@ class CoreMenu implements MenuBuilderInterface
                 ->setCaption('menu.admin.organization')
                 ->setDescription('menu.admin.organization.detail')
                 ->setColor('yellow')
-                ->setIcon('bank');
+                ->setIcon('map-marker');
 
             $menu1->addChild($menu2);
         }
