@@ -10,8 +10,8 @@
     </div>
 {% endmacro %}
 
-{% macro submit_button(name, icon = null, class = 'btn-success', caption) %}
-    <button type="submit" name="{{ name }}" class="btn btn-sm-block {{ class }}">{% if icon %}<i class="fa fa-{{ icon }}"></i> {% endif %}{{ caption }}</button>
+{% macro submit_button(name, icon = null, class = 'btn-success', caption, disabled) %}
+    <button type="submit" name="{{ name }}" class="btn btn-sm-block {{ class }}"{% if disabled %} disabled="disabled"{% endif %}>{% if icon %}<i class="fa fa-{{ icon }}"></i> {% endif %}{{ caption }}</button>
 {% endmacro %}
 
 {% macro link_button(href, icon = null, class = 'btn-success', caption, id = null) %}

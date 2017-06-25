@@ -1,0 +1,53 @@
+{% trans_default_domain 'organization' %}
+{% extends 'generic/list.html.twig' %}
+{% import 'macros.html.twig' as m %}
+
+{% block path_new %}{{ path('admin_organization_form_new') }}{% endblock %}
+{% block path_list %}{{ path('admin_organization_list') }}{% endblock %}
+
+{% block table_header %}
+    <th class="col-sm-3"><label><input type="checkbox" id="select"> {{ 'header.name'|trans }}</label></th>
+    <th class="col-sm-2">{{ 'header.code'|trans }}</th>
+    <th class="col-sm-3">{{ 'header.city'|trans }}</th>
+    <th class="col-sm-3">{{ 'header.email'|trans }}</th>
+    <th class="col-sm-1">{{ 'header.phone_number'|trans }}</th>
+{% endblock %}
+
+{% block table_body %}
+            {% for organization in organization %}
+                {% set url = path('admin_organization_form_edit', {'id': organization.id}) %}
+                <tr class="clickable-row" data-href="{{ url }}">
+                    <td>
+                        <label><input type="checkbox" name="organizations[]" value="{{ organization.id }}" {% if organization.id == user_extension.currentOrganization.id %} disabled="disabled"{% else %} class="selectable"{% endif %}> <a href="{{ url }}">{{ organization.name }}</a></label>
+                    </td>
+                    <td>
+                        <a href="{{ url }}">{{ organization.code }}</a>
+                    </td>
+                    <td>
+                        {{ organization.city }}
+                    </td>
+                    <td>
+                        {{ organization.emailAddress }}
+                    </td>
+                    <td>
+                        {{ organization.phoneNumber }}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">{{ 'table.no_items'|trans }}</td>
+                </tr>
+            {% endfor %}
+{% endblock %}
+
+
+{% block before_table %}
+    <form action="{{ path('admin_organization_delete') }}" method="post">
+{% endblock %}
+
+{% block after_table %}
+        <div class="clearfix"></div>
+        {{ m.link_button(last_url, 'arrow-left', 'btn-info', 'form.back'|trans) }}
+        {{ m.submit_button('delete', 'trash', 'btn-danger enable-on-items', 'form.delete'|trans, true) }}
+    </form>
+{% endblock %}

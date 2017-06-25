@@ -62,6 +62,17 @@ class CoreMenu implements MenuBuilderInterface
                 ->setIcon('id-badge');
 
             $menu1->addChild($menu2);
+
+            $menu2 = new MenuItem();
+            $menu2
+                ->setName('admin_organization')
+                ->setRouteName('admin_organization_list')
+                ->setCaption('menu.admin.organization')
+                ->setDescription('menu.admin.organization.detail')
+                ->setColor('yellow')
+                ->setIcon('bank');
+
+            $menu1->addChild($menu2);
         }
 
         $menu = new MenuItem();

@@ -47,12 +47,6 @@ class Organization
      * @ORM\Column(type="string")
      * @var string
      */
-    private $shortName;
-
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     * @var string
-     */
     private $code;
 
     /**
@@ -62,10 +56,16 @@ class Organization
     private $address;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="string")
      * @var string
      */
     private $city;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string
+     */
+    private $zipCode;
 
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -157,30 +157,6 @@ class Organization
     }
 
     /**
-     * Set shortName
-     *
-     * @param string $shortName
-     *
-     * @return Organization
-     */
-    public function setShortName($shortName)
-    {
-        $this->shortName = $shortName;
-
-        return $this;
-    }
-
-    /**
-     * Get shortName
-     *
-     * @return string
-     */
-    public function getShortName()
-    {
-        return $this->shortName;
-    }
-
-    /**
      * Set code
      *
      * @param string $code
@@ -250,6 +226,30 @@ class Organization
     public function getCity()
     {
         return $this->city;
+    }
+
+    /**
+     * Set zipCode
+     *
+     * @param string $zipCode
+     *
+     * @return Organization
+     */
+    public function setZipCode($zipCode)
+    {
+        $this->zipCode = $zipCode;
+
+        return $this;
+    }
+
+    /**
+     * Get zipCode
+     *
+     * @return string
+     */
+    public function getZipCode()
+    {
+        return $this->zipCode;
     }
 
     /**

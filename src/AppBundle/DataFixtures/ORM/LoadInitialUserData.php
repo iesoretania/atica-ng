@@ -41,7 +41,8 @@ class LoadInitialUserData extends AbstractFixture implements OrderedFixtureInter
         $organization = new Organization();
         $organization
             ->setName('I.E.S. Test')
-            ->setShortName('test');
+            ->setCode('23999999')
+            ->setCity('Linares');
 
         $manager->persist($organization);
 

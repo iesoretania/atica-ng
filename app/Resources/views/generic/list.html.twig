@@ -12,7 +12,12 @@
         <a href="{% block path_new %}{% endblock %}" class="btn btn-success"><i class="fa fa-plus"></i> {{ 'table.new'|trans }}</a>
     </div>
     {% endblock %}
+    {% block before_table %}{% endblock %}
+    <section id="exchange">
     <div id="table" class="col-md-12 table-responsive">
+        {% if pager and pager.count %}
+            <h4>{{ 'table.total'|transchoice(pager.count) }}</h4>
+        {% endif %}
         <table id="list" class="table table-bordered table-hover table-striped">
             <thead>
             <tr>
@@ -23,23 +28,27 @@
             {% block table_body %}{% endblock %}
             </tbody>
         </table>
-        {% if pager and pager.count %}
-            <h4>{{ 'table.total'|transchoice(pager.count) }}</h4>
-        {% endif %}
         {% if pager and pager.haveToPaginate %}
             <div class="pagerfanta">
                 {{ pagerfanta(pager, 'twitter_bootstrap3_translated') }}
             </div>
         {% endif %}
     </div>
+    </section>
+    {% block after_table %}{% endblock %}
 {% endblock %}
 
 {% block javascripts %}
     <script src="{{ asset('js/jquery-throttle-debounce/jquery.ba-throttle-debounce.min.js') }}"></script>
     <script>
+        var last_value = "";
         var reload = function() {
             var url = '{% block path_list %}{% endblock %}';
             var q = $('input#search').val();
+            if (q === last_value) {
+                return;
+            }
+            last_value = q;
             if (q) {
                 url = url + '?q='+encodeURIComponent(q);
             }
@@ -52,9 +61,6 @@
                     $('div#table').replaceWith(
                         $(html).find('div#table')
                     );
-                    $(".clickable-row").click(function() {
-                        window.document.location = $(this).data("href");
-                    });
                 },
                 error: function() {
                     window.location.replace(url);
@@ -70,8 +76,26 @@
         });
 
         jQuery(document).ready(function($) {
-            $(".clickable-row").click(function() {
-                window.document.location = $(this).data("href");
+
+            var updateButton = function() {
+                $(".enable-on-items").prop('disabled', $(".clickable-row input[type='checkbox']:checked").length === 0);
+            };
+
+            $("section#exchange")
+                .on("click", ".clickable-row", function(ev) {
+                    if (ev.target.type !== "checkbox") {
+                        window.document.location = $(this).data("href");
+                    }
+                })
+                .on("click", ".clickable-row input[type='checkbox']", updateButton)
+                .on("click", "#select", function(item) {
+                    $(".clickable-row input[type='checkbox'].selectable").prop('checked', item.currentTarget.checked);
+                    updateButton();
+                });
+
+            $("input[type='checkbox']#select").click(function(item) {
+                $(".clickable-row input[type='checkbox'].selectable").prop('checked', item.currentTarget.checked);
+                updateButton();
             });
         });
     </script>
