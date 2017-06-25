@@ -36,11 +36,12 @@ class CoreMenu implements MenuBuilderInterface
      */
     public function getMenuStructure()
     {
+        $isGlobalAdministrator = $this->userExtension->isUserGlobalAdministrator();
         $isLocalAdministrator = $this->userExtension->isUserLocalAdministrator();
 
         $root = [];
 
-        if ($isLocalAdministrator) {
+        if ($isGlobalAdministrator) {
             $menu1 = new MenuItem();
             $menu1
                 ->setName('admin')
@@ -48,7 +49,8 @@ class CoreMenu implements MenuBuilderInterface
                 ->setCaption('menu.admin')
                 ->setDescription('menu.admin.detail')
                 ->setColor('teal')
-                ->setIcon('wrench');
+                ->setIcon('wrench')
+                ->setPriority(9000);
 
             $root[] = $menu1;
 
@@ -73,6 +75,19 @@ class CoreMenu implements MenuBuilderInterface
                 ->setIcon('bank');
 
             $menu1->addChild($menu2);
+        }
+
+        if ($isLocalAdministrator) {
+            $menu1 = new MenuItem();
+            $menu1
+                ->setName('organization')
+                ->setRouteName('organization')
+                ->setCaption('menu.organization')
+                ->setDescription('menu.organization.detail')
+                ->setColor('yellow')
+                ->setIcon('bank');
+
+            $root[] = $menu1;
         }
 
         $menu = new MenuItem();

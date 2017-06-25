@@ -28,6 +28,7 @@ class MenuController extends Controller
     /**
      * @Route("/", name="frontpage", methods={"GET"})
      * @Route("/admin", name="admin", methods={"GET"})
+     * @Route("/centro", name="organization", methods={"GET"})
      */
     public function indexAction()
     {
