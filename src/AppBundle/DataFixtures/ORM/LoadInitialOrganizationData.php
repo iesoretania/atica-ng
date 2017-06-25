@@ -20,14 +20,14 @@
 
 namespace AppBundle\DataFixtures\ORM;
 
-use AppBundle\Entity\User;
+use AppBundle\Entity\Organization;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadInitialUserData extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
+class LoadInitialOrganizationData extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
 {
     /**
      * @var ContainerInterface
@@ -36,24 +36,22 @@ class LoadInitialUserData extends AbstractFixture implements OrderedFixtureInter
 
     public function load(ObjectManager $manager)
     {
-        $userAdmin = new User();
-        $userAdmin
-            ->setLoginUsername('admin')
-            ->setFirstName('Admin')
-            ->setLastName('Admin')
-            ->setGender(User::GENDER_NEUTRAL)
-            ->setEnabled(true)
-            ->setGlobalAdministrator(true)
-            ->setPassword($this->container->get('security.password_encoder')->encodePassword($userAdmin, 'admin'));
+        $organization = new Organization();
+        $organization
+            ->setName('I.E.S. Test')
+            ->setCode('23999999')
+            ->setCity('Linares');
 
-        $manager->persist($userAdmin);
+        $manager->persist($organization);
+
+        $this->setReference('organization', $organization);
 
         $manager->flush();
     }
 
     public function getOrder()
     {
-        return 10;
+        return 5;
     }
 
     /**

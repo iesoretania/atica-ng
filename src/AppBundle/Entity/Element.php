@@ -31,7 +31,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Element
 {
     /**
-     * @ORM\Id
+     * @ORM\Id()
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
      * @var int
@@ -45,8 +45,14 @@ class Element
     private $name;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string
+     */
+    private $code;
+
+    /**
      * @Gedmo\TreeLeft
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="lft", type="integer")
      * @var int
      */
     private $left;
@@ -60,10 +66,24 @@ class Element
 
     /**
      * @Gedmo\TreeRight
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="rght", type="integer")
      * @var int
      */
     private $right;
+
+    /**
+     * @Gedmo\TreeParent()
+     * @ORM\ManyToOne(targetEntity="Element", inversedBy="children")
+     * @ORM\JoinColumn(onDelete="CASCADE", nullable=true)
+     * @var Element
+     */
+    private $parent;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Element", mappedBy="parent")
+     * @var Collection
+     */
+    private $children;
 
     /**
      * @Gedmo\TreeRoot
@@ -91,6 +111,14 @@ class Element
      * @var Collection
      */
     private $labels;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Element")
+     * @ORM\JoinColumn(onDelete="SET NULL", nullable=true)
+     * @var Element
+     */
+    private $managedBy;
+
     /**
      * Constructor
      */
@@ -98,6 +126,7 @@ class Element
     {
         $this->references = new \Doctrine\Common\Collections\ArrayCollection();
         $this->labels = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->children = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -132,6 +161,30 @@ class Element
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set code
+     *
+     * @param string $code
+     *
+     * @return Element
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    /**
+     * Get code
+     *
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
     }
 
     /**
@@ -204,6 +257,64 @@ class Element
     public function getRight()
     {
         return $this->right;
+    }
+
+    /**
+     * Set parent
+     *
+     * @param Element $parent
+     *
+     * @return Element
+     */
+    public function setParent(Element $parent = null)
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * Get parent
+     *
+     * @return Element
+     */
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    /**
+     * Add child
+     *
+     * @param Element $child
+     *
+     * @return Element
+     */
+    public function addChild(Element $child)
+    {
+        $this->children[] = $child;
+
+        return $this;
+    }
+
+    /**
+     * Remove child
+     *
+     * @param Element $child
+     */
+    public function removeChild(Element $child)
+    {
+        $this->children->removeElement($child);
+    }
+
+    /**
+     * Get children
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getChildren()
+    {
+        return $this->children;
     }
 
     /**
@@ -320,5 +431,29 @@ class Element
     public function getLabels()
     {
         return $this->labels;
+    }
+
+    /**
+     * Set managedBy
+     *
+     * @param Element $managed
+     *
+     * @return Element
+     */
+    public function setManagedBy(Element $managed = null)
+    {
+        $this->managed = $managed;
+
+        return $this;
+    }
+
+    /**
+     * Get managed element
+     *
+     * @return Element
+     */
+    public function getManagedBy()
+    {
+        return $this->managedBy;
     }
 }

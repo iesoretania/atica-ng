@@ -19,7 +19,9 @@ services:
     app.menu_builders_chain:
         class: AppBundle\Service\MenuBuilderChain
 
-    AppBundle\Service\CoreMenu:
+    AppBundle\Service\CoreMenu: ~
+
+    AppBundle\Service\CoreData: ~
 
     AppBundle\Service\MailerService:
         autowire: false

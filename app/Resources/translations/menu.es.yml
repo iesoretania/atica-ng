@@ -12,6 +12,9 @@ menu.admin.organization.detail: Administrar los centros educativos
 menu.organization: Centro educativo
 menu.organization.detail: Administrar el centro educativo
 
+menu.organization.list: Listas
+menu.organization.list.detail: Administrar las listas del centro educativo
+
 menu.personal_data: Datos personales
 menu.personal_data.detail: Modificar los datos personales
 

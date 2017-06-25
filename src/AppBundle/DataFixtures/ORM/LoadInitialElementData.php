@@ -20,14 +20,14 @@
 
 namespace AppBundle\DataFixtures\ORM;
 
-use AppBundle\Entity\User;
+use AppBundle\Entity\Organization;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadInitialUserData extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
+class LoadInitialElementData extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
 {
     /**
      * @var ContainerInterface
@@ -36,24 +36,16 @@ class LoadInitialUserData extends AbstractFixture implements OrderedFixtureInter
 
     public function load(ObjectManager $manager)
     {
-        $userAdmin = new User();
-        $userAdmin
-            ->setLoginUsername('admin')
-            ->setFirstName('Admin')
-            ->setLastName('Admin')
-            ->setGender(User::GENDER_NEUTRAL)
-            ->setEnabled(true)
-            ->setGlobalAdministrator(true)
-            ->setPassword($this->container->get('security.password_encoder')->encodePassword($userAdmin, 'admin'));
-
-        $manager->persist($userAdmin);
-
-        $manager->flush();
+        $now = new \DateTime;
+        /** @var Organization $org */
+        $org = $this->getReference('organization');
+        $data = $this->container->get('AppBundle\Service\CoreData');
+        $data->createOrganizationElements($org, $now->format('Y') . '-' . ((int) $now->format('Y') + 1));
     }
 
     public function getOrder()
     {
-        return 10;
+        return 20;
     }
 
     /**

@@ -88,6 +88,17 @@ class CoreMenu implements MenuBuilderInterface
                 ->setIcon('bank');
 
             $root[] = $menu1;
+
+            $menu2 = new MenuItem();
+            $menu2
+                ->setName('organization_list')
+                ->setRouteName('organization_list_list')
+                ->setCaption('menu.organization.list')
+                ->setDescription('menu.organization.list.detail')
+                ->setColor('purple')
+                ->setIcon('list-ul');
+
+            $menu1->addChild($menu2);
         }
 
         $menu = new MenuItem();
