@@ -135,4 +135,67 @@ class UserController extends Controller
             'domain' => 'user'
         ]);
     }
+
+    /**
+     * @Route("/eliminar", name="admin_user_delete", methods={"POST"})
+     */
+    public function deleteAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $em->createQueryBuilder();
+
+        $items = $request->request->get('users', []);
+        if (count($items) === 0) {
+            return $this->redirectToRoute('admin_user_list');
+        }
+
+        $users = $queryBuilder
+            ->select('u')
+            ->from('AppBundle:User', 'u')
+            ->where('u.id IN (:items)')
+            ->andWhere('u.id != :current')
+            ->setParameter('items', $items)
+            ->setParameter('current', $this->getUser()->getId())
+            ->orderBy('u.firstName')
+            ->addOrderBy('u.lastName')
+            ->getQuery()
+            ->getResult();
+
+        if ($request->get('confirm', '') === 'ok') {
+            try {
+                /* Borrar primero las pertenencias */
+                $em->createQueryBuilder()
+                    ->delete('AppBundle:Membership', 'm')
+                    ->where('m.user IN (:items)')
+                    ->setParameter('items', $items)
+                    ->getQuery()
+                    ->execute();
+
+                $em->createQueryBuilder()
+                    ->delete('AppBundle:User', 'u')
+                    ->where('u IN (:items)')
+                    ->setParameter('items', $items)
+                    ->getQuery()
+                    ->execute();
+
+                $em->flush();
+                $this->addFlash('success', $this->get('translator')->trans('message.deleted', [], 'user'));
+            } catch (\Exception $e) {
+                $this->addFlash('error', $this->get('translator')->trans('message.delete_error', [], 'user'));
+            }
+            return $this->redirectToRoute('admin_user_list');
+        }
+
+        $title = $this->get('translator')->trans('title.delete', [], 'user');
+        $breadcrumb = [['fixed' => $this->get('translator')->trans('title.delete', [], 'user')]];
+
+        return $this->render('user/delete.html.twig', [
+            'menu_path' => 'admin_user_list',
+            'breadcrumb' => $breadcrumb,
+            'title' => $title,
+            'users' => $users
+        ]);
+    }
 }

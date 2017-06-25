@@ -18,7 +18,7 @@ form.global_administrator: El usuario puede administrar todos los centros
 
 form.save: Guardar cambios
 form.back: Volver
-form.delete: Borrar seleccionados
+form.delete: Eliminar centros seleccionados
 form.delete_confirm: Confirmar borrado
 
 prompt.delete_confirm: |
