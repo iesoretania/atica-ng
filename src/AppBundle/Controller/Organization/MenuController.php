@@ -18,19 +18,20 @@
   along with this program.  If not, see [http://www.gnu.org/licenses/].
 */
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Organization;
 
+use AppBundle\Security\OrganizationVoter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class MenuController extends Controller
 {
     /**
-     * @Route("/", name="frontpage", methods={"GET"})
-     * @Route("/admin", name="admin", methods={"GET"})
+     * @Route("/centro", name="organization", methods={"GET"})
      */
     public function indexAction()
     {
+        $this->denyAccessUnlessGranted(OrganizationVoter::MANAGE, $this->get('AppBundle\Service\UserExtensionService')->getCurrentOrganization());
         return $this->render('default/index.html.twig',
             [
                 'menu' => true
