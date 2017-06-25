@@ -101,6 +101,7 @@ class OrganizationController extends Controller
                 ->orWhere('o.name LIKE :tq')
                 ->orWhere('o.code LIKE :tq')
                 ->orWhere('o.emailAddress LIKE :tq')
+                ->orWhere('o.phoneNumber LIKE :tq')
                 ->orWhere('o.city LIKE :tq')
                 ->setParameter('tq', '%'.$q.'%')
                 ->setParameter('q', $q);
