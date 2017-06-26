@@ -226,14 +226,15 @@ class SecurityController extends Controller
                 'class' => Organization::class,
                 'query_builder' => function(OrganizationRepository $er) {
                     return $er->getMembershipByUserQueryBuilder($this->getUser(), new \DateTime());
-                }
+                },
+                'required' => true
             ])
             ->getForm();
 
         $form->handleRequest($request);
 
         // ¿se ha seleccionado una organización?
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid() && $form->get('organization')->getData()) {
 
             $session->set('organization_id', $form->get('organization')->getData()->getId());
             $this->getUser()->setDefaultOrganization($form->get('organization')->getData());
