@@ -86,14 +86,26 @@ class ListController extends Controller
     }
 
     /**
-     * @Route("/listar/{page}", name="organization_list_list", requirements={"page" = "\d+"}, defaults={"page" = "1"}, methods={"GET"})
+     * @Route("/listar/{page}/{rootName}", name="organization_list_list", requirements={"page" = "\d+"}, defaults={"page" = "1", "root" = null}, methods={"GET"})
      */
-    public function listAction($page, Request $request)
+    public function listAction($page, $rootName = null, Request $request)
     {
-        $this->denyAccessUnlessGranted(OrganizationVoter::MANAGE, $this->get('AppBundle\Service\UserExtensionService')->getCurrentOrganization());
+        $organization = $this->get('AppBundle\Service\UserExtensionService')->getCurrentOrganization();
+        $this->denyAccessUnlessGranted(OrganizationVoter::MANAGE, $organization);
+
+        $em = $this->getDoctrine()->getManager();
+
+        if (null === $rootName) {
+            $rootElement = $em->getRepository('AppBundle:Element')->findCurrentOneByOrganization($organization);
+        }
+        else {
+            if (null === $rootElement = $em->getRepository('AppBundle:Element')->findOneByOrganizationAndRootName($organization, $rootName)) {
+                throw $this->createNotFoundException();
+            }
+        }
 
         /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $this->getDoctrine()->getManager()->createQueryBuilder();
+        $queryBuilder = $em->createQueryBuilder();
 
         $queryBuilder
             ->select('o')

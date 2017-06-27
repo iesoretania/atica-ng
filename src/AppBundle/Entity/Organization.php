@@ -113,6 +113,12 @@ class Organization
     private $administrators;
 
     /**
+     * @ORM\OneToOne(targetEntity="Element")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     */
+    private $currentElement;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -447,5 +453,29 @@ class Organization
     public function getAdministrators()
     {
         return $this->administrators;
+    }
+
+    /**
+     * Set currentElement
+     *
+     * @param Element $currentElement
+     *
+     * @return Organization
+     */
+    public function setCurrentElement(Element $currentElement = null)
+    {
+        $this->currentElement = $currentElement;
+
+        return $this;
+    }
+
+    /**
+     * Get currentElement
+     *
+     * @return Element
+     */
+    public function getCurrentElement()
+    {
+        return $this->currentElement;
     }
 }
