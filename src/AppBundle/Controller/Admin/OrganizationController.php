@@ -94,7 +94,8 @@ class OrganizationController extends Controller
 
         $queryBuilder
             ->select('o')
-            ->from('AppBundle:Organization', 'o');
+            ->from('AppBundle:Organization', 'o')
+            ->orderBy('o.name');
 
         $q = $request->get('q', null);
         if ($q) {
@@ -109,7 +110,7 @@ class OrganizationController extends Controller
                 ->setParameter('q', $q);
         }
 
-        $adapter = new DoctrineORMAdapter($queryBuilder);
+        $adapter = new DoctrineORMAdapter($queryBuilder, false);
         $pager = new Pagerfanta($adapter);
         $pager
             ->setMaxPerPage($this->getParameter('page.size'))
