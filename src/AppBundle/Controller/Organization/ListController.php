@@ -20,8 +20,6 @@
 
 namespace AppBundle\Controller\Organization;
 
-use AppBundle\Entity\Organization;
-use AppBundle\Form\Type\OrganizationType;
 use AppBundle\Security\OrganizationVoter;
 use Doctrine\ORM\QueryBuilder;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
@@ -35,56 +33,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ListController extends Controller
 {
-    /**
-     * @Route("/nuevo", name="organization_list_form_new", methods={"GET", "POST"})
-     * @Route("/{id}", name="organization_list_form_edit", requirements={"id" = "\d+"}, methods={"GET", "POST"})
-     */
-    public function indexAction(Organization $organization = null, Request $request)
-    {
-        $this->denyAccessUnlessGranted(OrganizationVoter::MANAGE, $this->get('AppBundle\Service\UserExtensionService')->getCurrentOrganization());
-
-        $em = $this->getDoctrine()->getManager();
-
-        if (null === $organization) {
-            $organization = new Organization();
-            $em->persist($organization);
-        }
-
-        $form = $this->createForm(OrganizationType::class, $organization, [
-            'new' => $organization->getId() === null
-        ]);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            try {
-                $em->flush();
-                $this->addFlash('success', $this->get('translator')->trans('message.saved', [], 'organization'));
-                return $this->redirectToRoute('admin_organization_list');
-            } catch (\Exception $e) {
-                $this->addFlash('error', $this->get('translator')->trans('message.save_error', [], 'organization'));
-            }
-        }
-
-        $title = $this->get('translator')->trans($organization->getId() ? 'title.edit' : 'title.new', [], 'organization');
-
-        $breadcrumb = [];
-
-        if ($organization->getId()) {
-            $breadcrumb[] = ['fixed' => (string) $organization];
-        } else {
-            $breadcrumb[] = ['fixed' => $this->get('translator')->trans('title.new', [], 'organization')];
-        }
-
-        return $this->render('organization/form.html.twig', [
-            'menu_path' => 'admin_organization_list',
-            'breadcrumb' => $breadcrumb,
-            'title' => $title,
-            'form' => $form->createView(),
-            'user' => $organization
-        ]);
-    }
-
     /**
      * @Route("/listar/{page}/{rootName}", name="organization_list_list", requirements={"page" = "\d+"}, defaults={"page" = "1", "root" = null}, methods={"GET"})
      */
@@ -105,103 +53,32 @@ class ListController extends Controller
         }
 
         /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $em->createQueryBuilder();
-
-        $queryBuilder
-            ->select('o')
-            ->from('AppBundle:Organization', 'o');
+        $queryBuilder = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($rootElement, true);
 
         $q = $request->get('q', null);
         if ($q) {
             $queryBuilder
-                ->where('o.id = :q')
-                ->orWhere('o.name LIKE :tq')
-                ->orWhere('o.code LIKE :tq')
-                ->orWhere('o.emailAddress LIKE :tq')
-                ->orWhere('o.phoneNumber LIKE :tq')
-                ->orWhere('o.city LIKE :tq')
+                ->where('node.name LIKE :tq')
+                ->orWhere('node.code LIKE :tq')
+                ->orWhere('node.description LIKE :tq')
                 ->setParameter('tq', '%'.$q.'%')
                 ->setParameter('q', $q);
         }
 
-        $adapter = new DoctrineORMAdapter($queryBuilder);
+        $adapter = new DoctrineORMAdapter($queryBuilder, false);
         $pager = new Pagerfanta($adapter);
         $pager
             ->setMaxPerPage($this->getParameter('page.size'))
             ->setCurrentPage($page);
 
-        $title = $this->get('translator')->trans('title.list', [], 'organization');
+        $title = $this->get('translator')->trans('title.list', [], 'list');
 
-        return $this->render('organization/list.html.twig', [
+        return $this->render('organization/list/list.html.twig', [
             'title' => $title,
-            'organization' => $pager->getIterator(),
+            'elements' => $pager->getIterator(),
             'pager' => $pager,
             'q' => $q,
-            'domain' => 'organization'
-        ]);
-    }
-
-    /**
-     * @Route("/eliminar", name="organization_list_delete", methods={"POST"})
-     */
-    public function deleteAction(Request $request)
-    {
-        $this->denyAccessUnlessGranted(OrganizationVoter::MANAGE, $this->get('AppBundle\Service\UserExtensionService')->getCurrentOrganization());
-
-        $em = $this->getDoctrine()->getManager();
-
-        /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $em->createQueryBuilder();
-
-        $items = $request->request->get('organizations', []);
-        if (count($items) === 0) {
-            return $this->redirectToRoute('admin_organization_list');
-        }
-
-        $organizations = $queryBuilder
-            ->select('o')
-            ->from('AppBundle:Organization', 'o')
-            ->where('o.id IN (:items)')
-            ->andWhere('o.id != :current')
-            ->setParameter('items', $items)
-            ->setParameter('current', $this->get('session')->get('organization_id'), '')
-            ->orderBy('o.code')
-            ->getQuery()
-            ->getResult();
-
-        if ($request->get('confirm', '') === 'ok') {
-            try {
-                /* Borrar primero las pertenencias */
-                $em->createQueryBuilder()
-                    ->delete('AppBundle:Membership', 'm')
-                    ->where('m.organization IN (:items)')
-                    ->setParameter('items', $items)
-                    ->getQuery()
-                    ->execute();
-
-                $em->createQueryBuilder()
-                    ->delete('AppBundle:Organization', 'o')
-                    ->where('o IN (:items)')
-                    ->setParameter('items', $items)
-                    ->getQuery()
-                    ->execute();
-
-                $em->flush();
-                $this->addFlash('success', $this->get('translator')->trans('message.deleted', [], 'organization'));
-            } catch (\Exception $e) {
-                $this->addFlash('error', $this->get('translator')->trans('message.delete_error', [], 'organization'));
-            }
-            return $this->redirectToRoute('admin_organization_list');
-        }
-
-        $title = $this->get('translator')->trans('title.delete', [], 'organization');
-        $breadcrumb = [['fixed' => $this->get('translator')->trans('title.delete', [], 'organization')]];
-
-        return $this->render('organization/delete.html.twig', [
-            'menu_path' => 'admin_organization_list',
-            'breadcrumb' => $breadcrumb,
-            'title' => $title,
-            'organizations' => $organizations
+            'domain' => 'list'
         ]);
     }
 }
