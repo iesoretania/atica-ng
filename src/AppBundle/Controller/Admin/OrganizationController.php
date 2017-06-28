@@ -75,7 +75,7 @@ class OrganizationController extends Controller
             $breadcrumb[] = ['fixed' => $this->get('translator')->trans('title.new', [], 'organization')];
         }
 
-        return $this->render('organization/form.html.twig', [
+        return $this->render('admin/organization/form.html.twig', [
             'menu_path' => 'admin_organization_list',
             'breadcrumb' => $breadcrumb,
             'title' => $title,
@@ -118,7 +118,7 @@ class OrganizationController extends Controller
 
         $title = $this->get('translator')->trans('title.list', [], 'organization');
 
-        return $this->render('organization/list.html.twig', [
+        return $this->render('admin/organization/list.html.twig', [
             'title' => $title,
             'organization' => $pager->getIterator(),
             'pager' => $pager,
@@ -181,7 +181,7 @@ class OrganizationController extends Controller
         $title = $this->get('translator')->trans('title.delete', [], 'organization');
         $breadcrumb = [['fixed' => $this->get('translator')->trans('title.delete', [], 'organization')]];
 
-        return $this->render('organization/delete.html.twig', [
+        return $this->render('admin/organization/delete.html.twig', [
             'menu_path' => 'admin_organization_list',
             'breadcrumb' => $breadcrumb,
             'title' => $title,

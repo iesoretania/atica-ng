@@ -131,7 +131,7 @@ class UserController extends Controller
 
         $title = $this->get('translator')->trans('title.list', [], 'user');
 
-        return $this->render('user/list.html.twig', [
+        return $this->render('admin/user/list.html.twig', [
             'title' => $title,
             'users' => $pager->getIterator(),
             'pager' => $pager,
@@ -195,7 +195,7 @@ class UserController extends Controller
         $title = $this->get('translator')->trans('title.delete', [], 'user');
         $breadcrumb = [['fixed' => $this->get('translator')->trans('title.delete', [], 'user')]];
 
-        return $this->render('user/delete.html.twig', [
+        return $this->render('admin/user/delete.html.twig', [
             'menu_path' => 'admin_user_list',
             'breadcrumb' => $breadcrumb,
             'title' => $title,
