@@ -107,7 +107,9 @@ class UserController extends Controller
 
         $queryBuilder
             ->select('u')
-            ->from('AppBundle:User', 'u');
+            ->from('AppBundle:User', 'u')
+            ->orderBy('u.lastName')
+            ->addOrderBy('u.firstName');
 
         $q = $request->get('q', null);
         if ($q) {
@@ -121,7 +123,7 @@ class UserController extends Controller
                 ->setParameter('q', $q);
         }
 
-        $adapter = new DoctrineORMAdapter($queryBuilder);
+        $adapter = new DoctrineORMAdapter($queryBuilder, false);
         $pager = new Pagerfanta($adapter);
         $pager
             ->setMaxPerPage($this->getParameter('page.size'))
