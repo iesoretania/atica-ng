@@ -1,7 +1,6 @@
 form.name: Nombre del centro
 form.short_name: Nombre corto
 form.code: Código de centro
-form.code: Código de centro
 form.email_address: Correo electrónico
 form.address: Dirección postal
 form.city: Ciudad
