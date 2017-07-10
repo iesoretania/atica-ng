@@ -53,7 +53,9 @@ class ListController extends Controller
         }
 
         /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($rootElement, true);
+        $queryBuilder = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($rootElement, true)
+            ->addSelect('ref')
+            ->leftJoin('node.references', 'ref');
 
         $q = $request->get('q', null);
         if ($q) {

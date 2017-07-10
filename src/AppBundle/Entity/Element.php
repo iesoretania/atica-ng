@@ -130,6 +130,16 @@ class Element
     }
 
     /**
+     * Converts entity to string
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getName();
+    }
+
+    /**
      * Get id
      *
      * @return integer

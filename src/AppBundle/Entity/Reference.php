@@ -54,6 +54,29 @@ class Reference
     private $mandatory;
 
     /**
+     * Convert reference to string
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        $data = (string) $this->getTarget();
+
+        if ($this->isMultiple() || $this->isMandatory()) {
+            $data .= ' (';
+            $data .= $this->isMandatory() ? '1..' : '0..';
+
+            if ($this->isMultiple()) {
+                $data .= '*';
+            }
+
+            $data .= ')';
+        }
+
+        return $data;
+    }
+
+    /**
      * Set multiple
      *
      * @param boolean $multiple

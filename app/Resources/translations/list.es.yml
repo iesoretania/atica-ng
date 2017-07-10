@@ -28,5 +28,7 @@ table.new: Nueva lista
 table.filter: Filtrar...
 
 header.name: Nombre
+header.managed_by: Gestionado por
 header.code: Código
 header.description: Notas
+header.references: Referencias

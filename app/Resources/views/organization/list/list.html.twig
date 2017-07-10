@@ -6,9 +6,10 @@
 {% block path_list %}{{ app.request.uri }}{% endblock %}
 
 {% block table_header %}
-    <th class="col-sm-3"><label><input type="checkbox" id="select"> {{ 'header.name'|trans }}</label></th>
-    <th class="col-sm-2">{{ 'header.code'|trans }}</th>
-    <th class="col-sm-1">{{ 'header.description'|trans }}</th>
+    <th class="col-sm-4"><label><input type="checkbox" id="select"> {{ 'header.name'|trans }}</label></th>
+    <th class="col-sm-3">{{ 'header.managed_by'|trans }}</th>
+    <th class="col-sm-3">{{ 'header.references'|trans }}</th>
+    <th class="col-sm-2"></th>
 {% endblock %}
 
 {% block table_body %}
@@ -19,10 +20,13 @@
                         <label><input type="checkbox" name="elements[]" value="{{ element.id }}" class="selectable"> <a href="{{ url }}">{{ element.name }}</a></label>
                     </td>
                     <td>
-                        <a href="{{ url }}">{{ element.code }}</a>
+                        {{ element.managed_by|default('') }}
                     </td>
                     <td>
-                        {{ element.description|nl2br }}
+                        {{  element.references|join(', ') }}
+                    </td>
+                    <td>
+
                     </td>
                 </tr>
             {% else %}
