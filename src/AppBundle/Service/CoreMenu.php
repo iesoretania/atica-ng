@@ -91,10 +91,10 @@ class CoreMenu implements MenuBuilderInterface
 
             $menu2 = new MenuItem();
             $menu2
-                ->setName('organization_list')
-                ->setRouteName('organization_list_list')
-                ->setCaption('menu.organization.list')
-                ->setDescription('menu.organization.list.detail')
+                ->setName('organization_element')
+                ->setRouteName('organization_element_list')
+                ->setCaption('menu.organization.element')
+                ->setDescription('menu.organization.element.detail')
                 ->setColor('purple')
                 ->setIcon('list-ul');
 

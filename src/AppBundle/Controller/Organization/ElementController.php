@@ -29,12 +29,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @Route("/centro/listas")
+ * @Route("/centro/elementos")
  */
-class ListController extends Controller
+class ElementController extends Controller
 {
     /**
-     * @Route("/listar/{page}/{rootName}", name="organization_list_list", requirements={"page" = "\d+"}, defaults={"page" = "1", "root" = null}, methods={"GET"})
+     * @Route("/listar/{page}/{rootName}", name="organization_element_list", requirements={"page" = "\d+"}, defaults={"page" = "1", "root" = null}, methods={"GET"})
      */
     public function listAction($page, $rootName = null, Request $request)
     {
@@ -73,14 +73,14 @@ class ListController extends Controller
             ->setMaxPerPage($this->getParameter('page.size'))
             ->setCurrentPage($page);
 
-        $title = $this->get('translator')->trans('title.list', [], 'list');
+        $title = $this->get('translator')->trans('title.list', [], 'element');
 
-        return $this->render('organization/list/list.html.twig', [
+        return $this->render('organization/element/list.html.twig', [
             'title' => $title,
             'elements' => $pager->getIterator(),
             'pager' => $pager,
             'q' => $q,
-            'domain' => 'list'
+            'domain' => 'element'
         ]);
     }
 }

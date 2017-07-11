@@ -1,0 +1,34 @@
+form.name: Nombre
+form.code: Código
+form.description: Notas
+
+form.save: Guardar cambios
+form.back: Volver
+form.delete: Eliminar elementos seleccionados
+form.delete_confirm: Confirmar borrado
+
+prompt.delete_confirm: |
+  ¿Está seguro de que desea eliminar los siguientes elementos? No se podrán eliminar aquellos que estén asociados a otra información.
+
+  Esta operación no se puede deshacer.
+
+message.saved: Elemento actualizado con éxito.
+message.save_error: No se han podido actualizar el elemento.
+message.deleted: Los elementos seleccionados han sido eliminados con éxito.
+message.delete_error: No se han podido eliminar los elementos seleccionados.
+
+title.new: Nuevo elemento
+title.edit: Elemento
+title.list: Listas de elementos
+title.delete: Eliminar elementos
+
+table.total: "{1} Encontrado un único resultado|]1,Inf[ Encontrados %count% resultados"
+table.no_items: No hay elementos
+table.new: Nuevo elemento
+table.filter: Filtrar...
+
+header.name: Nombre
+header.managed_by: Gestionado por
+header.code: Código
+header.description: Notas
+header.references: Referencias
