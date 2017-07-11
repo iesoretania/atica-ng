@@ -104,6 +104,7 @@ class ElementController extends Controller
     }
 
     /**
+     * @Route("/carpeta/{path}", name="organization_element_folder_new", requirements={"path" = ".+"}, methods={"GET", "POST"})
      * @Route("/nuevo/{path}", name="organization_element_new", requirements={"path" = ".+"}, methods={"GET", "POST"})
      * @Route("/modificar/{path}", name="organization_element_form", requirements={"path" = ".+"}, methods={"GET", "POST"})
      */
@@ -119,7 +120,7 @@ class ElementController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $new = $request->get('_route') === 'organization_element_new';
+        $new = in_array($request->get('_route'), ['organization_element_new', 'organization_element_folder_new'], true);
         $breadcrumb = $this->generateBreadcrumb($element, !$new);
 
         if ($new) {
@@ -127,12 +128,17 @@ class ElementController extends Controller
             $newElement
                 ->setParent($element)
                 ->setOrganization($organization)
-                ->setFolder(false);
+                ->setFolder($request->get('_route') === 'organization_element_folder_new');
 
             $em->persist($newElement);
 
             $element = $newElement;
-            $breadcrumb[] = ['fixed' => $this->get('translator')->trans('title.new', [], 'element')];
+
+            $title = $this->get('translator')->trans($newElement->isFolder() ? 'title.new_folder' : 'title.new', [], 'element');
+            $breadcrumb[] = ['fixed' => $title];
+        }
+        else {
+            $title = $this->get('translator')->trans('title.edit', [], 'element');
         }
 
         $form = $this->createForm(ElementType::class, $element);
@@ -148,8 +154,6 @@ class ElementController extends Controller
                 $this->addFlash('error', $this->get('translator')->trans('message.save_error', [], 'element'));
             }
         }
-
-        $title = $this->get('translator')->trans($element->getId() ? 'title.edit' : 'title.new', [], 'element');
 
         return $this->render('organization/element/form.html.twig', [
             'menu_path' => 'organization_element_list',
