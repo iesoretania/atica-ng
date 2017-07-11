@@ -17,7 +17,7 @@
                 {% set url = element.folder ? path('organization_element_list', {'page': 1, 'path': element.path}) : path('organization_element_form', {'path': element.path}) %}
                 <tr class="clickable-row" data-href="{{ url }}">
                     <td>
-                        <label><input type="checkbox" name="elements[]" value="{{ element.id }}" class="selectable"> {% if element.folder %}<i class="fa fa-folder"></i> {% endif %}<a href="{{ url }}">{{ element.name }}</a>{% if element.code %} <i class="fa fa-lock"></i>{% endif %}</label>
+                        <label><input type="checkbox" name="elements[]" value="{{ element.id }}" class="selectable"> {% if element.folder %}<i class="fa fa-folder" title="{{ 'table.folder'|trans }}"></i> {% endif %}<a href="{{ url }}">{{ element.name }}</a>{% if element.code %} <i class="fa fa-lock" title="{{ 'table.locked'|trans }}"></i>{% endif %}</label>
                     </td>
                     <td>
                         {{ element.managed_by|default('') }}

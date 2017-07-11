@@ -31,6 +31,8 @@ table.filter: Filtrar...
 
 table.move_up: Subir elemento
 table.move_down: Bajar elemento
+table.locked: Elemento bloqueado
+table.folder: Carpeta
 
 header.name: Nombre
 header.managed_by: Gestionado por
