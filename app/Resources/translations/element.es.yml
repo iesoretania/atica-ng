@@ -29,6 +29,9 @@ table.new: Nuevo elemento
 table.new_category: Nueva carpeta
 table.filter: Filtrar...
 
+table.move_up: Subir elemento
+table.move_down: Bajar elemento
+
 header.name: Nombre
 header.managed_by: Gestionado por
 header.code: Código

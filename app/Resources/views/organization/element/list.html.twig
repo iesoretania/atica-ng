@@ -26,8 +26,8 @@
                         {{  element.references|join(', ') }}
                     </td>
                     <td>
-                        {% if not loop.first %}<button type="submit" class="btn btn-xs" name="up" value="{{ element.id }}"><i class="fa fa-arrow-up"></i></button>{% endif %}
-                        {% if not loop.last %}<button type="submit" class="btn btn-xs" name="down" value="{{ element.id }}"><i class="fa fa-arrow-down"></i></button>{% endif %}
+                        {% if not loop.first %}<button type="submit" class="btn btn-xs" name="up" value="{{ element.id }}" title="{{ 'table.move_up'|trans }}"><i class="fa fa-arrow-up"></i></button>{% endif %}
+                        {% if not loop.last %}<button type="submit" class="btn btn-xs" name="down" value="{{ element.id }}" title="{{ 'table.move_down'|trans }}"><i class="fa fa-arrow-down"></i></button>{% endif %}
                     </td>
                 </tr>
             {% else %}
