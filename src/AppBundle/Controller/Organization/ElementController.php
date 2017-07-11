@@ -46,13 +46,14 @@ class ElementController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         /** @var Element|null $element */
-        if (null === $path) {
-            $element = $em->getRepository('AppBundle:Element')->findCurrentOneByOrganization($organization);
-        }
-        else {
-            if (null === $element = $em->getRepository('AppBundle:Element')->findOneByOrganizationAndPath($organization, $path)) {
+        if (null !== $path) {
+            $element = $em->getRepository('AppBundle:Element')->findOneByOrganizationAndPath($organization, $path);
+            if (null === $element) {
                 throw $this->createNotFoundException();
             }
+        }
+        else {
+            $element = $em->getRepository('AppBundle:Element')->findCurrentOneByOrganization($organization);
         }
 
         if ('POST' === $request->getMethod()) {
@@ -165,7 +166,7 @@ class ElementController extends Controller
     }
 
     /**
-     * Returns breadcrumb that matches the element
+     * Returns breadcrumb that matches the element (ignores root element)
      * @param Element $element
      * @param bool $ignoreLast
      * @return array
@@ -175,7 +176,7 @@ class ElementController extends Controller
         $breadcrumb = [];
 
         $item = $element;
-        do {
+        while ($item->getParent()) {
             $entry = ['fixed' => $item->getName()];
             if ($item !== $element || !$ignoreLast) {
                 $entry['routeName'] = 'organization_element_list';
@@ -183,7 +184,7 @@ class ElementController extends Controller
             }
             array_unshift($breadcrumb, $entry);
             $item = $item->getParent();
-        } while ($item);
+        }
         return $breadcrumb;
     }
 }

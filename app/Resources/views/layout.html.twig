@@ -38,10 +38,10 @@
                     <p class="navbar-text" id="breadcrumb">
                         {% for menu_item in menu_extension.pathByRouteName(menu_path|default(app.request.get('_route'))) %}
                             {% if not loop.first %}<span class="separator"></span>{% endif %}
-                            {% if not loop.last or breadcrumb is defined %}{% set last_url = path(menu_item.routeName, menu_item.routeParams) %}<a href="{{ last_url }}" class="navbar-breadcrumb navbar-link">{% endif %}
+                            {% if not loop.last or (breadcrumb is defined and breadcrumb) %}{% set last_url = path(menu_item.routeName, menu_item.routeParams) %}<a href="{{ last_url }}" class="navbar-breadcrumb navbar-link">{% endif %}
                             {%- if menu_item.icon %}<i class="fa fa-{{ menu_item.icon }}"></i> {% endif -%}
                             {%- if not loop.first and menu_item.caption %}{{- menu_item.caption|trans({}, 'menu') -}}{% endif %}
-                            {% if not loop.last or breadcrumb is defined %}</a>{% endif %}
+                            {% if not loop.last or (breadcrumb is defined and breadcrumb) %}</a>{% endif %}
                         {%- endfor -%}
                         {% for item in breadcrumb|default([]) %}
                             <span class="separator"></span>

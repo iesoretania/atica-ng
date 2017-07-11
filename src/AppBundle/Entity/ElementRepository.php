@@ -30,7 +30,7 @@ class ElementRepository extends NestedTreeRepository
      */
     public function findCurrentOneByOrganization(Organization $organization)
     {
-        $item = $organization->getCurrentElement() ?: $this->findOneBy(['organization' => $organization, 'parent' => null], ['id' => 'DESC']);
+        $item = $organization->getCurrentElement() ?: $this->findOneBy(['organization' => $organization, 'parent' => null], ['left' => 'DESC']);
 
         return $item;
     }
