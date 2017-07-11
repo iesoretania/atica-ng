@@ -10,6 +10,7 @@
     {% block new_action %}
     <div class="form-group col-md-5">
         <a href="{% block path_new %}{% endblock %}" class="btn btn-success"><i class="fa fa-plus"></i> {{ 'table.new'|trans }}</a>
+        {% block more_actions %}{% endblock %}
     </div>
     {% endblock %}
     {% block before_table %}{% endblock %}

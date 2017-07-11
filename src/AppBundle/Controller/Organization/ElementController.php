@@ -36,7 +36,7 @@ use Symfony\Component\HttpFoundation\Request;
 class ElementController extends Controller
 {
     /**
-     * @Route("/listar/{page}/{path}", name="organization_element_list", requirements={"page" = "\d+", "path" = ".+"}, defaults={"page" = "1", "path" = null}, methods={"GET"})
+     * @Route("/listar/{page}/{path}", name="organization_element_list", requirements={"page" = "\d+", "path" = ".+"}, defaults={"page" = "1", "path" = null}, methods={"GET", "POST"})
      */
     public function listAction($page, $path = null, Request $request)
     {
@@ -52,6 +52,23 @@ class ElementController extends Controller
         else {
             if (null === $element = $em->getRepository('AppBundle:Element')->findOneByOrganizationAndPath($organization, $path)) {
                 throw $this->createNotFoundException();
+            }
+        }
+
+        if ('POST' === $request->getMethod()) {
+            if ($request->get('up')) {
+                $item = $em->getRepository('AppBundle:Element')->find($request->get('up'));
+                if (null === $item || $item->getParent() !== $element) {
+                    throw $this->createNotFoundException();
+                }
+                $em->getRepository('AppBundle:Element')->moveUp($item);
+            }
+            if ($request->get('down')) {
+                $item = $em->getRepository('AppBundle:Element')->find($request->get('down'));
+                if (null === $item || $item->getParent() !== $element) {
+                    throw $this->createNotFoundException();
+                }
+                $em->getRepository('AppBundle:Element')->moveDown($item);
             }
         }
 
@@ -109,6 +126,7 @@ class ElementController extends Controller
             $newElement = new Element();
             $newElement
                 ->setParent($element)
+                ->setOrganization($organization)
                 ->setFolder(false);
 
             $em->persist($newElement);

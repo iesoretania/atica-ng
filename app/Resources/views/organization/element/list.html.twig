@@ -4,7 +4,7 @@
 
 {% block path_new %}{{ path('organization_element_new', {'path': current.path}) }}{% endblock %}
 {% block path_list %}{{ app.request.uri }}{% endblock %}
-
+{% block more_actions %}<a href="{{ path('organization_element_new', {'path': current.path}) }}" class="btn btn-success"><i class="fa fa-folder-open"></i> {{ 'table.new_category'|trans }}</a>{% endblock %}
 {% block table_header %}
     <th class="col-sm-4"><label><input type="checkbox" id="select"> {{ 'header.name'|trans }}</label></th>
     <th class="col-sm-3">{{ 'header.managed_by'|trans }}</th>
@@ -26,7 +26,8 @@
                         {{  element.references|join(', ') }}
                     </td>
                     <td>
-
+                        {% if not loop.first %}<button type="submit" class="btn btn-xs" name="up" value="{{ element.id }}"><i class="fa fa-arrow-up"></i></button>{% endif %}
+                        {% if not loop.last %}<button type="submit" class="btn btn-xs" name="down" value="{{ element.id }}"><i class="fa fa-arrow-down"></i></button>{% endif %}
                     </td>
                 </tr>
             {% else %}

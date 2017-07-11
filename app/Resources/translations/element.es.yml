@@ -13,7 +13,7 @@ prompt.delete_confirm: |
   Esta operación no se puede deshacer.
 
 message.saved: Elemento actualizado con éxito.
-message.save_error: No se han podido actualizar el elemento.
+message.save_error: No se ha podido actualizar el elemento.
 message.deleted: Los elementos seleccionados han sido eliminados con éxito.
 message.delete_error: No se han podido eliminar los elementos seleccionados.
 
@@ -25,6 +25,7 @@ title.delete: Eliminar elementos
 table.total: "{1} Encontrado un único resultado|]1,Inf[ Encontrados %count% resultados"
 table.no_items: No hay elementos
 table.new: Nuevo elemento
+table.new_category: Nueva carpeta
 table.filter: Filtrar...
 
 header.name: Nombre
