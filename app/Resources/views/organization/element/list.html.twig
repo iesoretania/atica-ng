@@ -2,7 +2,7 @@
 {% extends 'generic/list.html.twig' %}
 {% import 'macros.html.twig' as m %}
 
-{% block path_new %}{% endblock %}
+{% block path_new %}{{ path('organization_element_new', {'path': current.path}) }}{% endblock %}
 {% block path_list %}{{ app.request.uri }}{% endblock %}
 
 {% block table_header %}
@@ -14,7 +14,7 @@
 
 {% block table_body %}
             {% for element in elements %}
-                {% set url = path('organization_element_list', {'page': 1, 'path': element.path}) %}
+                {% set url = element.folder ? path('organization_element_list', {'page': 1, 'path': element.path}) : path('organization_element_form', {'path': element.path}) %}
                 <tr class="clickable-row" data-href="{{ url }}">
                     <td>
                         <label><input type="checkbox" name="elements[]" value="{{ element.id }}" class="selectable"> {% if element.folder %}<i class="fa fa-folder"></i> {% endif %}<a href="{{ url }}">{{ element.name }}</a>{% if element.code %} <i class="fa fa-lock"></i>{% endif %}</label>

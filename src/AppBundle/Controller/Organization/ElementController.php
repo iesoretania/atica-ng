@@ -20,6 +20,8 @@
 
 namespace AppBundle\Controller\Organization;
 
+use AppBundle\Entity\Element;
+use AppBundle\Form\Type\ElementType;
 use AppBundle\Security\OrganizationVoter;
 use Doctrine\ORM\QueryBuilder;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
@@ -43,17 +45,18 @@ class ElementController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
+        /** @var Element|null $element */
         if (null === $path) {
-            $rootElement = $em->getRepository('AppBundle:Element')->findCurrentOneByOrganization($organization);
+            $element = $em->getRepository('AppBundle:Element')->findCurrentOneByOrganization($organization);
         }
         else {
-            if (null === $rootElement = $em->getRepository('AppBundle:Element')->findOneByOrganizationAndPath($organization, $path)) {
+            if (null === $element = $em->getRepository('AppBundle:Element')->findOneByOrganizationAndPath($organization, $path)) {
                 throw $this->createNotFoundException();
             }
         }
 
         /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($rootElement, true)
+        $queryBuilder = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($element, true)
             ->addSelect('ref')
             ->leftJoin('node.references', 'ref');
 
@@ -70,26 +73,95 @@ class ElementController extends Controller
             ->setMaxPerPage($this->getParameter('page.size'))
             ->setCurrentPage($page);
 
+        $breadcrumb = $this->generateBreadcrumb($element);
+
+        return $this->render('organization/element/list.html.twig', [
+            'breadcrumb' => $breadcrumb,
+            'title' => $element->getName(),
+            'elements' => $pager->getIterator(),
+            'pager' => $pager,
+            'current' => $element,
+            'q' => $q,
+            'domain' => 'element'
+        ]);
+    }
+
+    /**
+     * @Route("/nuevo/{path}", name="organization_element_new", requirements={"path" = ".+"}, methods={"GET", "POST"})
+     * @Route("/modificar/{path}", name="organization_element_form", requirements={"path" = ".+"}, methods={"GET", "POST"})
+     */
+    public function formAction($path, Request $request)
+    {
+        $organization = $this->get('AppBundle\Service\UserExtensionService')->getCurrentOrganization();
+        $this->denyAccessUnlessGranted(OrganizationVoter::MANAGE, $organization);
+
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var Element|null $element */
+        if (null === $element = $em->getRepository('AppBundle:Element')->findOneByOrganizationAndPath($organization, $path)) {
+            throw $this->createNotFoundException();
+        }
+
+        $new = $request->get('_route') === 'organization_element_new';
+        $breadcrumb = $this->generateBreadcrumb($element, !$new);
+
+        if ($new) {
+            $newElement = new Element();
+            $newElement
+                ->setParent($element)
+                ->setFolder(false);
+
+            $em->persist($newElement);
+
+            $element = $newElement;
+            $breadcrumb[] = ['fixed' => $this->get('translator')->trans('title.new', [], 'element')];
+        }
+
+        $form = $this->createForm(ElementType::class, $element);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                $em->flush();
+                $this->addFlash('success', $this->get('translator')->trans('message.saved', [], 'element'));
+                return $this->redirectToRoute('organization_element_list', ['page' => 1, 'path' => $element->getParent()->getPath()]);
+            } catch (\Exception $e) {
+                $this->addFlash('error', $this->get('translator')->trans('message.save_error', [], 'element'));
+            }
+        }
+
+        $title = $this->get('translator')->trans($element->getId() ? 'title.edit' : 'title.new', [], 'element');
+
+        return $this->render('organization/element/form.html.twig', [
+            'menu_path' => 'organization_element_list',
+            'breadcrumb' => $breadcrumb,
+            'title' => $title,
+            'element' => $element,
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * Returns breadcrumb that matches the element
+     * @param Element $element
+     * @param bool $ignoreLast
+     * @return array
+     */
+    private function generateBreadcrumb(Element $element, $ignoreLast = true)
+    {
         $breadcrumb = [];
 
-        $item = $rootElement;
+        $item = $element;
         do {
             $entry = ['fixed' => $item->getName()];
-            if ($item != $rootElement) {
+            if ($item !== $element || !$ignoreLast) {
                 $entry['routeName'] = 'organization_element_list';
                 $entry['routeParams'] = ['page' => 1, 'path' => $item->getPath()];
             }
             array_unshift($breadcrumb, $entry);
             $item = $item->getParent();
         } while ($item);
-
-        return $this->render('organization/element/list.html.twig', [
-            'breadcrumb' => $breadcrumb,
-            'title' => $rootElement->getName(),
-            'elements' => $pager->getIterator(),
-            'pager' => $pager,
-            'q' => $q,
-            'domain' => 'element'
-        ]);
+        return $breadcrumb;
     }
 }

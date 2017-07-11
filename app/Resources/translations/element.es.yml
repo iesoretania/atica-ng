@@ -18,7 +18,7 @@ message.deleted: Los elementos seleccionados han sido eliminados con éxito.
 message.delete_error: No se han podido eliminar los elementos seleccionados.
 
 title.new: Nuevo elemento
-title.edit: Elemento
+title.edit: Modificar elemento
 title.list: Listas de elementos
 title.delete: Eliminar elementos
 
