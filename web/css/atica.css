@@ -181,3 +181,7 @@ span#search-clear {
     transition: opacity 0.1s linear;
     pointer-events: none;
 }
+
+.fa-inherit {
+    text-decoration: inherit;
+}

@@ -17,7 +17,7 @@
                 {% set url = '' %}
                 <tr class="clickable-row" data-href="{{ url }}">
                     <td>
-                        <label><input type="checkbox" name="elements[]" value="{{ element.id }}" class="selectable"> <a href="{{ url }}">{{ element.name }}</a></label>
+                        <label><input type="checkbox" name="elements[]" value="{{ element.id }}" class="selectable"> <a href="{{ url }}">{% if element.folder %}<i class="fa fa-folder fa-inherit"></i> {% endif %}{{ element.name }}</a></label>
                     </td>
                     <td>
                         {{ element.managed_by|default('') }}

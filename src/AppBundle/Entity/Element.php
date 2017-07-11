@@ -51,6 +51,12 @@ class Element
     private $code;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $folder;
+
+    /**
      * @Gedmo\TreeLeft
      * @ORM\Column(name="lft", type="integer")
      * @var int
@@ -195,6 +201,30 @@ class Element
     public function getCode()
     {
         return $this->code;
+    }
+
+    /**
+     * Set folder
+     *
+     * @param boolean $folder
+     *
+     * @return Element
+     */
+    public function setFolder($folder)
+    {
+        $this->folder = $folder;
+
+        return $this;
+    }
+
+    /**
+     * Is folder
+     *
+     * @return boolean
+     */
+    public function isFolder()
+    {
+        return $this->folder;
     }
 
     /**
