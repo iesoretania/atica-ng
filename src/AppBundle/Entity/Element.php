@@ -23,10 +23,12 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @Gedmo\Tree(type="nested")
  * @ORM\Entity(repositoryClass="ElementRepository")
+ * @UniqueEntity(fields={"parent", "name"})
  */
 class Element
 {
@@ -495,5 +497,25 @@ class Element
     public function getManagedBy()
     {
         return $this->managedBy;
+    }
+
+    /**
+     * Get element path
+     *
+     * @return string
+     */
+    public function getPath()
+    {
+        $path = '';
+        $item = $this;
+        $first = true;
+
+        while ($item) {
+            $path = $item->getName() . ($first ? '' : '/') . $path;
+            $first = false;
+            $item = $item->getParent();
+        }
+
+        return $path;
     }
 }

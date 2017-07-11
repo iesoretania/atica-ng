@@ -34,20 +34,20 @@ use Symfony\Component\HttpFoundation\Request;
 class ElementController extends Controller
 {
     /**
-     * @Route("/listar/{page}/{rootName}", name="organization_element_list", requirements={"page" = "\d+"}, defaults={"page" = "1", "root" = null}, methods={"GET"})
+     * @Route("/listar/{page}/{path}", name="organization_element_list", requirements={"page" = "\d+", "path" = ".+"}, defaults={"page" = "1", "path" = null}, methods={"GET"})
      */
-    public function listAction($page, $rootName = null, Request $request)
+    public function listAction($page, $path = null, Request $request)
     {
         $organization = $this->get('AppBundle\Service\UserExtensionService')->getCurrentOrganization();
         $this->denyAccessUnlessGranted(OrganizationVoter::MANAGE, $organization);
 
         $em = $this->getDoctrine()->getManager();
 
-        if (null === $rootName) {
+        if (null === $path) {
             $rootElement = $em->getRepository('AppBundle:Element')->findCurrentOneByOrganization($organization);
         }
         else {
-            if (null === $rootElement = $em->getRepository('AppBundle:Element')->findOneByOrganizationAndRootName($organization, $rootName)) {
+            if (null === $rootElement = $em->getRepository('AppBundle:Element')->findOneByOrganizationAndPath($organization, $path)) {
                 throw $this->createNotFoundException();
             }
         }
@@ -60,11 +60,8 @@ class ElementController extends Controller
         $q = $request->get('q', null);
         if ($q) {
             $queryBuilder
-                ->where('node.name LIKE :tq')
-                ->orWhere('node.code LIKE :tq')
-                ->orWhere('node.description LIKE :tq')
-                ->setParameter('tq', '%'.$q.'%')
-                ->setParameter('q', $q);
+                ->andWhere('node.name LIKE :tq')
+                ->setParameter('tq', '%'.$q.'%');
         }
 
         $adapter = new DoctrineORMAdapter($queryBuilder, false);
@@ -80,7 +77,7 @@ class ElementController extends Controller
             $entry = ['fixed' => $item->getName()];
             if ($item != $rootElement) {
                 $entry['routeName'] = 'organization_element_list';
-                $entry['routeParams'] = ['page' => 1, 'rootName' => $item->getName()];
+                $entry['routeParams'] = ['page' => 1, 'path' => $item->getPath()];
             }
             array_unshift($breadcrumb, $entry);
             $item = $item->getParent();

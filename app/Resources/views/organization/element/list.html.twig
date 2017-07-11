@@ -14,7 +14,7 @@
 
 {% block table_body %}
             {% for element in elements %}
-                {% set url = '' %}
+                {% set url = path('organization_element_list', {'page': 1, 'path': element.path}) %}
                 <tr class="clickable-row" data-href="{{ url }}">
                     <td>
                         <label><input type="checkbox" name="elements[]" value="{{ element.id }}" class="selectable"> {% if element.folder %}<i class="fa fa-folder"></i> {% endif %}<a href="{{ url }}">{{ element.name }}</a>{% if element.code %} <i class="fa fa-lock"></i>{% endif %}</label>

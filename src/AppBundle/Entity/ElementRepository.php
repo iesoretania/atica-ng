@@ -42,6 +42,29 @@ class ElementRepository extends NestedTreeRepository
      */
     public function findOneByOrganizationAndRootName(Organization $organization, $rootName)
     {
-        return $this->findOneBy(['organization' => $organization, 'name' => $rootName, 'parent' => null], ['id' => 'DESC']);
+        return $this->findOneBy(['organization' => $organization, 'name' => $rootName, 'parent' => null]);
+    }
+
+    /**
+     * @param Organization  $organization
+     * @param string        $path
+     * @return null|object
+     */
+    public function findOneByOrganizationAndPath(Organization $organization, $path)
+    {
+        if (!$path) {
+            return null;
+        }
+
+        $items = explode('/', $path);
+        $itemName = array_shift($items);
+        $current = null;
+
+        while ($itemName) {
+            $current = $this->findOneBy(['organization' => $organization, 'name' => $itemName, 'parent' => $current]);
+            $itemName = array_shift($items);
+        }
+
+        return $current;
     }
 }

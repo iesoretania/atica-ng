@@ -43,8 +43,8 @@
                             {%- if not loop.first and menu_item.caption %}{{- menu_item.caption|trans({}, 'menu') -}}{% endif %}
                             {% if not loop.last or breadcrumb is defined %}</a>{% endif %}
                         {%- endfor -%}
-                        {% if breadcrumb is defined %}<span class="separator"></span>{% endif %}
                         {% for item in breadcrumb|default([]) %}
+                            <span class="separator"></span>
                             {%- if item.routeName is defined %}{% set last_url = path(item.routeName, item.routeParams ?: {}) %}<a href="{{ last_url }}" class="navbar-breadcrumb navbar-link">{% endif -%}
                             {%- if item.icon is defined %}<i class="fa fa-{{ item.icon }}"></i> {% endif -%}
                             {%- if item.caption is defined %}{{- item.caption|trans({}, 'menu') -}}{% endif %}{{- item.fixed|default('') -}}

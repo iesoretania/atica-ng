@@ -49,6 +49,7 @@ class CoreData
         $root = new Element();
         $root
             ->setOrganization($organization)
+            ->setFolder(true)
             ->setName($rootName);
 
         $this->entityManager->persist($root);
