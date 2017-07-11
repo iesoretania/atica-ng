@@ -73,10 +73,22 @@ class ElementController extends Controller
             ->setMaxPerPage($this->getParameter('page.size'))
             ->setCurrentPage($page);
 
-        $title = $this->get('translator')->trans('title.list', [], 'element');
+        $breadcrumb = [];
+
+        $item = $rootElement;
+        do {
+            $entry = ['fixed' => $item->getName()];
+            if ($item != $rootElement) {
+                $entry['routeName'] = 'organization_element_list';
+                $entry['routeParams'] = ['page' => 1, 'rootName' => $item->getName()];
+            }
+            array_unshift($breadcrumb, $entry);
+            $item = $item->getParent();
+        } while ($item);
 
         return $this->render('organization/element/list.html.twig', [
-            'title' => $title,
+            'breadcrumb' => $breadcrumb,
+            'title' => $rootElement->getName(),
             'elements' => $pager->getIterator(),
             'pager' => $pager,
             'q' => $q,

@@ -48,7 +48,7 @@
                             {%- if item.routeName is defined %}{% set last_url = path(item.routeName, item.routeParams ?: {}) %}<a href="{{ last_url }}" class="navbar-breadcrumb navbar-link">{% endif -%}
                             {%- if item.icon is defined %}<i class="fa fa-{{ item.icon }}"></i> {% endif -%}
                             {%- if item.caption is defined %}{{- item.caption|trans({}, 'menu') -}}{% endif %}{{- item.fixed|default('') -}}
-                            {%- if item.path is defined %}</a>{% endif -%}
+                            {%- if item.routeName is defined %}</a>{% endif -%}
                         {%- endfor %}
                     </p>
                 </div>
