@@ -37,9 +37,6 @@ class ElementType extends AbstractType
             ->add('name', null, [
                 'label' => 'form.name'
             ])
-            ->add('code', null, [
-                'label' => 'form.code'
-            ])
             ->add('description', TextareaType::class, [
                 'label' => 'form.description',
                 'required' => false
