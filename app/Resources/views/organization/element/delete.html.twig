@@ -1,0 +1,32 @@
+{% trans_default_domain 'element' %}
+{% extends 'layout.html.twig' %}
+{% import 'macros.html.twig' as m %}
+{% block content %}
+    <form method="post">
+        {% for element in elements %}
+            <input type="hidden" name="elements[]" value="{{ element.id }}">
+        {% endfor %}
+        <input type="hidden" name="confirm" value="ok">
+        <div class="alert alert-warning">{{ 'prompt.delete_confirm'|trans|nl2br }}</div>
+        <div id="table" class="col-md-12 table-responsive">
+            <table id="list" class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th class="col-sm-4">{{ 'header.name'|trans }}</th>
+                        <th class="col-sm-8">{{ 'header.description'|trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for element in elements %}
+                        <tr>
+                            <td>{{ element.name }}</td>
+                            <td>{{ element.description|nl2br }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {{ m.link_button(last_url, 'arrow-left', 'btn-info', 'form.back'|trans) }}
+        {{ m.submit_button('submit', 'trash', 'btn-danger', 'form.delete_confirm'|trans) }}
+    </form>
+{% endblock %}

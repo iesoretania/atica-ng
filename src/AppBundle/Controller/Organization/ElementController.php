@@ -21,6 +21,7 @@
 namespace AppBundle\Controller\Organization;
 
 use AppBundle\Entity\Element;
+use AppBundle\Entity\ElementRepository;
 use AppBundle\Form\Type\ElementType;
 use AppBundle\Security\OrganizationVoter;
 use Doctrine\ORM\QueryBuilder;
@@ -36,7 +37,7 @@ use Symfony\Component\HttpFoundation\Request;
 class ElementController extends Controller
 {
     /**
-     * @Route("/listar/{page}/{path}", name="organization_element_list", requirements={"page" = "\d+", "path" = ".+"}, defaults={"page" = "1", "path" = null}, methods={"GET", "POST"})
+     * @Route("/listar/{page}/{path}", name="organization_element_list", requirements={"page" = "\d+", "path" = ".+"}, defaults={"page" = "1", "path" = null}, methods={"GET"})
      */
     public function listAction($page, $path = null, Request $request)
     {
@@ -45,36 +46,11 @@ class ElementController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        /** @var Element|null $element */
-        if (null !== $path) {
-            $element = $em->getRepository('AppBundle:Element')->findOneByOrganizationAndPath($organization, $path);
-            if (null === $element) {
-                throw $this->createNotFoundException();
-            }
-        }
-        else {
-            $element = $em->getRepository('AppBundle:Element')->findCurrentOneByOrganization($organization);
-        }
-
-        if ('POST' === $request->getMethod()) {
-            if ($request->get('up')) {
-                $item = $em->getRepository('AppBundle:Element')->find($request->get('up'));
-                if (null === $item || $item->getParent() !== $element) {
-                    throw $this->createNotFoundException();
-                }
-                $em->getRepository('AppBundle:Element')->moveUp($item);
-            }
-            if ($request->get('down')) {
-                $item = $em->getRepository('AppBundle:Element')->find($request->get('down'));
-                if (null === $item || $item->getParent() !== $element) {
-                    throw $this->createNotFoundException();
-                }
-                $em->getRepository('AppBundle:Element')->moveDown($item);
-            }
-        }
+        $elementRepository = $em->getRepository('AppBundle:Element');
+        $element = $this->getSelectedElement($path, $elementRepository, $organization);
 
         /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($element, true)
+        $queryBuilder = $elementRepository->getChildrenQueryBuilder($element, true)
             ->addSelect('ref')
             ->leftJoin('node.references', 'ref');
 
@@ -101,6 +77,86 @@ class ElementController extends Controller
             'current' => $element,
             'q' => $q,
             'domain' => 'element'
+        ]);
+    }
+
+    /**
+     * @Route("/operar/{path}", name="organization_element_operation", requirements={"path" = ".+"}, defaults={"path" = null}, methods={"POST"})
+     */
+    public function operationAction($path = null, Request $request)
+    {
+        $organization = $this->get('AppBundle\Service\UserExtensionService')->getCurrentOrganization();
+        $this->denyAccessUnlessGranted(OrganizationVoter::MANAGE, $organization);
+
+        $em = $this->getDoctrine()->getManager();
+
+        $elementRepository = $em->getRepository('AppBundle:Element');
+        $element = $this->getSelectedElement($path, $elementRepository, $organization);
+
+        $ok = false;
+        if ($request->get('up')) {
+            $item = $em->getRepository('AppBundle:Element')->find($request->get('up'));
+            if (null === $item || $item->getParent() !== $element) {
+                throw $this->createNotFoundException();
+            }
+            $em->getRepository('AppBundle:Element')->moveUp($item);
+            $ok = true;
+        }
+        if ($request->get('down')) {
+            $item = $em->getRepository('AppBundle:Element')->find($request->get('down'));
+            if (null === $item || $item->getParent() !== $element) {
+                throw $this->createNotFoundException();
+            }
+            $em->getRepository('AppBundle:Element')->moveDown($item);
+            $ok = true;
+        }
+
+        $items = $request->request->get('elements', []);
+        if ($ok || count($items) === 0) {
+            return $this->redirectToRoute('organization_element_list', ['path' => $path]);
+        }
+
+        $elements = $em->createQueryBuilder()
+            ->select('e')
+            ->from('AppBundle:Element', 'e')
+            ->where('e.id IN (:items)')
+            ->andWhere('e.parent = :current')
+            ->andWhere('e.code IS NULL')
+            ->setParameter('items', $items)
+            ->setParameter('current', $element)
+            ->orderBy('e.left')
+            ->getQuery()
+            ->getResult();
+
+        if ($request->get('confirm', '') === 'ok') {
+            try {
+                $em->createQueryBuilder()
+                    ->delete('AppBundle:Element', 'e')
+                    ->where('e.id IN (:items)')
+                    ->andWhere('e.parent = :current')
+                    ->andWhere('e.code IS NULL')
+                    ->setParameter('items', $items)
+                    ->setParameter('current', $element)
+                    ->getQuery()
+                    ->execute();
+
+                $em->flush();
+                $this->addFlash('success', $this->get('translator')->trans('message.deleted', [], 'element'));
+            } catch (\Exception $e) {
+                $this->addFlash('error', $this->get('translator')->trans('message.delete_error', [], 'element'));
+            }
+            return $this->redirectToRoute('organization_element_list', ['path' => $path]);
+        }
+
+        $title = $this->get('translator')->trans('title.delete', [], 'element');
+        $breadcrumb = $this->generateBreadcrumb($element, false);
+        $breadcrumb[] = ['fixed' => $this->get('translator')->trans('title.delete', [], 'element')];
+
+        return $this->render('organization/element/delete.html.twig', [
+            'menu_path' => 'organization_element_list',
+            'breadcrumb' => $breadcrumb,
+            'title' => $title,
+            'elements' => $elements
         ]);
     }
 
@@ -180,11 +236,31 @@ class ElementController extends Controller
             $entry = ['fixed' => $item->getName()];
             if ($item !== $element || !$ignoreLast) {
                 $entry['routeName'] = 'organization_element_list';
-                $entry['routeParams'] = ['page' => 1, 'path' => $item->getPath()];
+                $entry['routeParams'] = ['path' => $item->getPath()];
             }
             array_unshift($breadcrumb, $entry);
             $item = $item->getParent();
         }
         return $breadcrumb;
+    }
+
+    /**
+     * @param $path
+     * @param ElementRepository $elementRepository
+     * @param $organization
+     * @return Element|null
+     */
+    private function getSelectedElement($path, ElementRepository $elementRepository, $organization)
+    {
+        /** @var Element|null $element */
+        if (null !== $path) {
+            $element = $elementRepository->findOneByOrganizationAndPath($organization, $path);
+            if (null === $element) {
+                throw $this->createNotFoundException();
+            }
+        } else {
+            $element = $elementRepository->findCurrentOneByOrganization($organization);
+        }
+        return $element;
     }
 }
