@@ -67,7 +67,7 @@ class Element
 
     /**
      * @Gedmo\TreeLevel
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="lvl", type="integer")
      * @var int
      */
     private $level;
@@ -128,6 +128,19 @@ class Element
     private $managedBy;
 
     /**
+     * @ORM\OneToOne(targetEntity="Profile", inversedBy="element")
+     * @ORM\JoinColumn(onDelete="SET NULL", nullable=true)
+     * @var Profile
+     */
+    private $profile;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="User", mappedBy="elements")
+     * @var Collection
+     */
+    private $users;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -135,6 +148,7 @@ class Element
         $this->references = new \Doctrine\Common\Collections\ArrayCollection();
         $this->labels = new \Doctrine\Common\Collections\ArrayCollection();
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->users = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -145,6 +159,26 @@ class Element
     public function __toString()
     {
         return $this->getName();
+    }
+
+    /**
+     * Get element path
+     *
+     * @return string
+     */
+    public function getPath()
+    {
+        $path = '';
+        $item = $this;
+        $first = true;
+
+        while ($item) {
+            $path = $item->getName() . ($first ? '' : '/') . $path;
+            $first = false;
+            $item = $item->getParent();
+        }
+
+        return $path;
     }
 
     /**
@@ -352,7 +386,7 @@ class Element
     /**
      * Get children
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getChildren()
     {
@@ -500,22 +534,60 @@ class Element
     }
 
     /**
-     * Get element path
+     * Set profile
      *
-     * @return string
+     * @param Profile $profile
+     *
+     * @return Element
      */
-    public function getPath()
+    public function setProfile(Profile $profile = null)
     {
-        $path = '';
-        $item = $this;
-        $first = true;
+        $this->profile = $profile;
 
-        while ($item) {
-            $path = $item->getName() . ($first ? '' : '/') . $path;
-            $first = false;
-            $item = $item->getParent();
-        }
+        return $this;
+    }
 
-        return $path;
+    /**
+     * Get profile
+     *
+     * @return Profile
+     */
+    public function getProfile()
+    {
+        return $this->profile;
+    }
+
+    /**
+     * Add user
+     *
+     * @param User $user
+     *
+     * @return Element
+     */
+    public function addUser(User $user)
+    {
+        $this->users[] = $user;
+
+        return $this;
+    }
+
+    /**
+     * Remove user
+     *
+     * @param User $user
+     */
+    public function removeUser(User $user)
+    {
+        $this->users->removeElement($user);
+    }
+
+    /**
+     * Get users
+     *
+     * @return Collection
+     */
+    public function getUsers()
+    {
+        return $this->users;
     }
 }

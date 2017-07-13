@@ -140,6 +140,12 @@ class User implements AdvancedUserInterface
     protected $defaultOrganization;
 
     /**
+     * @ORM\ManyToMany(targetEntity="Element", inversedBy="users")
+     * @var Collection
+     */
+    private $elements;
+
+    /**
      * Convertir usuario en cadena
      */
     public function __toString()
@@ -154,6 +160,7 @@ class User implements AdvancedUserInterface
     {
         $this->memberships = new \Doctrine\Common\Collections\ArrayCollection();
         $this->managedOrganizations = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->elements = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
