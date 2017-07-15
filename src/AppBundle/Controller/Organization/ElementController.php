@@ -193,8 +193,7 @@ class ElementController extends Controller
 
             $title = $this->get('translator')->trans($newElement->isFolder() ? 'title.new_folder' : 'title.new', [], 'element');
             $breadcrumb[] = ['fixed' => $title];
-        }
-        else {
+        } else {
             $title = $this->get('translator')->trans('title.edit', [], 'element');
         }
 
@@ -248,7 +247,7 @@ class ElementController extends Controller
      * @param $path
      * @param ElementRepository $elementRepository
      * @param $organization
-     * @return Element|null
+     * @return Element
      */
     private function getSelectedElement($path, ElementRepository $elementRepository, $organization)
     {

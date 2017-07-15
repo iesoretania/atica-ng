@@ -179,7 +179,7 @@ class Element
         $first = true;
 
         while ($item) {
-            $path = $item->getName() . ($first ? '' : '/') . $path;
+            $path = $item->getName().($first ? '' : '/').$path;
             $first = false;
             $item = $item->getParent();
         }

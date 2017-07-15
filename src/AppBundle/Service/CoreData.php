@@ -54,7 +54,7 @@ class CoreData
 
         $this->entityManager->persist($root);
 
-        foreach($data as $item) {
+        foreach ($data as $item) {
             $element = new Element();
             $element
                 ->setOrganization($organization)

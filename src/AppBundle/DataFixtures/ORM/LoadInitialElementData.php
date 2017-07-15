@@ -40,7 +40,7 @@ class LoadInitialElementData extends AbstractFixture implements OrderedFixtureIn
         /** @var Organization $org */
         $org = $this->getReference('organization');
         $data = $this->container->get('AppBundle\Service\CoreData');
-        $data->createOrganizationElements($org, $now->format('Y') . '-' . ((int) $now->format('Y') + 1));
+        $data->createOrganizationElements($org, $now->format('Y').'-'.((int) $now->format('Y') + 1));
     }
 
     public function getOrder()

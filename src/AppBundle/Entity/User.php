@@ -168,7 +168,7 @@ class User implements AdvancedUserInterface
      */
     public function getUsernameAndEmailAddress()
     {
-        return $this->loginUsername . (($this->loginUsername && $this->emailAddress) ? ' - ' : '') . $this->emailAddress;
+        return $this->loginUsername.(($this->loginUsername && $this->emailAddress) ? ' - ' : '').$this->emailAddress;
     }
     /**
      * Get id

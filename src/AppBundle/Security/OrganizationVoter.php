@@ -87,7 +87,7 @@ class OrganizationVoter extends Voter
 
             $date = new \DateTime();
             /** @var Membership $membership */
-            foreach($user->getMemberships() as $membership) {
+            foreach ($user->getMemberships() as $membership) {
                 if ($membership->getOrganization() == $subject && $membership->getValidFrom() <= $date && ($membership->getValidUntil() === null || $membership->getValidUntil() >= $date)) {
                     return true;
                 }
