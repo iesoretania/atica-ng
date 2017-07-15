@@ -542,13 +542,13 @@ class Element
     /**
      * Set managedBy
      *
-     * @param Element $managed
+     * @param Element $managedBy
      *
      * @return Element
      */
-    public function setManagedBy(Element $managed = null)
+    public function setManagedBy(Element $managedBy = null)
     {
-        $this->managed = $managed;
+        $this->managedBy = $managedBy;
 
         return $this;
     }
