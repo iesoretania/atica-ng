@@ -59,6 +59,12 @@ class Element
     private $folder;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $included;
+
+    /**
      * @Gedmo\TreeLeft
      * @ORM\Column(name="lft", type="integer")
      * @var int
@@ -261,6 +267,30 @@ class Element
     public function isFolder()
     {
         return $this->folder;
+    }
+
+    /**
+     * Set included
+     *
+     * @param boolean $included
+     *
+     * @return Element
+     */
+    public function setIncluded($included)
+    {
+        $this->included = $included;
+
+        return $this;
+    }
+
+    /**
+     * Is included
+     *
+     * @return boolean
+     */
+    public function isIncluded()
+    {
+        return $this->included;
     }
 
     /**
