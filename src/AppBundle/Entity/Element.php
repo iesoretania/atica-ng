@@ -155,6 +155,9 @@ class Element
         $this->labels = new \Doctrine\Common\Collections\ArrayCollection();
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
         $this->users = new \Doctrine\Common\Collections\ArrayCollection();
+
+        $this->folder = false;
+        $this->included = false;
     }
 
     /**
