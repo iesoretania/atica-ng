@@ -230,7 +230,9 @@ class ElementController extends Controller
     {
         $breadcrumb = [];
 
-        if (null === $element) return null;
+        if (null === $element) {
+            return null;
+        }
 
         $item = $element;
         while ($item->getParent()) {
