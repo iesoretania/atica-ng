@@ -222,25 +222,25 @@ class ElementController extends Controller
 
     /**
      * Returns breadcrumb that matches the element (ignores root element)
-     * @param Element|null $element
+     * @param Element $element
      * @param bool $ignoreLast
      * @return array
      */
-    private function generateBreadcrumb(Element $element, $ignoreLast = true)
+    private function generateBreadcrumb(Element $element = null, $ignoreLast = true)
     {
         $breadcrumb = [];
 
-        if (null !== $element) {
-            $item = $element;
-            while ($item->getParent()) {
-                $entry = ['fixed' => $item->getName()];
-                if ($item !== $element || !$ignoreLast) {
-                    $entry['routeName'] = 'organization_element_list';
-                    $entry['routeParams'] = ['path' => $item->getPath()];
-                }
-                array_unshift($breadcrumb, $entry);
-                $item = $item->getParent();
+        if (null === $element) return null;
+
+        $item = $element;
+        while ($item->getParent()) {
+            $entry = ['fixed' => $item->getName()];
+            if ($item !== $element || !$ignoreLast) {
+                $entry['routeName'] = 'organization_element_list';
+                $entry['routeParams'] = ['path' => $item->getPath()];
             }
+            array_unshift($breadcrumb, $entry);
+            $item = $item->getParent();
         }
         return $breadcrumb;
     }
