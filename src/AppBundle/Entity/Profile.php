@@ -78,6 +78,34 @@ class Profile
     private $element;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Organization")
+     * @ORM\JoinColumn(nullable=false)
+     * @var Organization
+     */
+    private $organization;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=false)
+     * @var bool
+     */
+    private $visible;
+
+    /**
+     * @return string
+     */
+    public function __toString() {
+        return $this->getNameNeutral();
+    }
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->visible = true;
+    }
+
+    /**
      * Get id
      *
      * @return integer
@@ -253,5 +281,53 @@ class Profile
     public function getElement()
     {
         return $this->element;
+    }
+
+    /**
+     * Set visible
+     *
+     * @param boolean $visible
+     *
+     * @return Profile
+     */
+    public function setVisible($visible)
+    {
+        $this->visible = $visible;
+
+        return $this;
+    }
+
+    /**
+     * Is visible
+     *
+     * @return boolean
+     */
+    public function isVisible()
+    {
+        return $this->visible;
+    }
+
+    /**
+     * Set organization
+     *
+     * @param Organization $organization
+     *
+     * @return Profile
+     */
+    public function setOrganization(Organization $organization)
+    {
+        $this->organization = $organization;
+
+        return $this;
+    }
+
+    /**
+     * Get organization
+     *
+     * @return Organization
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
     }
 }

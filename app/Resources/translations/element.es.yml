@@ -34,8 +34,11 @@ table.move_down: Bajar elemento
 table.locked: Elemento bloqueado
 table.folder: Carpeta
 
+table.managed_by: Gestionado por %manager%
+
 header.name: Nombre
 header.managed_by: Gestionado por
 header.code: Código
 header.description: Notas
 header.references: Referencias
+header.profiles: Perfil asociado
