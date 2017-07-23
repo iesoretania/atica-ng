@@ -72,12 +72,6 @@ class Profile
     private $initials;
 
     /**
-     * @ORM\OneToOne(targetEntity="Element", mappedBy="profile")
-     * @var Element
-     */
-    private $element;
-
-    /**
      * @ORM\ManyToOne(targetEntity="Organization")
      * @ORM\JoinColumn(nullable=false)
      * @var Organization
@@ -257,30 +251,6 @@ class Profile
     public function getInitials()
     {
         return $this->initials;
-    }
-
-    /**
-     * Set element
-     *
-     * @param Element $element
-     *
-     * @return Profile
-     */
-    public function setElement(Element $element = null)
-    {
-        $this->element = $element;
-
-        return $this;
-    }
-
-    /**
-     * Get element
-     *
-     * @return Element
-     */
-    public function getElement()
-    {
-        return $this->element;
     }
 
     /**

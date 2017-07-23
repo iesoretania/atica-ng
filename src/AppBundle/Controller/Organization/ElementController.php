@@ -185,6 +185,7 @@ class ElementController extends Controller
             $newElement
                 ->setParent($element)
                 ->setOrganization($organization)
+                ->setProfile($element->getProfile())
                 ->setFolder($request->get('_route') === 'organization_element_folder_new');
 
             $em->persist($newElement);

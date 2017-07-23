@@ -134,7 +134,7 @@ class Element
     private $managedBy;
 
     /**
-     * @ORM\OneToOne(targetEntity="Profile", inversedBy="element")
+     * @ORM\ManyToOne(targetEntity="Profile")
      * @ORM\JoinColumn(onDelete="SET NULL", nullable=true)
      * @var Profile
      */
