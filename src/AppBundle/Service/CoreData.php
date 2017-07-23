@@ -22,6 +22,7 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Element;
 use AppBundle\Entity\Organization;
+use AppBundle\Entity\Profile;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -39,10 +40,10 @@ class CoreData
     public function createOrganizationElements(Organization $organization, $rootName)
     {
         $data = [
-            ['management', true],
+            ['management', false],
             ['department', true],
             ['group', true],
-            ['other', true],
+            ['other', false],
             ['evaluation', false]
         ];
 
@@ -62,7 +63,24 @@ class CoreData
                 ->setCode($item[0])
                 ->setFolder(true)
                 ->setName($this->translator->trans('list.'.$item[0], [], 'core'));
+
             $this->entityManager->persist($element);
+
+            if ($item[1]) {
+                $profile = new Profile();
+                $profile
+                    ->setOrganization($organization)
+                    ->setCode($item[0])
+                    ->setNameNeutral($this->translator->trans('profile.'.$item[0].'_neutral', [], 'core'))
+                    ->setNameMale($this->translator->trans('profile.'.$item[0].'_male', [], 'core'))
+                    ->setNameFemale($this->translator->trans('profile.'.$item[0].'_female', [], 'core'))
+                    ->setInitials($this->translator->trans('profile.'.$item[0].'_initials', [], 'core'))
+                    ->setVisible(true);
+
+                $element->setProfile($profile);
+
+                $this->entityManager->persist($profile);
+            }
         }
         $this->entityManager->flush();
     }

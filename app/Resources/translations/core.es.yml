@@ -4,3 +4,13 @@ list.other: Otros puestos
 list.department: Departamento
 list.group: Unidad
 list.evaluation: Evaluación
+
+profile.department_neutral: Jefe/a de Departamento
+profile.department_male: Jefe de Departamento
+profile.department_female: Jefa de Departamento
+profile.department_initials: JD
+
+profile.group_neutral: Tutor/a
+profile.group_male: Tutor
+profile.group_female: Tutora
+profile.group_initials: TUT
