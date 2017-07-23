@@ -22,8 +22,11 @@ namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\Element;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ElementType extends AbstractType
@@ -36,11 +39,33 @@ class ElementType extends AbstractType
         $builder
             ->add('name', null, [
                 'label' => 'form.name'
-            ])
+            ]);
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) {
+            $form = $event->getForm();
+            /** @var Element $data */
+            $data = $event->getData();
+
+            if ($data->isFolder()) {
+                $form
+                    ->add('included', ChoiceType::class, [
+                        'label' => 'form.included',
+                        'expanded' => true,
+                        'choices' => [
+                            'form.included_false' => false,
+                            'form.included_true' => true
+                        ]
+                    ]);
+            }
+
+        });
+
+        $builder
             ->add('description', TextareaType::class, [
                 'label' => 'form.description',
                 'required' => false
             ]);
+
     }
 
     /**

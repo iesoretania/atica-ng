@@ -1,6 +1,9 @@
 form.name: Nombre
 form.code: Código
 form.description: Notas
+form.included: Inclusión en perfil
+form.included_true: Nombre de la carpeta incluido en el nombre del perfil
+form.included_false: No afecta al nombre del perfil
 
 form.save: Guardar cambios
 form.back: Volver
