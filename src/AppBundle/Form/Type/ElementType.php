@@ -21,6 +21,8 @@
 namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\Element;
+use AppBundle\Entity\Profile;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -61,6 +63,12 @@ class ElementType extends AbstractType
         });
 
         $builder
+            ->add('profile', EntityType::class, [
+                'label' => 'form.profile',
+                'class' => Profile::class,
+                'required' => false,
+                'placeholder' => 'form.profile_none'
+            ])
             ->add('description', TextareaType::class, [
                 'label' => 'form.description',
                 'required' => false

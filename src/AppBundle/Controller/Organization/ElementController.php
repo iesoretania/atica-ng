@@ -200,16 +200,31 @@ class ElementController extends Controller
 
         $form = $this->createForm(ElementType::class, $element);
 
+        $previousProfile = $element->getProfile();
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $em->flush();
+
+                if ($previousProfile !== $element->getProfile()) {
+                    $em->getRepository('AppBundle:Element')->childrenQueryBuilder($element)
+                        ->andWhere('node.profile = :old_profile')
+                        ->update()
+                        ->set('node.profile', ':new_profile')
+                        ->setParameter('old_profile', $previousProfile)
+                        ->setParameter('new_profile', $element->getProfile())
+                        ->resetDQLPart('orderBy')
+                        ->getQuery()
+                        ->execute();
+                }
                 $this->addFlash('success', $this->get('translator')->trans('message.saved', [], 'element'));
                 return $this->redirectToRoute('organization_element_list', ['page' => 1, 'path' => $element->getParent()->getPath()]);
             } catch (\Exception $e) {
                 $this->addFlash('error', $this->get('translator')->trans('message.save_error', [], 'element'));
             }
+
         }
 
         return $this->render('organization/element/form.html.twig', [
