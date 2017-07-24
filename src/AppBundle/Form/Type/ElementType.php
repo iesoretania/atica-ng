@@ -59,21 +59,21 @@ class ElementType extends AbstractType
                         ]
                     ]);
             }
-
+            $form
+                ->add('profile', EntityType::class, [
+                    'label' => 'form.profile',
+                    'class' => Profile::class,
+                    'required' => false,
+                    'placeholder' => 'form.profile_none',
+                    'disabled' => $data->getCode() != ''
+                ]);
         });
 
         $builder
-            ->add('profile', EntityType::class, [
-                'label' => 'form.profile',
-                'class' => Profile::class,
-                'required' => false,
-                'placeholder' => 'form.profile_none'
-            ])
             ->add('description', TextareaType::class, [
                 'label' => 'form.description',
                 'required' => false
             ]);
-
     }
 
     /**
