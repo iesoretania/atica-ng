@@ -46,6 +46,7 @@ class ElementController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
+        /** @var ElementRepository $elementRepository */
         $elementRepository = $em->getRepository('AppBundle:Element');
         $element = $this->getSelectedElement($path, $elementRepository, $organization);
 
@@ -209,12 +210,21 @@ class ElementController extends Controller
                 $em->flush();
 
                 if ($previousProfile !== $element->getProfile()) {
-                    $em->getRepository('AppBundle:Element')->childrenQueryBuilder($element)
-                        ->andWhere('node.profile = :old_profile')
+                    $qb = $em->getRepository('AppBundle:Element')->childrenQueryBuilder($element)
                         ->update()
                         ->set('node.profile', ':new_profile')
-                        ->setParameter('old_profile', $previousProfile)
-                        ->setParameter('new_profile', $element->getProfile())
+                        ->setParameter('new_profile', $element->getProfile());
+
+                    if ($previousProfile === null) {
+                        $qb
+                            ->andWhere('node.profile IS NULL');
+                    }
+                    else {
+                        $qb
+                            ->andWhere('node.profile = :old_profile')
+                            ->setParameter('old_profile', $previousProfile);
+                    }
+                    $qb
                         ->resetDQLPart('orderBy')
                         ->getQuery()
                         ->execute();

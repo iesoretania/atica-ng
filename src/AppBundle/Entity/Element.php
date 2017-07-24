@@ -623,4 +623,28 @@ class Element
     {
         return $this->users;
     }
+
+    /**
+     * Get full profile name
+     */
+    public function getFullProfileName()
+    {
+        $element = $this;
+        $name = '';
+        $profile = $this->getProfile();
+
+        // mostrar nombre del elemento si no es el raiz
+        $first = $element->getParent() && $element->getParent()->getProfile() === $profile;
+
+        while ($element && $element->getProfile() === $profile) {
+            if ($first || $element->isIncluded() || !$element->isFolder()) {
+                $name = $element->getName() . ' ' . $name;
+                $first = false;
+            }
+            $element = $element->getParent();
+        }
+
+        $name = (string) $profile . ' ' . $name;
+        return trim($name);
+    }
 }
