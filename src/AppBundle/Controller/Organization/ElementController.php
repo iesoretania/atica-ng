@@ -22,6 +22,7 @@ namespace AppBundle\Controller\Organization;
 
 use AppBundle\Entity\Element;
 use AppBundle\Entity\ElementRepository;
+use AppBundle\Entity\Reference;
 use AppBundle\Form\Type\ElementType;
 use AppBundle\Security\OrganizationVoter;
 use Doctrine\ORM\QueryBuilder;
@@ -199,9 +200,37 @@ class ElementController extends Controller
             $title = $this->get('translator')->trans('title.edit', [], 'element');
         }
 
-        $form = $this->createForm(ElementType::class, $element);
+        $form = $this->createForm(ElementType::class, $element, [
+            'entity_manager' => $em,
+            'reference_placeholder' => $this->get('translator')->trans('form.none', [], 'element')
+        ]);
 
         $previousProfile = $element->getProfile();
+
+        $labels = $element->getLabels();
+
+        /** @var Reference $reference */
+        foreach($element->getPathReferences() as $reference) {
+            $data = [];
+            $items = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($reference->getTarget())
+                ->andWhere('node.folder = false')
+                ->getQuery()
+                ->getResult();
+
+            foreach($labels as $label) {
+                if (in_array($label, $items)) {
+                    $data[] = $label;
+                }
+            }
+
+            if ($data) {
+                if ($reference->isMultiple()) {
+                    $form->get('reference' . $reference->getTarget()->getId())->setData($data);
+                } else {
+                    $form->get('reference' . $reference->getTarget()->getId())->setData($data[0]);
+                }
+            }
+        }
 
         $form->handleRequest($request);
 
@@ -229,6 +258,43 @@ class ElementController extends Controller
                         ->getQuery()
                         ->execute();
                 }
+                /** @var Reference $reference */
+                foreach($element->getPathReferences() as $reference) {
+                    $items = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($reference->getTarget())
+                        ->andWhere('node.folder = false')
+                        ->getQuery()
+                        ->getResult();
+
+                    $data = $form
+                        ->get('reference' . $reference->getTarget()->getId())->getData();
+
+                    if (!is_array($data)) {
+                        $data = [$data];
+                    }
+
+                    foreach($items as $item) {
+                        $childItems = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($element)
+                            ->getQuery()
+                            ->getResult();
+
+                        if (in_array($item, $data)) {
+                            $element->addLabel($item);
+                            /** @var Element $child */
+                            foreach($childItems as $child) {
+                                $child->addLabel($item);
+                            }
+                        }
+                        else {
+                            $element->removeLabel($item);
+                            /** @var Element $child */
+                            foreach($childItems as $child) {
+                                $child->removeLabel($item);
+                            }
+                        }
+                    }
+                    $em->flush();
+                }
+
                 $this->addFlash('success', $this->get('translator')->trans('message.saved', [], 'element'));
                 return $this->redirectToRoute('organization_element_list', ['page' => 1, 'path' => $element->getParent()->getPath()]);
             } catch (\Exception $e) {

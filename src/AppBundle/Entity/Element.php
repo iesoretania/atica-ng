@@ -20,6 +20,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
@@ -122,6 +123,7 @@ class Element
     /**
      * @ORM\ManyToMany(targetEntity="Element")
      * @ORM\JoinTable(name="label")
+     * @ORM\OrderBy({"left" = "ASC"})
      * @var Collection
      */
     private $labels;
@@ -517,7 +519,9 @@ class Element
      */
     public function addLabel(Element $label)
     {
-        $this->labels[] = $label;
+        if (!$this->labels->contains($label)) {
+            $this->labels[] = $label;
+        }
 
         return $this;
     }
@@ -646,5 +650,27 @@ class Element
 
         $name = (string) $profile . ' ' . $name;
         return trim($name);
+    }
+
+    /**
+     * Get path references
+     */
+    public function getPathReferences()
+    {
+        $result = new ArrayCollection();
+
+        $element = $this;
+
+        while ($element) {
+            $references = $element->getReferences();
+
+            foreach($references as $reference) {
+                $result->add($reference);
+            }
+
+            $element = $element->getParent();
+        }
+
+        return $result;
     }
 }

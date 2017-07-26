@@ -22,6 +22,8 @@ namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\Element;
 use AppBundle\Entity\Profile;
+use AppBundle\Entity\Reference;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -43,7 +45,7 @@ class ElementType extends AbstractType
                 'label' => 'form.name'
             ]);
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($options) {
             $form = $event->getForm();
             /** @var Element $data */
             $data = $event->getData();
@@ -64,16 +66,43 @@ class ElementType extends AbstractType
                     'label' => 'form.profile',
                     'class' => Profile::class,
                     'required' => false,
-                    'placeholder' => 'form.profile_none',
+                    'placeholder' => 'form.none',
                     'disabled' => $data->getCode() != ''
+                ])
+                ->add('description', TextareaType::class, [
+                    'label' => 'form.description',
+                    'required' => false
                 ]);
-        });
 
-        $builder
-            ->add('description', TextareaType::class, [
-                'label' => 'form.description',
-                'required' => false
-            ]);
+            // referencias
+            /** @var EntityManager $em */
+            $em = $options['entity_manager'];
+
+            $references = $data->getPathReferences();
+
+            /** @var Reference $reference */
+            foreach($references as $reference) {
+                $items = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($reference->getTarget())
+                    ->andWhere('node.folder = false')
+                    ->getQuery()
+                    ->getResult();
+
+                $form
+                    ->add('reference' . $reference->getTarget()->getId(), ChoiceType::class, [
+                        'label' => $reference->getTarget()->getName(),
+                        'mapped' => false,
+                        'translation_domain' => false,
+                        'choice_translation_domain' => false,
+                        'required' => $reference->isMandatory(),
+                        'multiple' => $reference->isMultiple(),
+                        'expanded' => false,
+                        'choices' => $items,
+                        'choice_value' => 'id',
+                        'choice_label' => 'name',
+                        'placeholder' => $options['reference_placeholder']
+                ]);
+            }
+        });
     }
 
     /**
@@ -84,7 +113,9 @@ class ElementType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Element::class,
             'translation_domain' => 'element',
-            'new' => false
+            'new' => false,
+            'entity_manager' => null,
+            'reference_placeholder' => false
         ]);
     }
 }
