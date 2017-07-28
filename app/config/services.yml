@@ -16,21 +16,14 @@ services:
             AppBundle\Service\MenuBuilderInterface:
                 tags: [app.menu]
 
+    # makes classes in src/AppBundle available to be used as services
+    AppBundle\:
+        resource: '../../src/AppBundle/*'
+        exclude: '../../src/AppBundle/{Entity,Repository}'
+
     app.menu_builders_chain:
         class: AppBundle\Service\MenuBuilderChain
-
-    AppBundle\Service\CoreMenu: ~
-
-    AppBundle\Service\CoreData: ~
 
     AppBundle\Service\MailerService:
         autowire: false
         arguments: ["%notification.prefix%", "%notification.email_from%", "@mailer", "@translator"]
-
-    AppBundle\Listener\SecurityListener: ~
-
-    AppBundle\Listener\RequestListener: ~
-
-    AppBundle\Service\UserExtensionService: ~
-
-    AppBundle\Security\OrganizationVoter: ~
