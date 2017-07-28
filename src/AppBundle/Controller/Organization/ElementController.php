@@ -220,7 +220,7 @@ class ElementController extends Controller
                 }
             }
 
-            if ($data) {
+            if (!empty($data)) {
                 if ($reference->isMultiple()) {
                     $form->get('reference' . $reference->getTarget()->getId())->setData($data);
                 } else {
