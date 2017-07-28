@@ -187,7 +187,6 @@ class ElementController extends Controller
             $newElement
                 ->setParent($element)
                 ->setOrganization($organization)
-                ->setProfile($element->getProfile())
                 ->setFolder($request->get('_route') === 'organization_element_folder_new');
 
             $em->persist($newElement);
@@ -204,8 +203,6 @@ class ElementController extends Controller
             'entity_manager' => $em,
             'reference_placeholder' => $this->get('translator')->trans('form.none', [], 'element')
         ]);
-
-        $previousProfile = $element->getProfile();
 
         $labels = $element->getLabels();
 
@@ -238,26 +235,6 @@ class ElementController extends Controller
             try {
                 $em->flush();
 
-                if ($previousProfile !== $element->getProfile()) {
-                    $qb = $em->getRepository('AppBundle:Element')->childrenQueryBuilder($element)
-                        ->update()
-                        ->set('node.profile', ':new_profile')
-                        ->setParameter('new_profile', $element->getProfile());
-
-                    if ($previousProfile === null) {
-                        $qb
-                            ->andWhere('node.profile IS NULL');
-                    }
-                    else {
-                        $qb
-                            ->andWhere('node.profile = :old_profile')
-                            ->setParameter('old_profile', $previousProfile);
-                    }
-                    $qb
-                        ->resetDQLPart('orderBy')
-                        ->getQuery()
-                        ->execute();
-                }
                 /** @var Reference $reference */
                 foreach($element->getPathReferences() as $reference) {
                     $items = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($reference->getTarget())

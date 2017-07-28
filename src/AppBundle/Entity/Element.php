@@ -136,7 +136,7 @@ class Element
     private $managedBy;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Profile")
+     * @ORM\OneToOne(targetEntity="Profile", inversedBy="element")
      * @ORM\JoinColumn(onDelete="SET NULL", nullable=true)
      * @var Profile
      */
@@ -635,12 +635,11 @@ class Element
     {
         $element = $this;
         $name = '';
-        $profile = $this->getProfile();
 
         // mostrar nombre del elemento si no es el raiz
-        $first = $element->getParent() && $element->getParent()->getProfile() === $profile;
+        $first = $element->getProfile() === null;
 
-        while ($element && $element->getProfile() === $profile) {
+        while ($element && $element->getProfile() === null) {
             if ($first || $element->isIncluded() || !$element->isFolder()) {
                 $name = $element->getName() . ' ' . $name;
                 $first = false;
@@ -648,8 +647,11 @@ class Element
             $element = $element->getParent();
         }
 
-        $name = (string) $profile . ' ' . $name;
-        return trim($name);
+        if ($element && ($profile = $element->getProfile())) {
+            return trim((string) $profile . ' ' . $name);
+        }
+
+        return '';
     }
 
     /**

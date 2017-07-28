@@ -19,7 +19,7 @@
                         <label><input type="checkbox" name="elements[]" value="{{ element.id }}"{% if element.code %} disabled="disabled"{% else %} class="selectable"{% endif %}> {% if element.folder %}<i class="fa fa-folder" title="{{ 'table.folder'|trans }}"></i> {% endif %}<a href="{{ url }}">{{ element.name }}</a>{% if element.code %} <i class="fa fa-lock" title="{{ 'table.locked'|trans }}"></i>{% endif %}</label>
                     </td>
                     <td>
-                        {{ element.profile ? element.fullProfileName }}{% if element.managedBy %}{{ element.profile ? '. ' }}{{ 'table.managed_by'|trans({'%manager%': element.managedBy}) }}{% endif %}
+                        {{ element.fullProfileName }}{% if element.managedBy %}{{ element.profile ? '. ' }}{{ 'table.managed_by'|trans({'%manager%': element.managedBy}) }}{% endif %}
                         {% for label in element.labels %} <span class="label label-default">{{ label.name }}</span>{% endfor %}
                     </td>
                     <td>
