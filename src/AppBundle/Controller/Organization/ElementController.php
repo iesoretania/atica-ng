@@ -199,10 +199,7 @@ class ElementController extends Controller
             $title = $this->get('translator')->trans('title.edit', [], 'element');
         }
 
-        $form = $this->createForm(ElementType::class, $element, [
-            'entity_manager' => $em,
-            'reference_placeholder' => $this->get('translator')->trans('form.none', [], 'element')
-        ]);
+        $form = $this->createForm(ElementType::class, $element);
 
         $labels = $element->getLabels();
 

@@ -23,7 +23,8 @@ namespace AppBundle\Form\Type;
 use AppBundle\Entity\Element;
 use AppBundle\Entity\Profile;
 use AppBundle\Entity\Reference;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -32,9 +33,22 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ElementType extends AbstractType
 {
+    /** @var EntityManagerInterface */
+    private $entityManager;
+
+    /** @var TranslatorInterface */
+    private $translator;
+
+    public function __construct(EntityManagerInterface $entityManager, TranslatorInterface $translator)
+    {
+        $this->entityManager = $entityManager;
+        $this->translator = $translator;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -45,64 +59,74 @@ class ElementType extends AbstractType
                 'label' => 'form.name'
             ]);
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($options) {
-            $form = $event->getForm();
-            /** @var Element $data */
-            $data = $event->getData();
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'buildDynamicForm']);
+    }
 
-            if ($data->isFolder()) {
-                $form
-                    ->add('included', ChoiceType::class, [
-                        'label' => 'form.included',
-                        'expanded' => true,
-                        'choices' => [
-                            'form.included_false' => false,
-                            'form.included_true' => true
-                        ]
-                    ]);
-            }
+    public function buildDynamicForm(FormEvent $event) {
+        $form = $event->getForm();
+        /** @var Element $data */
+        $data = $event->getData();
+
+        if ($data->isFolder()) {
             $form
-                ->add('profile', EntityType::class, [
-                    'label' => 'form.profile',
-                    'class' => Profile::class,
-                    'required' => false,
-                    'placeholder' => 'form.none',
-                    'disabled' => $data->getCode() != ''
-                ])
-                ->add('description', TextareaType::class, [
-                    'label' => 'form.description',
-                    'required' => false
+                ->add('included', ChoiceType::class, [
+                    'label' => 'form.included',
+                    'expanded' => true,
+                    'choices' => [
+                        'form.included_false' => false,
+                        'form.included_true' => true
+                    ]
                 ]);
+        }
 
-            // referencias
-            /** @var EntityManager $em */
-            $em = $options['entity_manager'];
+        $form
+            ->add('profile', EntityType::class, [
+                'label' => 'form.profile',
+                'class' => Profile::class,
+                'required' => false,
+                'placeholder' => 'form.none',
+                'disabled' => $data->getCode() !== null,
+                'query_builder' => function(EntityRepository $entityRepository) use ($data) {
+                    return $entityRepository->createQueryBuilder('p')
+                        ->where('p.organization = :organization')
+                        ->setParameter('organization', $data->getOrganization())
+                        ->orderBy('p.nameNeutral');
+                },
+                'choice_attr' => function($val, $key, $index) use ($data) {
+                    /** @var Profile $val */
+                    return ['disabled' => $val->getElement() !== null && $val->getElement() !== $data];
+                }
+            ])
+            ->add('description', TextareaType::class, [
+                'label' => 'form.description',
+                'required' => false
+            ]);
 
-            $references = $data->getPathReferences();
+        // referencias
+        $references = $data->getPathReferences();
 
-            /** @var Reference $reference */
-            foreach($references as $reference) {
-                $items = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($reference->getTarget())
-                    ->andWhere('node.folder = false')
-                    ->getQuery()
-                    ->getResult();
+        /** @var Reference $reference */
+        foreach($references as $reference) {
+            $items = $this->entityManager->getRepository('AppBundle:Element')->getChildrenQueryBuilder($reference->getTarget())
+                ->andWhere('node.folder = false')
+                ->getQuery()
+                ->getResult();
 
-                $form
-                    ->add('reference' . $reference->getTarget()->getId(), ChoiceType::class, [
-                        'label' => $reference->getTarget()->getName(),
-                        'mapped' => false,
-                        'translation_domain' => false,
-                        'choice_translation_domain' => false,
-                        'required' => $reference->isMandatory(),
-                        'multiple' => $reference->isMultiple(),
-                        'expanded' => false,
-                        'choices' => $items,
-                        'choice_value' => 'id',
-                        'choice_label' => 'name',
-                        'placeholder' => $options['reference_placeholder']
+            $form
+                ->add('reference' . $reference->getTarget()->getId(), ChoiceType::class, [
+                    'label' => $reference->getTarget()->getName(),
+                    'mapped' => false,
+                    'translation_domain' => false,
+                    'choice_translation_domain' => false,
+                    'required' => $reference->isMandatory(),
+                    'multiple' => $reference->isMultiple(),
+                    'expanded' => false,
+                    'choices' => $items,
+                    'choice_value' => 'id',
+                    'choice_label' => 'name',
+                    'placeholder' => $this->translator->trans('form.none', [], 'element')
                 ]);
-            }
-        });
+        }
     }
 
     /**
@@ -112,10 +136,7 @@ class ElementType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Element::class,
-            'translation_domain' => 'element',
-            'new' => false,
-            'entity_manager' => null,
-            'reference_placeholder' => false
+            'translation_domain' => 'element'
         ]);
     }
 }
