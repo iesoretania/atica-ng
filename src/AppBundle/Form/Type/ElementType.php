@@ -106,14 +106,14 @@ class ElementType extends AbstractType
         $references = $data->getPathReferences();
 
         /** @var Reference $reference */
-        foreach($references as $reference) {
+        foreach ($references as $reference) {
             $items = $this->entityManager->getRepository('AppBundle:Element')->getChildrenQueryBuilder($reference->getTarget())
                 ->andWhere('node.folder = false')
                 ->getQuery()
                 ->getResult();
 
             $form
-                ->add('reference' . $reference->getTarget()->getId(), ChoiceType::class, [
+                ->add('reference'.$reference->getTarget()->getId(), ChoiceType::class, [
                     'label' => $reference->getTarget()->getName(),
                     'mapped' => false,
                     'translation_domain' => false,
