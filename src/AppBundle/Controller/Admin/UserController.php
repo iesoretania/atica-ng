@@ -38,7 +38,7 @@ use Symfony\Component\HttpFoundation\Request;
 class UserController extends Controller
 {
     /**
-     * @Route("/nuevo", name="admin_user_form_new"}, methods={"GET", "POST"})
+     * @Route("/nuevo", name="admin_user_form_new", methods={"GET", "POST"})
      * @Route("/{id}", name="admin_user_form_edit", requirements={"id" = "\d+"}, methods={"GET", "POST"})
      */
     public function indexAction(User $user = null, Request $request)

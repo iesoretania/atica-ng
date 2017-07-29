@@ -708,4 +708,38 @@ class User implements AdvancedUserInterface
     {
         return $this->managedOrganizations;
     }
+
+    /**
+     * Add element
+     *
+     * @param Element $element
+     *
+     * @return User
+     */
+    public function addElement(Element $element)
+    {
+        $this->elements[] = $element;
+
+        return $this;
+    }
+
+    /**
+     * Remove element
+     *
+     * @param Element $element
+     */
+    public function removeElement(Element $element)
+    {
+        $this->elements->removeElement($element);
+    }
+
+    /**
+     * Get elements
+     *
+     * @return Collection
+     */
+    public function getElements()
+    {
+        return $this->elements;
+    }
 }
