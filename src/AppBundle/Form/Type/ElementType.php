@@ -92,8 +92,7 @@ class ElementType extends AbstractType
                         ->setParameter('organization', $data->getOrganization())
                         ->orderBy('p.nameNeutral');
                 },
-                'choice_attr' => function($val, $key, $index) use ($data) {
-                    /** @var Profile $val */
+                'choice_attr' => function(Profile $val) use ($data) {
                     return ['disabled' => $val->getElement() !== null && $val->getElement() !== $data];
                 }
             ])
