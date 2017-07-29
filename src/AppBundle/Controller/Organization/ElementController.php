@@ -266,8 +266,8 @@ class ElementController extends Controller
                             }
                         }
                     }
-                    $em->flush();
                 }
+                $em->flush();
 
                 $this->addFlash('success', $this->get('translator')->trans('message.saved', [], 'element'));
                 return $this->redirectToRoute('organization_element_list', ['page' => 1, 'path' => $element->getParent()->getPath()]);
