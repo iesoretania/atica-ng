@@ -25,11 +25,14 @@ use AppBundle\Entity\ElementRepository;
 use AppBundle\Entity\Reference;
 use AppBundle\Form\Type\ElementType;
 use AppBundle\Security\OrganizationVoter;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\QueryBuilder;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -200,75 +203,15 @@ class ElementController extends Controller
         }
 
         $form = $this->createForm(ElementType::class, $element);
-
         $labels = $element->getLabels();
-
-        /** @var Reference $reference */
-        foreach($element->getPathReferences() as $reference) {
-            $data = [];
-            $items = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($reference->getTarget())
-                ->andWhere('node.folder = false')
-                ->getQuery()
-                ->getResult();
-
-            foreach($labels as $label) {
-                if (in_array($label, $items)) {
-                    $data[] = $label;
-                }
-            }
-
-            if (!empty($data)) {
-                if ($reference->isMultiple()) {
-                    $form->get('reference' . $reference->getTarget()->getId())->setData($data);
-                } else {
-                    $form->get('reference' . $reference->getTarget()->getId())->setData($data[0]);
-                }
-            }
-        }
+        $this->getElementReferences($element, $em, $labels, $form);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $em->flush();
-
-                /** @var Reference $reference */
-                foreach($element->getPathReferences() as $reference) {
-                    $items = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($reference->getTarget())
-                        ->andWhere('node.folder = false')
-                        ->getQuery()
-                        ->getResult();
-
-                    $data = $form
-                        ->get('reference' . $reference->getTarget()->getId())->getData();
-
-                    if (!is_array($data)) {
-                        $data = [$data];
-                    }
-
-                    foreach($items as $item) {
-                        $childItems = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($element)
-                            ->getQuery()
-                            ->getResult();
-
-                        if (in_array($item, $data)) {
-                            $element->addLabel($item);
-                            /** @var Element $child */
-                            foreach($childItems as $child) {
-                                $child->addLabel($item);
-                            }
-                        }
-                        else {
-                            $element->removeLabel($item);
-                            /** @var Element $child */
-                            foreach($childItems as $child) {
-                                $child->removeLabel($item);
-                            }
-                        }
-                    }
-                }
-                $em->flush();
-
+                $this->updateElementReferences($element, $em, $form);
                 $this->addFlash('success', $this->get('translator')->trans('message.saved', [], 'element'));
                 return $this->redirectToRoute('organization_element_list', ['page' => 1, 'path' => $element->getParent()->getPath()]);
             } catch (\Exception $e) {
@@ -331,5 +274,81 @@ class ElementController extends Controller
             $element = $elementRepository->findCurrentOneByOrganization($organization);
         }
         return $element;
+    }
+
+    /**
+     * @param Element $element
+     * @param ObjectManager $em
+     * @param Form $form
+     */
+    private function updateElementReferences($element, $em, $form)
+    {
+        /** @var Reference $reference */
+        foreach ($element->getPathReferences() as $reference) {
+            $items = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($reference->getTarget())
+                ->andWhere('node.folder = false')
+                ->getQuery()
+                ->getResult();
+
+            $data = $form
+                ->get('reference' . $reference->getTarget()->getId())->getData();
+
+            if (!is_array($data)) {
+                $data = [$data];
+            }
+
+            foreach ($items as $item) {
+                $childItems = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($element)
+                    ->getQuery()
+                    ->getResult();
+
+                if (in_array($item, $data)) {
+                    $element->addLabel($item);
+                    /** @var Element $child */
+                    foreach ($childItems as $child) {
+                        $child->addLabel($item);
+                    }
+                } else {
+                    $element->removeLabel($item);
+                    /** @var Element $child */
+                    foreach ($childItems as $child) {
+                        $child->removeLabel($item);
+                    }
+                }
+            }
+        }
+        $em->flush();
+    }
+
+    /**
+     * @param Element $element
+     * @param ObjectManager $em
+     * @param Collection $labels
+     * @param Form $form
+     */
+    private function getElementReferences($element, $em, $labels, $form)
+    {
+        /** @var Reference $reference */
+        foreach ($element->getPathReferences() as $reference) {
+            $data = [];
+            $items = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($reference->getTarget())
+                ->andWhere('node.folder = false')
+                ->getQuery()
+                ->getResult();
+
+            foreach ($labels as $label) {
+                if (in_array($label, $items)) {
+                    $data[] = $label;
+                }
+            }
+
+            if (!empty($data)) {
+                if ($reference->isMultiple()) {
+                    $form->get('reference' . $reference->getTarget()->getId())->setData($data);
+                } else {
+                    $form->get('reference' . $reference->getTarget()->getId())->setData($data[0]);
+                }
+            }
+        }
     }
 }
