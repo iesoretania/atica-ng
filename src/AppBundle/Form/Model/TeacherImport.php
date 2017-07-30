@@ -34,6 +34,11 @@ class TeacherImport
     /**
      * @var boolean
      */
+    private $externalPassword;
+
+    /**
+     * @var boolean
+     */
     private $generatePassword;
 
     /**
@@ -42,6 +47,7 @@ class TeacherImport
     public function __construct()
     {
         $this->generatePassword = false;
+        $this->externalPassword = true;
     }
 
     /**
@@ -78,6 +84,24 @@ class TeacherImport
     public function setGeneratePassword($generatePassword)
     {
         $this->generatePassword = $generatePassword;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExternalPassword()
+    {
+        return $this->externalPassword;
+    }
+
+    /**
+     * @param bool $externalPassword
+     * @return TeacherImport
+     */
+    public function setExternalPassword($externalPassword)
+    {
+        $this->externalPassword = $externalPassword;
         return $this;
     }
 }

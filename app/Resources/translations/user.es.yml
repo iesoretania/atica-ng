@@ -10,7 +10,9 @@ form.enabled: Acceso
 form.enabled.no: El acceso a la aplicación le está denegado
 form.enabled.yes: El acceso a la aplicación le está permitido
 form.global_administrator: El usuario puede administrar todos los centros
-
+form.external_check: Comprobación de contraseña
+form.external_check.yes: Se comprobará primero en Séneca, luego en local
+form.external_check.no: Sólo se comprobará en local
 
 form.save: Guardar cambios
 form.delete: Eliminar usuarios seleccionados

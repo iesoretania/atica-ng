@@ -2,9 +2,14 @@ title.teacher_import: Importación de profesorado
 title.import_result: Resultado de la importación
 
 form.file: "Fichero .CSV de Séneca"
+
+form.external_password: Habilitar contraseña de Séneca
+form.external_password.no: El docente tendrá una contraseña independiente de la de Séneca
+form.external_password.yes: Se intentará verificar la contraseña desde Séneca y, si falla, en local
+
 form.generate_password: Contraseña inicial del nuevo profesorado
-form.generate_password_false: No generar ninguna
-form.generate_password_true: Establecer por defecto en el usuario IdEA (aumenta el tiempo de importación)
+form.generate_password.no: No generar ninguna
+form.generate_password.yes: Establecer por defecto en el usuario IdEA (aumenta el tiempo de importación)
 
 form.submit: Importar
 

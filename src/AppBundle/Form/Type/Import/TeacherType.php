@@ -40,13 +40,22 @@ class TeacherType extends AbstractType
                 'label' => 'form.file',
                 'required' => true
             ])
+            ->add('externalPassword', ChoiceType::class, [
+                'label' => 'form.external_password',
+                'required' => true,
+                'expanded' => true,
+                'choices' => [
+                    'form.external_password.yes' => true,
+                    'form.external_password.no' => false
+                ]
+            ])
             ->add('generatePassword', ChoiceType::class, [
                 'label' => 'form.generate_password',
                 'required' => true,
                 'expanded' => true,
                 'choices' => [
-                    'form.generate_password_false' => false,
-                    'form.generate_password_true' => true
+                    'form.generate_password.no' => false,
+                    'form.generate_password.yes' => true
                 ]
             ]);
     }

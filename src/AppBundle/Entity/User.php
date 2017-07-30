@@ -146,6 +146,12 @@ class User implements AdvancedUserInterface
     private $elements;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $externalCheck;
+
+    /**
      * Convertir usuario en cadena
      */
     public function __toString()
@@ -161,6 +167,7 @@ class User implements AdvancedUserInterface
         $this->memberships = new \Doctrine\Common\Collections\ArrayCollection();
         $this->managedOrganizations = new \Doctrine\Common\Collections\ArrayCollection();
         $this->elements = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->externalCheck = false;
     }
 
     /**
@@ -741,5 +748,29 @@ class User implements AdvancedUserInterface
     public function getElements()
     {
         return $this->elements;
+    }
+
+    /**
+     * Set externalCheck
+     *
+     * @param boolean $externalCheck
+     *
+     * @return User
+     */
+    public function setExternalCheck($externalCheck)
+    {
+        $this->externalCheck = $externalCheck;
+
+        return $this;
+    }
+
+    /**
+     * Get externalCheck
+     *
+     * @return boolean
+     */
+    public function getExternalCheck()
+    {
+        return $this->externalCheck;
     }
 }

@@ -80,14 +80,23 @@ class UserType extends AbstractType
                     'required' => true,
                     'expanded' => true,
                     'choices' => [
-                        'form.enabled.yes' => 1,
-                        'form.enabled.no' => 0
+                        'form.enabled.yes' => true,
+                        'form.enabled.no' => false
                     ]
                 ])
                 ->add('globalAdministrator', null, [
                     'label' => 'form.global_administrator',
                     'required' => false,
                     'disabled' => $options['own']
+                ])
+                ->add('externalCheck', ChoiceType::class, [
+                    'label' => 'form.external_check',
+                    'required' => true,
+                    'expanded' => true,
+                    'choices' => [
+                        'form.external_check.yes' => true,
+                        'form.external_check.no' => false
+                    ]
                 ]);
         }
 
