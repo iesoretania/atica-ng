@@ -1,0 +1,31 @@
+title.teacher_import: Importación de profesorado
+title.import_result: Resultado de la importación
+
+form.file: "Fichero .CSV de Séneca"
+form.generate_password: Contraseña inicial del nuevo profesorado
+form.generate_password_false: No generar ninguna
+form.generate_password_true: Establecer por defecto en el usuario IdEA (aumenta el tiempo de importación)
+
+form.submit: Importar
+
+form.teacher_import: Importar profesorado
+form.again: Importar otro fichero
+form.back: Volver
+
+message.password_info: |
+  El profesorado nuevo ha sido incorporado con una contraseña generada automáticamente. Dicha contraseña
+  es su usuario IdEA. Recomendamos que sea cambiada lo antes posible para evitar problemas de accesos
+  no autorizados.
+
+message.import_ok: Importación realizada con éxito
+message.import_error: Ha ocurrido un error al realizar la importación
+
+report.stats: Estadísticas de la importación
+
+report.existing_teachers: Docentes ya existentes
+report.new_teachers: Docentes nuevos incorporados
+
+report.existing_memberships: Pertenencias ya existentes
+report.new_memberships: Pertenencias nuevas incorporadas
+
+report.welcome: Docentes nuevos dados de alta en la plataforma

@@ -99,6 +99,28 @@ class CoreMenu implements MenuBuilderInterface
                 ->setIcon('list-ul');
 
             $menu1->addChild($menu2);
+
+            $menu2 = new MenuItem();
+            $menu2
+                ->setName('organization_import')
+                ->setRouteName('organization_import')
+                ->setCaption('menu.organization.import')
+                ->setDescription('menu.organization.import.detail')
+                ->setColor('red')
+                ->setIcon('download');
+
+            $menu1->addChild($menu2);
+
+            $menu3 = new MenuItem();
+            $menu3
+                ->setName('organization_import')
+                ->setRouteName('organization_import_teacher_form')
+                ->setCaption('menu.organization.import.teacher')
+                ->setDescription('menu.organization.import.teacher.detail')
+                ->setColor('blue')
+                ->setIcon('graduation-cap');
+
+            $menu2->addChild($menu3);
         }
 
         $menu = new MenuItem();

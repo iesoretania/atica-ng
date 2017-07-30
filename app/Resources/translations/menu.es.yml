@@ -15,6 +15,12 @@ menu.organization.detail: Administrar el centro educativo
 menu.organization.element: Elementos
 menu.organization.element.detail: Administrar los elementos que definen el centro educativo
 
+menu.organization.import: Importar
+menu.organization.import.detail: Importar datos desde Séneca
+
+menu.organization.import.teacher: Profesorado
+menu.organization.import.teacher.detail: Importar profesorado desde Séneca
+
 menu.personal_data: Datos personales
 menu.personal_data.detail: Modificar los datos personales
 
