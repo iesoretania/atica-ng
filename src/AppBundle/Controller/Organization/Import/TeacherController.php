@@ -145,8 +145,7 @@ class TeacherController extends Controller
                     $membership = $em->getRepository('AppBundle:Membership')->findOneBy([
                         'organization' => $organization,
                         'user' => $user,
-                        'validFrom' => $validFrom,
-                        'validUntil' => $validUntil
+                        'validFrom' => $validFrom
                     ]);
 
                     if (null === $membership) {
@@ -162,6 +161,9 @@ class TeacherController extends Controller
                         $newMemberships++;
                     }
                     else {
+                        $membership
+                            ->setValidUntil($validUntil);
+
                         $existingMemberships++;
                     }
                 }

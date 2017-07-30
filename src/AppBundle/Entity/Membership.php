@@ -78,7 +78,7 @@ class Membership
      *
      * @return Membership
      */
-    public function setValidFrom($validFrom)
+    public function setValidFrom(\DateTime $validFrom)
     {
         $this->validFrom = $validFrom;
 
@@ -98,11 +98,11 @@ class Membership
     /**
      * Set validUntil
      *
-     * @param \DateTime $validUntil
+     * @param \DateTime|null $validUntil
      *
      * @return Membership
      */
-    public function setValidUntil($validUntil)
+    public function setValidUntil(\DateTime $validUntil = null)
     {
         $this->validUntil = $validUntil;
 
