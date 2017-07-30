@@ -91,3 +91,10 @@ swiftmailer:
     username: '%mailer_user%'
     password: '%mailer_password%'
     spool: { type: memory }
+
+intriro_csv:
+    importers:
+        seneca:
+            to_charset: UTF-8
+            from_charset: ISO-8859-1
+

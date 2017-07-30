@@ -26,10 +26,9 @@ use AppBundle\Entity\User;
 use AppBundle\Form\Model\TeacherImport;
 use AppBundle\Form\Type\Import\TeacherType;
 use AppBundle\Security\OrganizationVoter;
-use AppBundle\Utils\CsvImporter;
+use Goodby\CSV\Import\Standard\Interpreter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Request;
 
 class TeacherController extends Controller
@@ -79,100 +78,102 @@ class TeacherController extends Controller
      */
     private function importTeachersFromCsv($file, Organization $organization, $generatePassword = false)
     {
-        $newUserCount = 0;
+        $newUsers = 0;
         $newMemberships = 0;
         $existingUsers = 0;
         $existingMemberships = 0;
+        $first = true;
 
-        $em = $this->getDoctrine()->getManager();
-
-        $importer = new CsvImporter($file, true);
-        $encoder = $this->container->get('security.password_encoder');
+        $importer = $this->get('intriro_csv.importer.seneca');
 
         $userCollection = [];
         $newUserCollection = [];
 
-        try {
-            while ($data = $importer->get(100)) {
-                foreach ($data as $userData) {
-                    if (!isset($userData['Usuario IdEA'])) {
-                        return null;
-                    }
-                    $userName = $userData['Usuario IdEA'];
+        $interpreter = new Interpreter();
 
-                    $user = $em->getRepository('AppBundle:User')->findOneBy(['loginUsername' => $userName]);
-                    $alreadyProcessed = isset($userCollection[$userName]);
+        $interpreter->addObserver(function($userData) use ($organization, $generatePassword, &$first, &$userCollection, &$newUserCollection, &$newUsers, &$newMemberships, &$existingUsers, &$existingMemberships) {
 
-                    if (null === $user) {
-                        if ($alreadyProcessed) {
-                            $user = $userCollection[$userName];
-                        } else {
-                            $user = new User();
-                            $fullName = explode(', ', $userData['Empleado/a']);
+            if ($first) {
+                $first = false;
+                return null;
+            }
 
-                            $user
-                                ->setLoginUsername($userName)
-                                ->setFirstName($fullName[1])
-                                ->setLastName($fullName[0])
-                                ->setEnabled(true)
-                                ->setGlobalAdministrator(false)
-                                ->setGender(User::GENDER_NEUTRAL);
+            $encoder = $this->container->get('security.password_encoder');
+            $em = $this->getDoctrine()->getManager();
 
-                            if ($generatePassword) {
-                                $user
-                                    ->setPassword($encoder->encodePassword($user, $userData['Usuario IdEA']));
-                            }
+            $userName = $userData[5];
 
-                            $em->persist($user);
+            $user = $em->getRepository('AppBundle:User')->findOneBy(['loginUsername' => $userName]);
+            $alreadyProcessed = isset($userCollection[$userName]);
 
-                            $userCollection[$userName] = $user;
-                            $newUserCollection[$userName] = $user;
+            if (null === $user) {
+                if ($alreadyProcessed) {
+                    $user = $userCollection[$userName];
+                } else {
+                    $user = new User();
+                    $fullName = explode(', ', $userData[0]);
 
-                            $newUserCount++;
-                        }
-                    }
-                    else {
-                        if (!$alreadyProcessed) {
-                            $existingUsers++;
-                            $userCollection[$userName] = $user;
-                        }
+                    $user
+                        ->setLoginUsername($userName)
+                        ->setFirstName($fullName[1])
+                        ->setLastName($fullName[0])
+                        ->setEnabled(true)
+                        ->setGlobalAdministrator(false)
+                        ->setGender(User::GENDER_NEUTRAL);
+
+                    if ($generatePassword) {
+                        $user
+                            ->setPassword($encoder->encodePassword($user, $userData[5]));
                     }
 
-                    $validFrom = \DateTime::createFromFormat('d/m/Y H:i:s', $userData['Fecha de toma de posesión'] . '00:00:00');
-                    $validUntil = ($userData['Fecha de cese']) ? \DateTime::createFromFormat('d/m/Y H:i:s', $userData['Fecha de cese'] . '23:59:59') : null;
+                    $em->persist($user);
 
-                    $membership = $em->getRepository('AppBundle:Membership')->findOneBy([
-                        'organization' => $organization,
-                        'user' => $user,
-                        'validFrom' => $validFrom,
-                        'validUntil' => $validUntil
-                    ]);
+                    $userCollection[$userName] = $user;
+                    $newUserCollection[$userName] = $user;
 
-                    if (null === $membership) {
-                        $membership = new Membership();
-                        $membership
-                            ->setOrganization($organization)
-                            ->setUser($user)
-                            ->setValidFrom($validFrom)
-                            ->setValidUntil($validUntil);
-
-                        $em->persist($membership);
-
-                        $newMemberships++;
-                    }
-                    else {
-                        $existingMemberships++;
-                    }
+                    $newUsers++;
                 }
             }
-            $em->flush();
-        }
-        catch(Exception $e) {
-            return null;
-        }
+            else {
+                if (!$alreadyProcessed) {
+                    $existingUsers++;
+                    $userCollection[$userName] = $user;
+                }
+            }
+
+            $validFrom = \DateTime::createFromFormat('d/m/Y H:i:s', $userData[3] . '00:00:00');
+            $validUntil = ($userData[4]) ? \DateTime::createFromFormat('d/m/Y H:i:s', $userData[4] . '23:59:59') : null;
+
+            $membership = $em->getRepository('AppBundle:Membership')->findOneBy([
+                'organization' => $organization,
+                'user' => $user,
+                'validFrom' => $validFrom,
+                'validUntil' => $validUntil
+            ]);
+
+            if (null === $membership) {
+                $membership = new Membership();
+                $membership
+                    ->setOrganization($organization)
+                    ->setUser($user)
+                    ->setValidFrom($validFrom)
+                    ->setValidUntil($validUntil);
+
+                $em->persist($membership);
+
+                $newMemberships++;
+            }
+            else {
+                $existingMemberships++;
+            }
+        });
+
+        $importer->parse($file, $interpreter);
+
+        $this->getDoctrine()->getManager()->flush();
 
         return [
-            'new_user_count' => $newUserCount,
+            'new_user_count' => $newUsers,
             'new_membership_count' => $newMemberships,
             'existing_user_count' => $existingUsers,
             'existing_membership_count' => $existingMemberships,
