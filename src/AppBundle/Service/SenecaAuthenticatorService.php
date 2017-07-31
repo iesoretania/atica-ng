@@ -20,16 +20,22 @@
 
 namespace AppBundle\Service;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 class SenecaAuthenticatorService
 {
-    /** @var ContainerInterface */
-    private $container;
+    /** @var string */
+    private $url;
 
-    public function __construct(ContainerInterface $container)
+    /** @var boolean */
+    private $forceSecurity;
+
+    /** @var boolean */
+    private $enabled;
+
+    public function __construct($url, $forceSecurity, $enabled)
     {
-        $this->container = $container;
+        $this->url = $url;
+        $this->forceSecurity = $forceSecurity;
+        $this->enabled = $enabled;
     }
 
     /**
@@ -40,17 +46,12 @@ class SenecaAuthenticatorService
     public function checkUserCredentials($user, $password)
     {
         // devolver error si no está habilitado
-        if (false === (bool) $this->container->getParameter('external.enabled')) {
+        if (false === $this->enabled) {
             return null;
         }
 
-        // obtener URL de los parámetros
-        $url = $this->container->getParameter('external.url');
-
-        // ¿forzar comprobación del certificado?
-        $forceSecurity = (boolean) $this->container->getParameter('external.url.force_security');
-
-        $str = $this->getUrl($url, $forceSecurity);
+        // obtener URL de entrada
+        $str = $this->getUrl($this->url, $this->forceSecurity);
         if (!$str) {
             return null;
         }
@@ -66,6 +67,7 @@ class SenecaAuthenticatorService
             return null;
         }
 
+        // enviar datos del formulario
         $postUrl = $form->getAttribute('action');
         $hiddenValue = $hidden->getAttribute('value');
 
@@ -75,7 +77,7 @@ class SenecaAuthenticatorService
             'N_V_' => urlencode($hiddenValue)
         );
 
-        $str = $this->postToUrl($fields, $postUrl, $url, $forceSecurity);
+        $str = $this->postToUrl($fields, $postUrl, $this->url, $this->forceSecurity);
 
         if (!$str) {
             return null;
