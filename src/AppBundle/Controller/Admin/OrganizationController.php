@@ -65,20 +65,10 @@ class OrganizationController extends Controller
             }
         }
 
-        $title = $this->get('translator')->trans($organization->getId() ? 'title.edit' : 'title.new', [], 'organization');
-
-        $breadcrumb = [];
-
-        if ($organization->getId()) {
-            $breadcrumb[] = ['fixed' => (string) $organization];
-        } else {
-            $breadcrumb[] = ['fixed' => $this->get('translator')->trans('title.new', [], 'organization')];
-        }
-
         return $this->render('admin/organization/form.html.twig', [
             'menu_path' => 'admin_organization_list',
-            'breadcrumb' => $breadcrumb,
-            'title' => $title,
+            'breadcrumb' => [['fixed' => $organization->getId() ? (string) $organization : $this->get('translator')->trans('title.new', [], 'organization')]],
+            'title' => $this->get('translator')->trans($organization->getId() ? 'title.edit' : 'title.new', [], 'organization'),
             'form' => $form->createView(),
             'user' => $organization
         ]);
@@ -178,13 +168,10 @@ class OrganizationController extends Controller
             return $this->redirectToRoute('admin_organization_list');
         }
 
-        $title = $this->get('translator')->trans('title.delete', [], 'organization');
-        $breadcrumb = [['fixed' => $this->get('translator')->trans('title.delete', [], 'organization')]];
-
         return $this->render('admin/organization/delete.html.twig', [
             'menu_path' => 'admin_organization_list',
-            'breadcrumb' => $breadcrumb,
-            'title' => $title,
+            'breadcrumb' => [['fixed' => $this->get('translator')->trans('title.delete', [], 'organization')]],
+            'title' => $this->get('translator')->trans('title.delete', [], 'organization'),
             'organizations' => $organizations
         ]);
     }

@@ -38,10 +38,6 @@ class PersonalDataController extends Controller
         /** @var User $user */
         $user = $this->getUser();
 
-        if (null === $user) {
-            return $this->redirectToRoute('frontpage');
-        }
-
         $form = $this->createForm(UserType::class, $user, [
             'own' => true,
             'admin' => $user->isGlobalAdministrator()
@@ -53,14 +49,12 @@ class PersonalDataController extends Controller
             $translator = $this->get('translator');
 
             // Si es solicitado, cambiar la contraseña
-            $passwordSubmit = $form->get('changePassword');
-            if (($passwordSubmit instanceof SubmitButton) && $passwordSubmit->isClicked()) {
+            $passwordSubmitted = ($form->get('changePassword') instanceof SubmitButton) && $form->get('changePassword')->isClicked();
+            if ($passwordSubmitted) {
                 $user->setPassword($this->get('security.password_encoder')
                     ->encodePassword($user, $form->get('newPassword')->get('first')->getData()));
-                $message = $this->get('translator')->trans('message.password_changed', [], 'user');
-            } else {
-                $message = $this->get('translator')->trans('message.saved', [], 'user');
             }
+            $message = $this->get('translator')->trans($passwordSubmitted ? 'message.password_changed' : 'message.saved', [], 'user');
 
             try {
                 $this->getDoctrine()->getManager()->flush();

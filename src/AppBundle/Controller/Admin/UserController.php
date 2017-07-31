@@ -192,13 +192,10 @@ class UserController extends Controller
             return $this->redirectToRoute('admin_user_list');
         }
 
-        $title = $this->get('translator')->trans('title.delete', [], 'user');
-        $breadcrumb = [['fixed' => $this->get('translator')->trans('title.delete', [], 'user')]];
-
         return $this->render('admin/user/delete.html.twig', [
             'menu_path' => 'admin_user_list',
-            'breadcrumb' => $breadcrumb,
-            'title' => $title,
+            'breadcrumb' => [['fixed' => $this->get('translator')->trans('title.delete', [], 'user')]],
+            'title' => $this->get('translator')->trans('title.delete', [], 'user'),
             'users' => $users
         ]);
     }
