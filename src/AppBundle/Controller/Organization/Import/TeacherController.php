@@ -141,6 +141,10 @@ class TeacherController extends Controller
                     $validFrom = \DateTime::createFromFormat('d/m/Y H:i:s', $userData['Fecha de toma de posesión'].'00:00:00');
                     $validUntil = ($userData['Fecha de cese']) ? \DateTime::createFromFormat('d/m/Y H:i:s', $userData['Fecha de cese'].'23:59:59') : null;
 
+                    if (false === $validFrom) {
+                        continue;
+                    }
+
                     $membership = $em->getRepository('AppBundle:Membership')->findOneBy([
                         'organization' => $organization,
                         'user' => $user,
