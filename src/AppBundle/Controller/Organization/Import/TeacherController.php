@@ -51,7 +51,10 @@ class TeacherController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $stats = $this->importTeachersFromCsv($formData->getFile()->getPathname(), $organization, $formData->getGeneratePassword());
+            $stats = $this->importTeachersFromCsv($formData->getFile()->getPathname(), $organization, [
+                'generate_password' => $formData->getGeneratePassword(),
+                'external_check' => $formData->isExternalPassword()
+            ]);
 
             if (null !== $stats) {
                 $this->addFlash('success', $this->get('translator')->trans('message.import_ok', [], 'import'));
@@ -74,11 +77,13 @@ class TeacherController extends Controller
     /**
      * @param string $file
      * @param Organization $organization
-     * @param bool $generatePassword
+     * @param array $options
      * @return array|null
      */
-    private function importTeachersFromCsv($file, Organization $organization, $generatePassword = false)
+    private function importTeachersFromCsv($file, Organization $organization, $options = [])
     {
+        $generatePassword = isset($options['generate_password']) && $options['generate_password'];
+        $external = isset($options['external_check']) && $options['external_check'];
         $newUserCount = 0;
         $newMemberships = 0;
         $existingUsers = 0;
@@ -117,7 +122,7 @@ class TeacherController extends Controller
                                 ->setEnabled(true)
                                 ->setGlobalAdministrator(false)
                                 ->setGender(User::GENDER_NEUTRAL)
-                                ->setExternalCheck(true);
+                                ->setExternalCheck($external);
 
                             if ($generatePassword) {
                                 $user
