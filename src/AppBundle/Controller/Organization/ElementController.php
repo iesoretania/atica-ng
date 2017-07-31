@@ -291,7 +291,7 @@ class ElementController extends Controller
                 ->getResult();
 
             $data = $form
-                ->get('reference' . $reference->getTarget()->getId())->getData();
+                ->get('reference'.$reference->getTarget()->getId())->getData();
 
             if (!is_array($data)) {
                 $data = [$data];
@@ -344,9 +344,9 @@ class ElementController extends Controller
 
             if (!empty($data)) {
                 if ($reference->isMultiple()) {
-                    $form->get('reference' . $reference->getTarget()->getId())->setData($data);
+                    $form->get('reference'.$reference->getTarget()->getId())->setData($data);
                 } else {
-                    $form->get('reference' . $reference->getTarget()->getId())->setData($data[0]);
+                    $form->get('reference'.$reference->getTarget()->getId())->setData($data[0]);
                 }
             }
         }

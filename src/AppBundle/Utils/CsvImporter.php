@@ -31,7 +31,7 @@ class CsvImporter
     private $delimiter;
     private $length;
 
-    public function __construct($fileName, $parseHeader=true, $delimiter=",", $length=0)
+    public function __construct($fileName, $parseHeader = true, $delimiter = ",", $length = 0)
     {
         $this->fp = fopen($fileName, 'rb');
         $this->parse_header = $parseHeader;
@@ -40,7 +40,7 @@ class CsvImporter
 
         if ($this->parse_header) {
             $this->header = fgetcsv($this->fp, $this->length, $this->delimiter);
-            foreach($this->header as $key => $data) {
+            foreach ($this->header as $key => $data) {
                 $this->header[$key] = iconv('ISO-8859-1', 'UTF-8', $data);
             }
         }
@@ -54,7 +54,7 @@ class CsvImporter
         }
     }
 
-    public function get($max_lines=0)
+    public function get($max_lines = 0)
     {
         //if $max_lines is set to 0, then get all the data
 
@@ -62,14 +62,13 @@ class CsvImporter
 
         if ($max_lines > 0) {
             $line_count = 0;
-        }
-        else {
+        } else {
             $line_count = -1; // so loop limit is ignored
         }
 
         while ($line_count < $max_lines && ($row = fgetcsv($this->fp, $this->length, $this->delimiter)) !== FALSE)
         {
-            foreach($row as $key => $key_data) {
+            foreach ($row as $key => $key_data) {
                 $row[$key] = iconv('ISO-8859-1', 'UTF-8', $key_data);
             }
 
@@ -80,8 +79,7 @@ class CsvImporter
                 }
 
                 $data[] = $row_new;
-            }
-            else {
+            } else {
                 $data[] = $row;
             }
 

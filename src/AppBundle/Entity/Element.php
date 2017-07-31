@@ -641,14 +641,14 @@ class Element
 
         while ($element && $element->getProfile() === null) {
             if ($first || $element->isIncluded() || !$element->isFolder()) {
-                $name = $element->getName() . ' ' . $name;
+                $name = $element->getName().' '.$name;
                 $first = false;
             }
             $element = $element->getParent();
         }
 
         if ($element && ($profile = $element->getProfile())) {
-            return trim((string) $profile . ' ' . $name);
+            return trim((string) $profile.' '.$name);
         }
 
         return '';
@@ -666,7 +666,7 @@ class Element
         while ($element) {
             $references = $element->getReferences();
 
-            foreach($references as $reference) {
+            foreach ($references as $reference) {
                 $result->add($reference);
             }
 

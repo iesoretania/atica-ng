@@ -129,7 +129,7 @@ class SenecaAuthenticatorService
     {
         $fieldsString = '';
         foreach ($fields as $key => $value) {
-            $fieldsString .= $key . '=' . $value . '&';
+            $fieldsString .= $key.'='.$value.'&';
         }
         $fieldsString = rtrim($fieldsString, '&');
 

@@ -96,8 +96,7 @@ class FormAuthenticator extends AbstractGuardAuthenticator
     {
         try {
             return $userProvider->loadUserByUsername($credentials['username']);
-        }
-        catch (UsernameNotFoundException $e) {
+        } catch (UsernameNotFoundException $e) {
             throw new BadCredentialsException();
         }
     }

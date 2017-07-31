@@ -72,7 +72,7 @@ class TeacherController extends Controller
     }
 
     /**
-     * @param $file
+     * @param string $file
      * @param Organization $organization
      * @param bool $generatePassword
      * @return array|null
@@ -131,16 +131,15 @@ class TeacherController extends Controller
 
                             $newUserCount++;
                         }
-                    }
-                    else {
+                    } else {
                         if (!$alreadyProcessed) {
                             $existingUsers++;
                             $userCollection[$userName] = $user;
                         }
                     }
 
-                    $validFrom = \DateTime::createFromFormat('d/m/Y H:i:s', $userData['Fecha de toma de posesión'] . '00:00:00');
-                    $validUntil = ($userData['Fecha de cese']) ? \DateTime::createFromFormat('d/m/Y H:i:s', $userData['Fecha de cese'] . '23:59:59') : null;
+                    $validFrom = \DateTime::createFromFormat('d/m/Y H:i:s', $userData['Fecha de toma de posesión'].'00:00:00');
+                    $validUntil = ($userData['Fecha de cese']) ? \DateTime::createFromFormat('d/m/Y H:i:s', $userData['Fecha de cese'].'23:59:59') : null;
 
                     $membership = $em->getRepository('AppBundle:Membership')->findOneBy([
                         'organization' => $organization,
@@ -159,8 +158,7 @@ class TeacherController extends Controller
                         $em->persist($membership);
 
                         $newMemberships++;
-                    }
-                    else {
+                    } else {
                         $membership
                             ->setValidUntil($validUntil);
 
@@ -169,8 +167,7 @@ class TeacherController extends Controller
                 }
             }
             $em->flush();
-        }
-        catch(Exception $e) {
+        } catch (Exception $e) {
             return null;
         }
 

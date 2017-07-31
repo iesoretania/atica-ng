@@ -59,7 +59,6 @@ class TeacherImport
     }
 
     /**
-     * @param UploadedFile $fichero
      *
      * @return TeacherImport
      */
