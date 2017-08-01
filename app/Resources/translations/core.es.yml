@@ -1,8 +1,9 @@
 
 list.management: Equipo directivo
 list.other: Otros puestos
-list.department: Departamento
-list.group: Unidad
+list.department: Departamentos
+list.unit: Unidades
+list.subject: Asignaturas
 list.evaluation: Evaluación
 
 profile.department_neutral: Jefe/a de Departamento
@@ -14,3 +15,8 @@ profile.unit_neutral: Tutor/a
 profile.unit_male: Tutor
 profile.unit_female: Tutora
 profile.unit_initials: TUT
+
+profile.subject_neutral: Profesor/a
+profile.subject_male: Profesor
+profile.subject_female: Profesora
+profile.subject_initials: PROF

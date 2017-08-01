@@ -43,6 +43,7 @@ class CoreData
             ['management', false],
             ['department', true],
             ['unit', true],
+            ['subject', true],
             ['other', false],
             ['evaluation', false]
         ];
