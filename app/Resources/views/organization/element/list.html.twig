@@ -6,8 +6,9 @@
 {% block path_list %}{{ app.request.uri }}{% endblock %}
 {% block more_actions %}<a href="{{ path('organization_element_folder_new', {'path': current.path}) }}" class="btn btn-success"><i class="fa fa-folder-open"></i> {{ 'table.new_category'|trans }}</a>{% endblock %}
 {% block table_header %}
-    <th class="col-sm-3"><label><input type="checkbox" id="select"> {{ 'header.name'|trans }}</label></th>
-    <th class="col-sm-7">{{ 'header.profiles'|trans }}</th>
+    <th class="col-sm-2"><label><input type="checkbox" id="select"> {{ 'header.name'|trans }}</label></th>
+    <th class="col-sm-5">{{ 'header.profiles'|trans }}</th>
+    <th class="col-sm-3">{{ 'header.users'|trans }}</th>
     <th class="col-sm-2"></th>
 {% endblock %}
 
@@ -21,6 +22,9 @@
                     <td>
                         {{ element.fullProfileName }}{% if element.managedBy %}{{ element.profile ? '. ' }}{{ 'table.managed_by'|trans({'%manager%': element.managedBy}) }}{% endif %}
                         {% for label in element.labels %} <span class="label label-default">{{ label.name }}</span>{% endfor %}
+                    </td>
+                    <td>
+                        {{ element.users|join(', ') }}
                     </td>
                     <td>
                         {% if not loop.first %}<button type="submit" class="btn btn-link btn-xs" name="up" value="{{ element.id }}" title="{{ 'table.move_up'|trans }}"><i class="fa fa-arrow-up"></i></button>{% endif %}
