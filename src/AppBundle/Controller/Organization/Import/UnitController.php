@@ -101,8 +101,7 @@ class UnitController extends Controller
 
                     if (isset($unitCollection[$unitName])) {
                         $unit = $unitCollection[$unitName];
-                    }
-                    else {
+                    } else {
                         $unit = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($base)
                             ->andWhere('node.name = :unit')
                             ->setParameter('unit', $unitName)
@@ -127,11 +126,15 @@ class UnitController extends Controller
 
                     preg_match_all('/\b(.*) \(.*\)/U', $userData['Tutor/a'], $matches, PREG_SET_ORDER, 0);
 
-                    foreach($matches as $tutor) {
-                        /** @var User|null $user */
-                        $user = $em->getRepository('AppBundle:User')->findOneByOrganizationAndFullName($organization, $tutor[1]);
-                        if ($user) {
-                            $user->addElement($unit);
+                    $unit->getUsers()->clear();
+
+                    if (null !== $matches) {
+                        foreach ($matches as $tutor) {
+                            /** @var User|null $user */
+                            $user = $em->getRepository('AppBundle:User')->findOneByOrganizationAndFullName($organization, $tutor[1], new \DateTime());
+                            if ($user) {
+                                $unit->addUser($user);
+                            }
                         }
                     }
                 }

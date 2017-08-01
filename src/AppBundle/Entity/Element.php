@@ -143,7 +143,7 @@ class Element
     private $profile;
 
     /**
-     * @ORM\ManyToMany(targetEntity="User", mappedBy="elements")
+     * @ORM\ManyToMany(targetEntity="User", inversedBy="elements")
      * @var Collection
      */
     private $users;
@@ -603,7 +603,10 @@ class Element
      */
     public function addUser(User $user)
     {
-        $this->users[] = $user;
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->addElement($this);
+        }
 
         return $this;
     }

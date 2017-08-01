@@ -68,7 +68,7 @@ class UserRepository extends EntityRepository implements UserLoaderInterface
 
     /**
      * @param Organization $organization
-     * @param null $date
+     * @param \DateTime|null $date
      * @return array
      */
     public function findByOrganizationAndDate(Organization $organization, $date = null)
@@ -92,10 +92,11 @@ class UserRepository extends EntityRepository implements UserLoaderInterface
 
     /**
      * @param Organization $organization
-     * @param $fullName
+     * @param string $fullName
+     * @param \DateTime|null $fullName
      * @return User|null
      */
-    public function findOneByOrganizationAndFullName(Organization $organization, $fullName)
+    public function findOneByOrganizationAndFullName(Organization $organization, $fullName, $date = null)
     {
         $item = explode(', ', $fullName);
 
@@ -105,7 +106,7 @@ class UserRepository extends EntityRepository implements UserLoaderInterface
             ->andWhere('u IN (:users)')
             ->setParameter('firstName', $item[1])
             ->setParameter('lastName', $item[0])
-            ->setParameter('users', $this->findByOrganizationAndDate($organization, new \DateTime()))
+            ->setParameter('users', $this->findByOrganizationAndDate($organization, $date))
             ->getQuery()
             ->getOneOrNullResult();
     }

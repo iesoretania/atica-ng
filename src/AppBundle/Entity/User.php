@@ -140,7 +140,7 @@ class User implements AdvancedUserInterface
     protected $defaultOrganization;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Element", inversedBy="users")
+     * @ORM\ManyToMany(targetEntity="Element", mappedBy="users")
      * @var Collection
      */
     private $elements;
