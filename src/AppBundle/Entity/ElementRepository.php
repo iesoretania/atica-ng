@@ -67,4 +67,24 @@ class ElementRepository extends NestedTreeRepository
 
         return $current;
     }
+
+    /**
+     * @param Organization $organization
+     * @param string $code
+     * @return null|object
+     */
+    public function findOneByOrganizationAndCurrentCode(Organization $organization, $code)
+    {
+        $item = $this->findCurrentOneByOrganization($organization);
+
+        if (null === $item) {
+            return null;
+        }
+
+        return $this->getChildrenQueryBuilder($item)
+            ->andWhere('node.code = :code')
+            ->setParameter('code', $code)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

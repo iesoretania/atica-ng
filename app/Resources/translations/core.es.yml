@@ -10,7 +10,7 @@ profile.department_male: Jefe de Departamento
 profile.department_female: Jefa de Departamento
 profile.department_initials: JD
 
-profile.group_neutral: Tutor/a
-profile.group_male: Tutor
-profile.group_female: Tutora
-profile.group_initials: TUT
+profile.unit_neutral: Tutor/a
+profile.unit_male: Tutor
+profile.unit_female: Tutora
+profile.unit_initials: TUT

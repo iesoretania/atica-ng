@@ -725,7 +725,10 @@ class User implements AdvancedUserInterface
      */
     public function addElement(Element $element)
     {
-        $this->elements[] = $element;
+        if (!$this->elements->contains($element)) {
+            $this->elements[] = $element;
+            $element->addUser($this);
+        }
 
         return $this;
     }
@@ -737,7 +740,10 @@ class User implements AdvancedUserInterface
      */
     public function removeElement(Element $element)
     {
-        $this->elements->removeElement($element);
+        if ($this->elements->contains($element)) {
+            $this->elements->removeElement($element);
+            $element->getUsers()->removeElement($this);
+        }
     }
 
     /**

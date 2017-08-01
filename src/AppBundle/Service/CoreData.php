@@ -42,7 +42,7 @@ class CoreData
         $data = [
             ['management', false],
             ['department', true],
-            ['group', true],
+            ['unit', true],
             ['other', false],
             ['evaluation', false]
         ];

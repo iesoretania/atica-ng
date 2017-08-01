@@ -615,7 +615,10 @@ class Element
      */
     public function removeUser(User $user)
     {
-        $this->users->removeElement($user);
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
+            $user->getElements()->removeElement($this);
+        }
     }
 
     /**

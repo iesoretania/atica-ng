@@ -121,6 +121,17 @@ class CoreMenu implements MenuBuilderInterface
                 ->setIcon('graduation-cap');
 
             $menu2->addChild($menu3);
+
+            $menu3 = new MenuItem();
+            $menu3
+                ->setName('unit_import')
+                ->setRouteName('organization_import_unit_form')
+                ->setCaption('menu.organization.import.unit')
+                ->setDescription('menu.organization.import.unit.detail')
+                ->setColor('green')
+                ->setIcon('group');
+
+            $menu2->addChild($menu3);
         }
 
         $menu = new MenuItem();

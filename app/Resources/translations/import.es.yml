@@ -1,4 +1,5 @@
 title.teacher_import: Importación de profesorado
+title.unit_import: Importación de unidades
 title.import_result: Resultado de la importación
 
 form.file: "Fichero .CSV de Séneca"
@@ -11,9 +12,14 @@ form.generate_password: Contraseña inicial del nuevo profesorado
 form.generate_password.no: No generar ninguna
 form.generate_password.yes: Establecer por defecto en el usuario IdEA (aumenta el tiempo de importación)
 
+form.remove_existing: Eliminar no incluidos en el fichero
+form.remove_existing.no: Mantener los elementos no incluidos
+form.remove_existing.yes: Eliminar aquellos elementos no incluidos y que no estén asociados
+
 form.submit: Importar
 
 form.teacher_import: Importar profesorado
+form.unit_import: Importar unidades
 form.again: Importar otro fichero
 form.back: Volver
 
@@ -33,4 +39,8 @@ report.new_teachers: Docentes nuevos incorporados
 report.existing_memberships: Pertenencias ya existentes
 report.new_memberships: Pertenencias nuevas incorporadas
 
+report.existing_units: Unidades previamente existentes
+report.new_units: Nuevas unidades
+
 report.welcome: Docentes nuevos dados de alta en la plataforma
+report.units: Unidades resultantes

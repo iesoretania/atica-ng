@@ -50,11 +50,63 @@ class UserRepository extends EntityRepository implements UserLoaderInterface
             ->getOneOrNullResult();
     }
 
+    /**
+     * @param UserInterface $user
+     * @return null|UserInterface
+     */
     public function refreshUser(UserInterface $user) {
         return $this->loadUserByUsername($user->getUsername());
     }
 
+    /**
+     * @param $class
+     * @return bool
+     */
     public function supportsClass($class) {
         return $class === User::class;
+    }
+
+    /**
+     * @param Organization $organization
+     * @param null $date
+     * @return array
+     */
+    public function findByOrganizationAndDate(Organization $organization, $date = null)
+    {
+        $query = $this->createQueryBuilder('u')
+            ->distinct()
+            ->join('u.memberships', 'm')
+            ->where('m.organization = :organization')
+            ->setParameter('organization', $organization);
+
+        if ($date) {
+            $query = $query
+                ->andWhere('m.validUntil >= :date')
+                ->orWhere('m.validUntil IS NULL')
+                ->andWhere('m.validFrom <= :date')
+                ->setParameter('date', $date);
+        }
+
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * @param Organization $organization
+     * @param $fullName
+     * @return User|null
+     */
+    public function findOneByOrganizationAndFullName(Organization $organization, $fullName)
+    {
+        $item = explode(', ', $fullName);
+
+        return $this->createQueryBuilder('u')
+            ->where('u.firstName = :firstName')
+            ->andWhere('u.lastName = :lastName')
+            ->andWhere('u IN (:users)')
+            ->setParameter('firstName', $item[1])
+            ->setParameter('lastName', $item[0])
+            ->setParameter('users', $this->findByOrganizationAndDate($organization, new \DateTime()))
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }
