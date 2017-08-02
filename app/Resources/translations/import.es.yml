@@ -1,5 +1,6 @@
 title.teacher_import: Importación de profesorado
 title.unit_import: Importación de unidades
+title.subject_import: Importación de asignaturas/módulos
 title.import_result: Resultado de la importación
 
 form.file: "Fichero .CSV de Séneca"
@@ -20,6 +21,7 @@ form.submit: Importar
 
 form.teacher_import: Importar profesorado
 form.unit_import: Importar unidades
+form.subject_import: Importar asignaturas/módulos
 form.again: Importar otro fichero
 form.back: Volver
 
@@ -42,5 +44,9 @@ report.new_memberships: Pertenencias nuevas incorporadas
 report.existing_units: Unidades previamente existentes
 report.new_units: Nuevas unidades
 
+report.existing_subjects: Asignaturas/módulos previamente existentes
+report.new_subjects: Nuevas asignaturas/módulos
+
 report.welcome: Docentes nuevos dados de alta en la plataforma
 report.units: Unidades resultantes
+report.subjects: Asignaturas/módulos incluidos

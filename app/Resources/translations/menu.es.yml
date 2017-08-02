@@ -24,6 +24,9 @@ menu.organization.import.teacher.detail: Importar profesorado desde Séneca
 menu.organization.import.unit: Unidades
 menu.organization.import.unit.detail: Importar unidades desde Séneca
 
+menu.organization.import.subject: Asignaturas
+menu.organization.import.subject.detail: Importar asignaturas desde Séneca
+
 menu.personal_data: Datos personales
 menu.personal_data.detail: Modificar los datos personales
 

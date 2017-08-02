@@ -118,7 +118,8 @@ class CoreMenu implements MenuBuilderInterface
                 ->setCaption('menu.organization.import.teacher')
                 ->setDescription('menu.organization.import.teacher.detail')
                 ->setColor('blue')
-                ->setIcon('graduation-cap');
+                ->setIcon('graduation-cap')
+                ->setPriority(0);
 
             $menu2->addChild($menu3);
 
@@ -129,7 +130,20 @@ class CoreMenu implements MenuBuilderInterface
                 ->setCaption('menu.organization.import.unit')
                 ->setDescription('menu.organization.import.unit.detail')
                 ->setColor('green')
-                ->setIcon('group');
+                ->setIcon('group')
+                ->setPriority(1);
+
+            $menu2->addChild($menu3);
+
+            $menu3 = new MenuItem();
+            $menu3
+                ->setName('subject_import')
+                ->setRouteName('organization_import_subject_form')
+                ->setCaption('menu.organization.import.subject')
+                ->setDescription('menu.organization.import.subject.detail')
+                ->setColor('yellow')
+                ->setIcon('book')
+                ->setPriority(2);
 
             $menu2->addChild($menu3);
         }

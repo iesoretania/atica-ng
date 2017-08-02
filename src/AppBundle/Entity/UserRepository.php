@@ -101,12 +101,17 @@ class UserRepository extends EntityRepository implements UserLoaderInterface
         $item = explode(', ', $fullName);
 
         return $this->createQueryBuilder('u')
+            ->distinct()
             ->where('u.firstName = :firstName')
             ->andWhere('u.lastName = :lastName')
-            ->andWhere('u IN (:users)')
+            ->join('u.memberships', 'm')
+            ->andWhere('m.organization = :organization')
+            ->setParameter('organization', $organization)
             ->setParameter('firstName', $item[1])
             ->setParameter('lastName', $item[0])
-            ->setParameter('users', $this->findByOrganizationAndDate($organization, $date))
+            ->andWhere('m.validUntil >= :date OR    m.validUntil IS NULL')
+            ->andWhere('m.validFrom <= :date')
+            ->setParameter('date', $date)
             ->getQuery()
             ->getOneOrNullResult();
     }
