@@ -23,6 +23,8 @@ namespace AppBundle\Form\Type;
 use AppBundle\Entity\Element;
 use AppBundle\Entity\Profile;
 use AppBundle\Entity\Reference;
+use AppBundle\Entity\User;
+use AppBundle\Entity\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -95,10 +97,6 @@ class ElementType extends AbstractType
                 'choice_attr' => function(Profile $val) use ($data) {
                     return ['disabled' => $val->getElement() !== null && $val->getElement() !== $data];
                 }
-            ])
-            ->add('description', TextareaType::class, [
-                'label' => 'form.description',
-                'required' => false
             ]);
 
         // referencias
@@ -126,6 +124,25 @@ class ElementType extends AbstractType
                     'placeholder' => $this->translator->trans('form.none', [], 'element')
                 ]);
         }
+
+        $form
+            ->add('users', EntityType::class, [
+                'label' => 'form.users',
+                'class' => User::class,
+                'multiple' => true,
+                'required' => false,
+                'placeholder' => 'form.none',
+                'query_builder' => function(EntityRepository $entityRepository) use ($data) {
+                    if (!$entityRepository instanceof UserRepository) {
+                        return null;
+                    }
+                    return $entityRepository->getOrganizationAndDateQueryBuilder($data->getOrganization(), new \DateTime());
+                }
+            ])
+            ->add('description', TextareaType::class, [
+                'label' => 'form.description',
+                'required' => false
+            ]);
     }
 
     /**

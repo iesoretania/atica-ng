@@ -21,6 +21,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -73,6 +74,16 @@ class UserRepository extends EntityRepository implements UserLoaderInterface
      */
     public function findByOrganizationAndDate(Organization $organization, $date = null)
     {
+        return $this->getOrganizationAndDateQueryBuilder($organization, $date)->getQuery()->getResult();
+    }
+
+    /**
+     * @param Organization $organization
+     * @param \DateTime|null $date
+     * @return QueryBuilder
+     */
+    public function getOrganizationAndDateQueryBuilder(Organization $organization, $date = null)
+    {
         $query = $this->createQueryBuilder('u')
             ->distinct()
             ->join('u.memberships', 'm')
@@ -87,7 +98,7 @@ class UserRepository extends EntityRepository implements UserLoaderInterface
                 ->setParameter('date', $date);
         }
 
-        return $query->getQuery()->getResult();
+        return $query;
     }
 
     /**
