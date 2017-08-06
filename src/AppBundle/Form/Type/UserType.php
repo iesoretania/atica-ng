@@ -39,11 +39,12 @@ class UserType extends AbstractType
      *
      * @param FormBuilderInterface $builder
      */
-    private function buildBaseForm(FormBuilderInterface $builder)
+    private function buildBaseForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('loginUsername', null, [
-                'label' => 'form.user_name'
+                'label' => 'form.user_name',
+                'disabled' => !$options['admin']
             ])
             ->add('firstName', null, [
                 'label' => 'form.first_name'
@@ -70,7 +71,7 @@ class UserType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $this->buildBaseForm($builder);
+        $this->buildBaseForm($builder, $options);
 
         if ($options['admin']) {
             $builder
