@@ -66,6 +66,12 @@ class Element
     private $included;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $locked;
+
+    /**
      * @Gedmo\TreeLeft
      * @ORM\Column(name="lft", type="integer")
      * @var int
@@ -160,6 +166,7 @@ class Element
 
         $this->folder = false;
         $this->included = false;
+        $this->locked = false;
     }
 
     /**
@@ -296,6 +303,28 @@ class Element
     public function isIncluded()
     {
         return $this->included;
+    }
+
+    /**
+     * Is locked
+     *
+     * @return mixed
+     */
+    public function isLocked()
+    {
+        return $this->locked;
+    }
+
+    /**
+     * Set locked
+     *
+     * @param mixed $locked
+     * @return Element
+     */
+    public function setLocked($locked)
+    {
+        $this->locked = $locked;
+        return $this;
     }
 
     /**

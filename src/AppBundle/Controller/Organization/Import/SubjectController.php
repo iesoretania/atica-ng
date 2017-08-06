@@ -109,7 +109,7 @@ class SubjectController extends Controller
                         $unit = $unitCollection[$unitName];
                     } else {
                         $unit = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($baseUnit)
-                            ->andWhere('node.name = :unit')
+                            ->andWhere('node.code = :unit')
                             ->setParameter('unit', $unitName)
                             ->getQuery()
                             ->getOneOrNullResult();
@@ -119,6 +119,7 @@ class SubjectController extends Controller
 
                     if ($unit) {
                         $subjectName = $userData['Unidad'] . ' - ' . $userData['Materia'];
+                        $displayName = $unit->getName() . ' - ' . $userData['Materia'];
 
                         $new = false;
                         $subject = null;
@@ -128,7 +129,7 @@ class SubjectController extends Controller
                                 $unitFolder = $unitFolderCollection[$unitName];
                             } else {
                                 $unitFolder = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($baseSubject)
-                                    ->andWhere('node.name = :unit')
+                                    ->andWhere('node.code = :unit')
                                     ->setParameter('unit', $unitName)
                                     ->getQuery()
                                     ->getOneOrNullResult();
@@ -139,6 +140,7 @@ class SubjectController extends Controller
                                         ->setOrganization($organization)
                                         ->setParent($baseSubject)
                                         ->setName($unit->getName())
+                                        ->setCode($unit->getCode())
                                         ->setFolder(true);
 
                                     $unitFolder->addLabel($unit);
@@ -152,7 +154,7 @@ class SubjectController extends Controller
 
                             if (!$new) {
                                 $subject = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($baseSubject)
-                                    ->andWhere('node.name = :subject')
+                                    ->andWhere('node.code = :subject')
                                     ->setParameter('subject', $subjectName)
                                     ->leftJoin('node.labels', 'l')
                                     ->andWhere('l = :unit')
@@ -166,8 +168,11 @@ class SubjectController extends Controller
                                 $subject
                                     ->setOrganization($organization)
                                     ->setParent($unitFolder)
-                                    ->setName($subjectName)
-                                    ->setFolder(false);
+                                    ->setName($displayName)
+                                    ->setCode($subjectName)
+                                    ->setFolder(false)
+                                    ->setLocked(false);
+
                                 $em->persist($subject);
                                 $newCount++;
                             } else {

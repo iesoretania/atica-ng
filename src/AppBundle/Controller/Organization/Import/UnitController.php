@@ -113,7 +113,10 @@ class UnitController extends Controller
                             $unit
                                 ->setOrganization($organization)
                                 ->setParent($base)
-                                ->setName($unitName);
+                                ->setName($unitName)
+                                ->setCode($unitName)
+                                ->setLocked(false);
+
                             $em->persist($unit);
 
                             $newUnitCount++;

@@ -63,6 +63,7 @@ class CoreData
                 ->setParent($root)
                 ->setCode($item[0])
                 ->setFolder(true)
+                ->setLocked(true)
                 ->setName($this->translator->trans('list.'.$item[0], [], 'core'));
 
             $this->entityManager->persist($element);
