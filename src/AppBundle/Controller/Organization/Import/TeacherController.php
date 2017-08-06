@@ -119,6 +119,7 @@ class TeacherController extends Controller
                                 ->setLoginUsername($userName)
                                 ->setFirstName($fullName[1])
                                 ->setLastName($fullName[0])
+                                ->setInternalCode($userData['Empleado/a'])
                                 ->setEnabled(true)
                                 ->setGlobalAdministrator(false)
                                 ->setGender(User::GENDER_NEUTRAL)

@@ -109,18 +109,14 @@ class UserRepository extends EntityRepository implements UserLoaderInterface
      */
     public function findOneByOrganizationAndFullName(Organization $organization, $fullName, $date = null)
     {
-        $item = explode(', ', $fullName);
-
         return $this->createQueryBuilder('u')
             ->distinct()
-            ->where('u.firstName = :firstName')
-            ->andWhere('u.lastName = :lastName')
+            ->where('u.internalCode = :name')
             ->join('u.memberships', 'm')
             ->andWhere('m.organization = :organization')
             ->setParameter('organization', $organization)
-            ->setParameter('firstName', $item[1])
-            ->setParameter('lastName', $item[0])
-            ->andWhere('m.validUntil >= :date OR    m.validUntil IS NULL')
+            ->setParameter('name', $fullName)
+            ->andWhere('m.validUntil >= :date OR  m.validUntil IS NULL')
             ->andWhere('m.validFrom <= :date')
             ->setParameter('date', $date)
             ->getQuery()

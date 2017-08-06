@@ -90,6 +90,12 @@ class User implements AdvancedUserInterface
     private $emailAddress;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string
+     */
+    private $internalCode;
+
+    /**
      * @ORM\Column(type="integer")
      * @var int
      */
@@ -320,6 +326,28 @@ class User implements AdvancedUserInterface
     public function isGlobalAdministrator()
     {
         return $this->globalAdministrator;
+    }
+
+    /**
+     * Get internal code
+     *
+     * @return string
+     */
+    public function getInternalCode()
+    {
+        return $this->internalCode;
+    }
+
+    /**
+     * Set internal code
+     *
+     * @param string $internalCode
+     * @return User
+     */
+    public function setInternalCode($internalCode)
+    {
+        $this->internalCode = $internalCode;
+        return $this;
     }
 
     /**
