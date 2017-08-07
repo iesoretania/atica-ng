@@ -146,10 +146,10 @@ class User implements AdvancedUserInterface
     protected $defaultOrganization;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Element", mappedBy="users")
+     * @ORM\OneToMany(targetEntity="Role", mappedBy="user")
      * @var Collection
      */
-    private $elements;
+    private $assignedRoles;
 
     /**
      * @ORM\Column(type="boolean")
@@ -172,7 +172,7 @@ class User implements AdvancedUserInterface
     {
         $this->memberships = new \Doctrine\Common\Collections\ArrayCollection();
         $this->managedOrganizations = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->elements = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->assignedRoles = new \Doctrine\Common\Collections\ArrayCollection();
         $this->externalCheck = false;
     }
 
@@ -745,43 +745,41 @@ class User implements AdvancedUserInterface
     }
 
     /**
-     * Add element
+     * Add assigned role
      *
-     * @param Element $element
+     * @param Role $assignedRole
      *
      * @return User
      */
-    public function addElement(Element $element)
+    public function addAssignedRole(Role $assignedRole)
     {
-        if (!$this->elements->contains($element)) {
-            $this->elements[] = $element;
-            $element->addUser($this);
+        if (!$this->assignedRoles->contains($assignedRole)) {
+            $this->assignedRoles[] = $assignedRole;
         }
 
         return $this;
     }
 
     /**
-     * Remove element
+     * Remove assigned role
      *
-     * @param Element $element
+     * @param Element $assignedRole
      */
-    public function removeElement(Element $element)
+    public function removeRole(Role $assignedRole)
     {
-        if ($this->elements->contains($element)) {
-            $this->elements->removeElement($element);
-            $element->getUsers()->removeElement($this);
+        if ($this->assignedRoles->contains($assignedRole)) {
+            $this->assignedRoles->removeElement($assignedRole);
         }
     }
 
     /**
-     * Get elements
+     * Get assigned roles
      *
      * @return Collection
      */
-    public function getElements()
+    public function getAssignedRoles()
     {
-        return $this->elements;
+        return $this->assignedRoles;
     }
 
     /**

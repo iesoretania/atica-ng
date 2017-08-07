@@ -155,10 +155,10 @@ class Element
     private $actors;
 
     /**
-     * @ORM\ManyToMany(targetEntity="User", inversedBy="elements")
+     * @ORM\OneToMany(targetEntity="Role", mappedBy="element")
      * @var Collection
      */
-    private $users;
+    private $roles;
 
     /**
      * Constructor
@@ -168,7 +168,7 @@ class Element
         $this->references = new \Doctrine\Common\Collections\ArrayCollection();
         $this->labels = new \Doctrine\Common\Collections\ArrayCollection();
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->users = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->roles = new \Doctrine\Common\Collections\ArrayCollection();
         $this->actors = new \Doctrine\Common\Collections\ArrayCollection();
 
         $this->folder = false;
@@ -669,17 +669,16 @@ class Element
     }
 
     /**
-     * Add user
+     * Add role
      *
-     * @param User $user
+     * @param Role $role
      *
      * @return Element
      */
-    public function addUser(User $user)
+    public function addRole(Role $role)
     {
-        if (!$this->users->contains($user)) {
-            $this->users[] = $user;
-            $user->addElement($this);
+        if (!$this->roles->contains($role)) {
+            $this->roles[] = $role;
         }
 
         return $this;
@@ -690,22 +689,21 @@ class Element
      *
      * @param User $user
      */
-    public function removeUser(User $user)
+    public function removeRole(User $user)
     {
-        if ($this->users->contains($user)) {
-            $this->users->removeElement($user);
-            $user->getElements()->removeElement($this);
+        if ($this->roles->contains($user)) {
+            $this->roles->removeElement($user);
         }
     }
 
     /**
-     * Get users
+     * Get roles
      *
      * @return Collection
      */
-    public function getUsers()
+    public function getRoles()
     {
-        return $this->users;
+        return $this->roles;
     }
 
     /**
