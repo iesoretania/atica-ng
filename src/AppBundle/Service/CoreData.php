@@ -23,6 +23,7 @@ namespace AppBundle\Service;
 use AppBundle\Entity\Element;
 use AppBundle\Entity\Organization;
 use AppBundle\Entity\Profile;
+use AppBundle\Entity\Reference;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -40,13 +41,17 @@ class CoreData
     public function createOrganizationElements(Organization $organization, $rootName)
     {
         $data = [
-            ['management', false],
-            ['department', true],
-            ['unit', true],
-            ['subject', true],
-            ['other', false],
-            ['evaluation', false]
+            ['management', false, []],
+            ['department', true, []],
+            ['unit', true, []],
+            ['subject', true, [
+                ['unit', false, false]
+            ]],
+            ['other', false, []],
+            ['evaluation', false, []]
         ];
+
+        $elements = [];
 
         $root = new Element();
         $root
@@ -82,6 +87,22 @@ class CoreData
                 $element->setProfile($profile);
 
                 $this->entityManager->persist($profile);
+            }
+
+            $elements[$item[0]] = $element;
+
+            if (!empty($item[2])) {
+                foreach($item[2] as $referenceData) {
+                    $reference = new Reference();
+                    $reference
+                        ->setSource($element)
+                        ->setTarget($elements[$referenceData[0]])
+                        ->setMandatory($referenceData[1])
+                        ->setMultiple($referenceData[2]);
+
+                    $element->addReference($reference);
+                    $this->entityManager->persist($reference);
+                }
             }
         }
         $this->entityManager->flush();
