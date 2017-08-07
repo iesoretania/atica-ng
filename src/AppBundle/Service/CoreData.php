@@ -45,7 +45,8 @@ class CoreData
             ['department', true, []],
             ['unit', true, []],
             ['subject', true, [
-                ['unit', false, false]
+                ['department', true, false],
+                ['unit', true, false]
             ]],
             ['other', false, []],
             ['evaluation', false, []]
