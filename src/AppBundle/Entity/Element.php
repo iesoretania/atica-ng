@@ -149,6 +149,12 @@ class Element
     private $profile;
 
     /**
+     * @ORM\OneToMany(targetEntity="Actor", mappedBy="source")
+     * @var Collection
+     */
+    private $actors;
+
+    /**
      * @ORM\ManyToMany(targetEntity="User", inversedBy="elements")
      * @var Collection
      */
@@ -163,6 +169,7 @@ class Element
         $this->labels = new \Doctrine\Common\Collections\ArrayCollection();
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
         $this->users = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->actors = new \Doctrine\Common\Collections\ArrayCollection();
 
         $this->folder = false;
         $this->included = false;
@@ -624,6 +631,44 @@ class Element
     }
 
     /**
+     * Get actors
+     *
+     * @return Collection
+     */
+    public function getActors()
+    {
+        return $this->actors;
+    }
+
+    /**
+     * Add actor
+     *
+     * @param Actor $actor
+     *
+     * @return Element
+     */
+    public function addActor(Actor $actor)
+    {
+        $this->actors[] = $actor;
+
+        return $this;
+    }
+
+    /**
+     * Remove actor
+     *
+     * @param User $actor
+     *
+     * @return Element
+     */
+    public function removeActor(User $actor)
+    {
+        $this->actors->removeElement($actor);
+
+        return $this;
+    }
+
+    /**
      * Add user
      *
      * @param User $user
@@ -690,24 +735,40 @@ class Element
     }
 
     /**
-     * Get path references
+     * Get path collection
      */
-    public function getPathReferences()
+    private function getPathCollection($method)
     {
         $result = new ArrayCollection();
 
         $element = $this;
 
         while ($element) {
-            $references = $element->getReferences();
+            $items = $element->$method();
 
-            foreach ($references as $reference) {
-                $result->add($reference);
+            foreach ($items as $collection) {
+                $result->add($collection);
             }
 
             $element = $element->getParent();
         }
 
         return $result;
+    }
+
+    /**
+     * Get path references
+     */
+    public function getPathReferences()
+    {
+        return $this->getPathCollection('getReferences');
+    }
+
+    /**
+     * Get path actors
+     */
+    public function getPathActors()
+    {
+        return $this->getPathCollection('getActors');
     }
 }
