@@ -56,6 +56,16 @@ class Role
     private $role;
 
     /**
+     * Convert role to string
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getUser().' ('.$this->getRole().')';
+    }
+
+    /**
      * Get id
      *
      * @return integer

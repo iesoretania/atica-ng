@@ -22,6 +22,7 @@ namespace AppBundle\Controller\Organization\Import;
 
 use AppBundle\Entity\Element;
 use AppBundle\Entity\Organization;
+use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
 use AppBundle\Form\Model\UnitImport;
 use AppBundle\Form\Type\Import\UnitType;
@@ -129,14 +130,20 @@ class UnitController extends Controller
 
                     preg_match_all('/\b(.*) \(.*\)/U', $userData['Tutor/a'], $matches, PREG_SET_ORDER, 0);
 
-                    $unit->getUsers()->clear();
+                    $unit->getRoles()->clear();
 
                     if (null !== $matches) {
                         foreach ($matches as $tutor) {
                             /** @var User|null $user */
                             $user = $em->getRepository('AppBundle:User')->findOneByOrganizationAndFullName($organization, $tutor[1], new \DateTime());
                             if ($user) {
-                                $unit->addUser($user);
+                                $role = new Role();
+                                $role
+                                    ->setElement($unit)
+                                    ->setRole('TUTOR')
+                                    ->setUser($user);
+                                $em->persist($role);
+                                $unit->addRole($role);
                             }
                         }
                     }

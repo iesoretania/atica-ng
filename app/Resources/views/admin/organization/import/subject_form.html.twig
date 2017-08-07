@@ -22,8 +22,8 @@
                 {% for element in stats.collection %}
                     <li>
                         {{ element.name }}
-                        {% if element.users.count() %}
-                            ({{ element.users|join(', ') }})
+                        {%- if element.roles.count() -%}
+                            : {{ element.roles|join(', ') }}
                         {% endif %}
                     </li>
                 {% endfor %}

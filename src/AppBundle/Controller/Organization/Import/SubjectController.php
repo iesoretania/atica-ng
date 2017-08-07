@@ -22,6 +22,7 @@ namespace AppBundle\Controller\Organization\Import;
 
 use AppBundle\Entity\Element;
 use AppBundle\Entity\Organization;
+use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
 use AppBundle\Form\Model\UnitImport;
 use AppBundle\Form\Type\Import\UnitType;
@@ -202,14 +203,30 @@ class SubjectController extends Controller
             foreach($teacherCollection as $data) {
                 /** @var Element $subject */
                 $subject = $data['subject'];
-                $oldTeachers = $subject->getUsers()->toArray();
+                $oldRoles = $subject->getRoles();
+                $oldTeachers = [];
+                $oldTeachersReferences = [];
+                foreach($oldRoles as $role) {
+                    if ($role->getRole() === 'TEACHER') {
+                        $oldTeachers[] = $role->getUser();
+                        $oldTeachersReferences[$role->getUser()->getId()] = $role;
+                    }
+                }
+
                 $insert = array_diff($data['teachers'], $oldTeachers);
                 $delete = array_diff($oldTeachers, $data['teachers']);
+                /** @var User $teacher */
                 foreach($delete as $teacher) {
-                    $subject->removeUser($teacher);
+                    $subject->removeRole($oldTeachersReferences[$teacher->getId()]);
                 }
                 foreach($insert as $teacher) {
-                    $subject->addUser($teacher);
+                    $role = new Role();
+                    $role
+                        ->setElement($subject)
+                        ->setRole('TEACHER')
+                        ->setUser($teacher);
+                    $em->persist($role);
+                    $subject->addRole($role);
                 }
 
             }

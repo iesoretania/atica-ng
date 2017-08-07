@@ -20,3 +20,6 @@ profile.subject_neutral: Profesor/a
 profile.subject_male: Profesor
 profile.subject_female: Profesora
 profile.subject_initials: PROF
+
+role.TEACHER: Profesor/a
+role.TUTOR: Tutor/a
