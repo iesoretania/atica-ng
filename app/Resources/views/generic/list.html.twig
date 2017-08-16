@@ -31,7 +31,7 @@
         </table>
         {% if pager and pager.haveToPaginate %}
             <div class="pagerfanta">
-                {{ pagerfanta(pager, 'twitter_bootstrap3_translated') }}
+                {{ pagerfanta(pager, 'twitter_bootstrap3_translated', {'css_disabled_class': 'hidden'}) }}
             </div>
         {% endif %}
     </div>
