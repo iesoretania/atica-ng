@@ -44,7 +44,7 @@
     <script>
         var last_value = "";
         var reload = function() {
-            var url = '{% block path_list %}{% endblock %}';
+            var url = '{% block path_list %}{{ app.request.uri }}{% endblock %}';
             var q = $('input#search').val();
             if (q === last_value) {
                 return;

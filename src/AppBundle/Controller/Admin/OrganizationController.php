@@ -104,7 +104,7 @@ class OrganizationController extends Controller
         $pager = new Pagerfanta($adapter);
         $pager
             ->setMaxPerPage($this->getParameter('page.size'))
-            ->setCurrentPage($page);
+            ->setCurrentPage($q ? 1 : $page);
 
         $title = $this->get('translator')->trans('title.list', [], 'organization');
 

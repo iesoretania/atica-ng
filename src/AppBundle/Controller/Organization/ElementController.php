@@ -70,7 +70,7 @@ class ElementController extends Controller
         $pager = new Pagerfanta($adapter);
         $pager
             ->setMaxPerPage($this->getParameter('page.size'))
-            ->setCurrentPage($page);
+            ->setCurrentPage($q ? 1 : $page);
 
         $breadcrumb = $this->generateBreadcrumb($element);
 

@@ -3,8 +3,8 @@
 {% import 'macros.html.twig' as m %}
 
 {% block path_new %}{{ path('organization_element_new', {'path': current.path}) }}{% endblock %}
-{% block path_list %}{{ app.request.uri }}{% endblock %}
 {% block more_actions %}<a href="{{ path('organization_element_folder_new', {'path': current.path}) }}" class="btn btn-success"><i class="fa fa-folder-open"></i> {{ 'table.new_category'|trans }}</a>{% endblock %}
+
 {% block table_header %}
     <th class="col-sm-2"><label><input type="checkbox" id="select"> {{ 'header.name'|trans }}</label></th>
     <th class="col-sm-5">{{ 'header.profiles'|trans }}</th>
