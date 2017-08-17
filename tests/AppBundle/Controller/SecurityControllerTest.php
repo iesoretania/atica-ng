@@ -50,9 +50,6 @@ class SecurityControllerTest extends WebTestCase
 
         $this->assertEquals(302, $client->getResponse()->getStatusCode());
 
-        // convertir URL de relativa a absoluta
-        $loginUrl = $client->getRequest()->getSchemeAndHttpHost() . $loginUrl;
-
         $this->assertTrue($client->getResponse()->isRedirect($loginUrl));
     }
 
