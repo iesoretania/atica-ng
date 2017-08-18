@@ -694,12 +694,12 @@ class Element
     /**
      * Remove user
      *
-     * @param User $user
+     * @param Role $role
      */
-    public function removeRole(User $user)
+    public function removeRole(Role $role)
     {
-        if ($this->roles->contains($user)) {
-            $this->roles->removeElement($user);
+        if ($this->roles->contains($role)) {
+            $this->roles->removeElement($role);
         }
     }
 

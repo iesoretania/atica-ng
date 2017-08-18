@@ -17,6 +17,14 @@ form.remove_existing: Eliminar no incluidos en el fichero
 form.remove_existing.no: Mantener los elementos no incluidos
 form.remove_existing.yes: Eliminar aquellos elementos no incluidos y que no estén asociados
 
+form.add_new_teachers: Incorporar profesorado nuevo del listado importado
+form.add_new_teachers.no: No añadir ningún docente nuevo
+form.add_new_teachers.yes: Añadir aquellos profesores nuevos que no estaban incluidos antes
+
+form.remove_old_teachers: Retirar profesorado que no aparezca en el listado importado
+form.remove_old_teachers.no: No retirar ningún docente existentes
+form.remove_old_teachers.yes: Retirar aquellos profesores que no están en el listado
+
 form.submit: Importar
 
 form.teacher_import: Importar profesorado

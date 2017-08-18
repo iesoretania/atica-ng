@@ -25,8 +25,8 @@ use AppBundle\Entity\ElementRepository;
 use AppBundle\Entity\Organization;
 use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
-use AppBundle\Form\Model\UnitImport;
-use AppBundle\Form\Type\Import\UnitType;
+use AppBundle\Form\Model\SubjectImport;
+use AppBundle\Form\Type\Import\SubjectType;
 use AppBundle\Security\OrganizationVoter;
 use AppBundle\Utils\CsvImporter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -44,8 +44,8 @@ class SubjectController extends Controller
         $organization = $this->get('AppBundle\Service\UserExtensionService')->getCurrentOrganization();
         $this->denyAccessUnlessGranted(OrganizationVoter::MANAGE, $organization);
 
-        $formData = new UnitImport();
-        $form = $this->createForm(UnitType::class, $formData);
+        $formData = new SubjectImport();
+        $form = $this->createForm(SubjectType::class, $formData);
         $form->handleRequest($request);
 
         $stats = null;
@@ -53,7 +53,10 @@ class SubjectController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $stats = $this->importSubjectsFromCsv($formData->getFile()->getPathname(), $organization);
+            $stats = $this->importSubjectsFromCsv($formData->getFile()->getPathname(), $organization, [
+                'add_new_teachers' => $formData->getAddNewTeachers(),
+                'remove_existing_teachers' => $formData->getRemoveExistingTeachers()
+            ]);
 
             if (null !== $stats) {
                 $this->addFlash('success', $this->get('translator')->trans('message.import_ok', [], 'import'));
@@ -75,10 +78,14 @@ class SubjectController extends Controller
     /**
      * @param string $file
      * @param Organization $organization
+     * @param array $options
      * @return array|null
      */
-    private function importSubjectsFromCsv($file, Organization $organization)
+    private function importSubjectsFromCsv($file, Organization $organization, array $options = [])
     {
+        $addNewTeachers = isset($options['add_new_teachers']) && $options['add_new_teachers'];
+        $removeExistingTeachers = isset($options['remove_existing_teachers']) && $options['remove_existing_teachers'];
+
         $newCount = 0;
         $existingCount = 0;
 
@@ -205,35 +212,42 @@ class SubjectController extends Controller
                 }
             }
 
-            foreach ($teacherCollection as $data) {
-                /** @var Element $subject */
-                $subject = $data['subject'];
-                $oldRoles = $subject->getRoles();
-                $oldTeachers = [];
-                $oldTeachersReferences = [];
-                foreach ($oldRoles as $role) {
-                    if ($role->getRole() === 'TEACHER') {
-                        $oldTeachers[] = $role->getUser();
-                        $oldTeachersReferences[$role->getUser()->getId()] = $role;
+            if ($addNewTeachers || $removeExistingTeachers) {
+                foreach ($teacherCollection as $data) {
+                    /** @var Element $subject */
+                    $subject = $data['subject'];
+                    $oldRoles = $subject->getRoles();
+                    $oldTeachers = [];
+                    $oldTeachersReferences = [];
+                    foreach ($oldRoles as $role) {
+                        if ($role->getRole() === 'TEACHER') {
+                            $oldTeachers[] = $role->getUser();
+                            $oldTeachersReferences[$role->getUser()->getId()] = $role;
+                        }
+                    }
+
+                    $insert = array_diff($data['teachers'], $oldTeachers);
+                    $delete = array_diff($oldTeachers, $data['teachers']);
+
+                    if ($removeExistingTeachers) {
+                        /** @var User $teacher */
+                        foreach ($delete as $teacher) {
+                            $em->remove($oldTeachersReferences[$teacher->getId()]);
+                        }
+                    }
+
+                    if ($addNewTeachers) {
+                        foreach ($insert as $teacher) {
+                            $role = new Role();
+                            $role
+                                ->setElement($subject)
+                                ->setRole('TEACHER')
+                                ->setUser($teacher);
+                            $em->persist($role);
+                            $subject->addRole($role);
+                        }
                     }
                 }
-
-                $insert = array_diff($data['teachers'], $oldTeachers);
-                $delete = array_diff($oldTeachers, $data['teachers']);
-                /** @var User $teacher */
-                foreach ($delete as $teacher) {
-                    $subject->removeRole($oldTeachersReferences[$teacher->getId()]);
-                }
-                foreach ($insert as $teacher) {
-                    $role = new Role();
-                    $role
-                        ->setElement($subject)
-                        ->setRole('TEACHER')
-                        ->setUser($teacher);
-                    $em->persist($role);
-                    $subject->addRole($role);
-                }
-
             }
             $em->flush();
         } catch (Exception $e) {
