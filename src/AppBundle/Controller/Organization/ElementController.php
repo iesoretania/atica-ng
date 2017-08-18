@@ -20,11 +20,14 @@
 
 namespace AppBundle\Controller\Organization;
 
+use AppBundle\Entity\Actor;
 use AppBundle\Entity\Element;
 use AppBundle\Entity\ElementRepository;
 use AppBundle\Entity\Reference;
+use AppBundle\Entity\Role;
 use AppBundle\Form\Type\ElementType;
 use AppBundle\Security\OrganizationVoter;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\QueryBuilder;
@@ -57,7 +60,14 @@ class ElementController extends Controller
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $elementRepository->getChildrenQueryBuilder($element, true)
             ->addSelect('ref')
-            ->leftJoin('node.references', 'ref');
+            ->addSelect('r')
+            ->addSelect('u')
+            ->addSelect('l')
+            ->leftJoin('node.references', 'ref')
+            ->leftJoin('node.roles', 'r')
+            ->leftJoin('node.labels', 'l')
+            ->leftJoin('r.user', 'u')
+        ;
 
         $q = $request->get('q', null);
         if ($q) {
@@ -175,6 +185,7 @@ class ElementController extends Controller
         $organization = $this->get('AppBundle\Service\UserExtensionService')->getCurrentOrganization();
         $this->denyAccessUnlessGranted(OrganizationVoter::MANAGE, $organization);
 
+        /** @var ObjectManager $em */
         $em = $this->getDoctrine()->getManager();
 
         /** @var Element|null $element */
@@ -203,8 +214,8 @@ class ElementController extends Controller
         }
 
         $form = $this->createForm(ElementType::class, $element);
-        $labels = $element->getLabels();
-        $this->getElementReferences($element, $em, $labels, $form);
+        $this->getElementReferences($element, $em, $element->getLabels(), $form);
+        $this->getElementRoles($element, $em, $element->getRoles(), $form, $organization);
 
         $form->handleRequest($request);
 
@@ -212,6 +223,7 @@ class ElementController extends Controller
             try {
                 $em->flush();
                 $this->updateElementReferences($element, $em, $form);
+                $this->updateElementRoles($element, $em, $form);
                 $this->addFlash('success', $this->get('translator')->trans('message.saved', [], 'element'));
                 return $this->redirectToRoute('organization_element_list', ['page' => 1, 'path' => $element->getParent()->getPath()]);
             } catch (\Exception $e) {
@@ -323,6 +335,48 @@ class ElementController extends Controller
     /**
      * @param Element $element
      * @param ObjectManager $em
+     * @param Form $form
+     */
+    private function updateElementRoles($element, $em, $form)
+    {
+        /** @var Actor $actor */
+        foreach ($element->getPathActors() as $actor) {
+            $formData = $form
+                ->get('role'.$actor->getRole())->getData();
+
+            if (!is_array($formData)) {
+                $formData = [$formData];
+            }
+
+            $data = new ArrayCollection($formData);
+
+            $oldRoles = $element->getRoles();
+
+            foreach ($oldRoles as $role) {
+                if ($role->getRole() === $actor->getRole()) {
+                    if (!$data->contains($role->getUser())) {
+                        $em->remove($role);
+                    } else {
+                        $data->removeElement($role->getUser());
+                    }
+                }
+            }
+
+            foreach ($data as $datum) {
+                $role = new Role();
+                $role
+                    ->setUser($datum)
+                    ->setRole($actor->getRole())
+                    ->setElement($element);
+                $em->persist($role);
+            }
+        }
+        $em->flush();
+    }
+
+    /**
+     * @param Element $element
+     * @param ObjectManager $em
      * @param Collection $labels
      * @param Form $form
      */
@@ -347,6 +401,35 @@ class ElementController extends Controller
                     $form->get('reference'.$reference->getTarget()->getId())->setData($data);
                 } else {
                     $form->get('reference'.$reference->getTarget()->getId())->setData($data[0]);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param Element $element
+     * @param ObjectManager $em
+     * @param Collection $roles
+     * @param Form $form
+     */
+    private function getElementRoles($element, $em, $roles, $form, $organization)
+    {
+        /** @var Actor $actor */
+        foreach ($element->getPathActors() as $actor) {
+            $data = [];
+            $items = $em->getRepository('AppBundle:User')->findByOrganizationAndDate($organization);
+
+            foreach ($roles as $role) {
+                if ($role->getRole() == $actor->getRole() && in_array($role->getUser(), $items)) {
+                    $data[] = $role->getUser();
+                }
+            }
+
+            if (!empty($data)) {
+                if ($actor->isMultiple()) {
+                    $form->get('role'.$actor->getRole())->setData($data);
+                } else {
+                    $form->get('role'.$actor->getRole())->setData($data[0]);
                 }
             }
         }

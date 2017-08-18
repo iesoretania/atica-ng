@@ -24,6 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(columns={"element_id", "user_id", "role"})})
  */
 class Role
 {

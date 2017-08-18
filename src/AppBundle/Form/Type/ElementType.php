@@ -20,11 +20,11 @@
 
 namespace AppBundle\Form\Type;
 
+use AppBundle\Entity\Actor;
 use AppBundle\Entity\Element;
 use AppBundle\Entity\Profile;
 use AppBundle\Entity\Reference;
-use AppBundle\Entity\Role;
-use AppBundle\Entity\UserRepository;
+use AppBundle\Service\UserExtensionService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -45,10 +45,14 @@ class ElementType extends AbstractType
     /** @var TranslatorInterface */
     private $translator;
 
-    public function __construct(EntityManagerInterface $entityManager, TranslatorInterface $translator)
+    /** @var UserExtensionService */
+    private $userExtensionService;
+
+    public function __construct(EntityManagerInterface $entityManager, TranslatorInterface $translator, UserExtensionService $userExtensionService)
     {
         $this->entityManager = $entityManager;
         $this->translator = $translator;
+        $this->userExtensionService = $userExtensionService;
     }
 
     /**
@@ -125,20 +129,30 @@ class ElementType extends AbstractType
                 ]);
         }
 
+
+        // actores
+        $actors = $data->getPathActors();
+
+        /** @var Actor $actor */
+        foreach ($actors as $actor) {
+            $items = $this->entityManager->getRepository('AppBundle:User')->findByOrganizationAndDate($this->userExtensionService->getCurrentOrganization());
+            $form
+                ->add('role'.$actor->getRole(), ChoiceType::class, [
+                    'label' => 'role.'.$actor->getRole(),
+                    'mapped' => false,
+                    'translation_domain' => 'core',
+                    'choice_translation_domain' => false,
+                    'required' => $actor->isMandatory(),
+                    'multiple' => $actor->isMultiple(),
+                    'expanded' => false,
+                    'choices' => $items,
+                    'choice_value' => 'id',
+                    'choice_label' => 'fullName',
+                    'placeholder' => $this->translator->trans('form.none', [], 'element')
+                ]);
+        };
+
         $form
-            ->add('roles', EntityType::class, [
-                'label' => 'form.users',
-                'class' => Role::class,
-                'multiple' => true,
-                'required' => false,
-                'placeholder' => 'form.none',
-                'query_builder' => function(EntityRepository $entityRepository) use ($data) {
-                    if (!$entityRepository instanceof UserRepository) {
-                        return null;
-                    }
-                    return $entityRepository->getOrganizationAndDateQueryBuilder($data->getOrganization(), new \DateTime());
-                }
-            ])
             ->add('description', TextareaType::class, [
                 'label' => 'form.description',
                 'required' => false

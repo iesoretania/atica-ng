@@ -159,10 +159,22 @@ class User implements AdvancedUserInterface
 
     /**
      * Convertir usuario en cadena
+     *
+     * @return string
      */
     public function __toString()
     {
         return $this->getFirstName().' '.$this->getLastName();
+    }
+
+    /**
+     * Convertir usuario en cadena
+     *
+     * @return string
+     */
+    public function getFullName()
+    {
+        return (string) $this.' ('.$this->getUsernameAndEmailAddress().')';
     }
 
     /**
