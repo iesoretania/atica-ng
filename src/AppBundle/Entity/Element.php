@@ -161,6 +161,13 @@ class Element
     private $roles;
 
     /**
+     * @ORM\OneToOne(targetEntity="Element")
+     * @ORM\JoinColumn(onDelete="SET NULL", nullable=true)
+     * @var Element
+     */
+    private $linkedTo;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -768,5 +775,28 @@ class Element
     public function getPathActors()
     {
         return $this->getPathCollection('getActors');
+    }
+
+    /**
+     * Get linkedTo
+     *
+     * @return Element
+     */
+    public function getLinkedTo()
+    {
+        return $this->linkedTo;
+    }
+
+    /**
+     * Set linkedTo
+     *
+     * @param Element $linkedTo
+     *
+     * @return Element
+     */
+    public function setLinkedTo($linkedTo)
+    {
+        $this->linkedTo = $linkedTo;
+        return $this;
     }
 }

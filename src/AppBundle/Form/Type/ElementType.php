@@ -23,7 +23,7 @@ namespace AppBundle\Form\Type;
 use AppBundle\Entity\Element;
 use AppBundle\Entity\Profile;
 use AppBundle\Entity\Reference;
-use AppBundle\Entity\User;
+use AppBundle\Entity\Role;
 use AppBundle\Entity\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -126,9 +126,9 @@ class ElementType extends AbstractType
         }
 
         $form
-            ->add('users', EntityType::class, [
+            ->add('roles', EntityType::class, [
                 'label' => 'form.users',
-                'class' => User::class,
+                'class' => Role::class,
                 'multiple' => true,
                 'required' => false,
                 'placeholder' => 'form.none',

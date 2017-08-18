@@ -21,6 +21,7 @@
 namespace AppBundle\Controller\Organization\Import;
 
 use AppBundle\Entity\Element;
+use AppBundle\Entity\ElementRepository;
 use AppBundle\Entity\Organization;
 use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
@@ -82,8 +83,12 @@ class SubjectController extends Controller
         $existingCount = 0;
 
         $em = $this->getDoctrine()->getManager();
-        $baseSubject = $em->getRepository('AppBundle:Element')->findOneByOrganizationAndCurrentCode($organization, 'subject');
-        $baseUnit = $em->getRepository('AppBundle:Element')->findOneByOrganizationAndCurrentCode($organization, 'unit');
+
+        /** @var ElementRepository $elementRepository */
+        $elementRepository = $em->getRepository('AppBundle:Element');
+
+        $baseSubject = $elementRepository->findOneByOrganizationAndCurrentCode($organization, 'subject');
+        $baseUnit = $elementRepository->findOneByOrganizationAndCurrentCode($organization, 'unit');
 
         if (null === $baseSubject || null === $baseUnit) {
             return null;
@@ -101,7 +106,7 @@ class SubjectController extends Controller
         try {
             while ($data = $importer->get(100)) {
                 foreach ($data as $userData) {
-                    if (!isset($userData['Unidad'], $userData['Materia'], $userData['Profesor/a'])  ) {
+                    if (!isset($userData['Unidad'], $userData['Materia'], $userData['Profesor/a'])) {
                         return null;
                     }
                     $unitName = $userData['Unidad'];
@@ -109,7 +114,7 @@ class SubjectController extends Controller
                     if (isset($unitCollection[$unitName])) {
                         $unit = $unitCollection[$unitName];
                     } else {
-                        $unit = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($baseUnit)
+                        $unit = $elementRepository->getChildrenQueryBuilder($baseUnit)
                             ->andWhere('node.code = :unit')
                             ->setParameter('unit', $unitName)
                             ->getQuery()
@@ -119,8 +124,8 @@ class SubjectController extends Controller
                     }
 
                     if ($unit) {
-                        $subjectName = $userData['Unidad'] . ' - ' . $userData['Materia'];
-                        $displayName = $unit->getName() . ' - ' . $userData['Materia'];
+                        $subjectName = $userData['Unidad'].' - '.$userData['Materia'];
+                        $displayName = $unit->getName().' - '.$userData['Materia'];
 
                         $new = false;
                         $subject = null;
@@ -129,7 +134,7 @@ class SubjectController extends Controller
                             if (isset($unitFolderCollection[$unitName])) {
                                 $unitFolder = $unitFolderCollection[$unitName];
                             } else {
-                                $unitFolder = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($baseSubject)
+                                $unitFolder = $elementRepository->getChildrenQueryBuilder($baseSubject)
                                     ->andWhere('node.code = :unit')
                                     ->setParameter('unit', $unitName)
                                     ->getQuery()
@@ -154,7 +159,7 @@ class SubjectController extends Controller
                             }
 
                             if (!$new) {
-                                $subject = $em->getRepository('AppBundle:Element')->getChildrenQueryBuilder($baseSubject)
+                                $subject = $elementRepository->getChildrenQueryBuilder($baseSubject)
                                     ->andWhere('node.code = :subject')
                                     ->setParameter('subject', $subjectName)
                                     ->leftJoin('node.labels', 'l')
@@ -200,13 +205,13 @@ class SubjectController extends Controller
                 }
             }
 
-            foreach($teacherCollection as $data) {
+            foreach ($teacherCollection as $data) {
                 /** @var Element $subject */
                 $subject = $data['subject'];
                 $oldRoles = $subject->getRoles();
                 $oldTeachers = [];
                 $oldTeachersReferences = [];
-                foreach($oldRoles as $role) {
+                foreach ($oldRoles as $role) {
                     if ($role->getRole() === 'TEACHER') {
                         $oldTeachers[] = $role->getUser();
                         $oldTeachersReferences[$role->getUser()->getId()] = $role;
@@ -216,10 +221,10 @@ class SubjectController extends Controller
                 $insert = array_diff($data['teachers'], $oldTeachers);
                 $delete = array_diff($oldTeachers, $data['teachers']);
                 /** @var User $teacher */
-                foreach($delete as $teacher) {
+                foreach ($delete as $teacher) {
                     $subject->removeRole($oldTeachersReferences[$teacher->getId()]);
                 }
-                foreach($insert as $teacher) {
+                foreach ($insert as $teacher) {
                     $role = new Role();
                     $role
                         ->setElement($subject)

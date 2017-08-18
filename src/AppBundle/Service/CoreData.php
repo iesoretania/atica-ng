@@ -93,7 +93,7 @@ class CoreData
             $elements[$item[0]] = $element;
 
             if (!empty($item[2])) {
-                foreach($item[2] as $referenceData) {
+                foreach ($item[2] as $referenceData) {
                     $reference = new Reference();
                     $reference
                         ->setSource($element)
