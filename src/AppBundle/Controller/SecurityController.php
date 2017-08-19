@@ -84,62 +84,10 @@ class SecurityController extends Controller
 
         // ¿se ha enviado una dirección?
         if ($form->isSubmitted() && $form->isValid()) {
+            $error = $this->passwordResetRequest($email);
 
-            /** @var User $user */
-            // comprobar que está asociada a un usuario
-            $user = $this->getDoctrine()->getManager()->getRepository('AppBundle:User')->findOneBy(['emailAddress' => $email]);
-
-            if (null === $user) {
-                $error = $this->get('translator')->trans('form.reset.notfound', [], 'security');
-            } else {
-                // almacenar como último correo electrónico el indicado
-                $this->get('session')->set('_security.last_username', $user->getEmailAddress());
-
-                // obtener tiempo de expiración del token
-                $expire = (int) $this->getParameter('password_reset.expire');
-
-                if ($this->getParameter('external.enabled') && $user->getExternalCheck()) {
-                    $this->addFlash('error', $this->get('translator')->trans('form.reset.external_login.error', [], 'security'));
-                }
-                else {
-                    // comprobar que no se ha generado un token hace poco
-                    if ($user->getToken() && $user->getTokenExpiration() > new \DateTime()) {
-                        $error = $this->get('translator')->trans('form.reset.wait', ['%expiry%' => $expire], 'security');
-                    } else {
-                        // generar un nuevo token
-                        $token = bin2hex(random_bytes(16));
-                        $user->setToken($token);
-
-                        // calcular fecha de expiración del token
-                        $validity = new \DateTime();
-                        $validity->add(new \DateInterval('PT' . $expire . 'M'));
-                        $user->setTokenExpiration($validity);
-
-                        // enviar correo
-                        if (0 === $this->get(MailerService::class)->sendEmail([$user],
-                                ['id' => 'form.reset.email.subject', 'parameters' => []],
-                                [
-                                    'id' => 'form.reset.email.body',
-                                    'parameters' => [
-                                        '%name%' => $user->getFirstName(),
-                                        '%link%' => $this->generateUrl('login_password_reset_do',
-                                            ['userId' => $user->getId(), 'token' => $token],
-                                            UrlGeneratorInterface::ABSOLUTE_URL),
-                                        '%expiry%' => $expire
-                                    ]
-                                ], 'security')
-                        ) {
-                            $this->addFlash('error', $this->get('translator')->trans('form.reset.error', [], 'security'));
-                        } else {
-                            // guardar token
-                            $this->get('doctrine')->getManager()->flush();
-
-                            $this->addFlash('success',
-                                $this->get('translator')->trans('form.reset.sent', ['%email%' => $email], 'security'));
-                            return $this->redirectToRoute('login');
-                        }
-                    }
-                }
+            if (!is_string($error)) {
+                return $error;
             }
         }
 
@@ -153,6 +101,40 @@ class SecurityController extends Controller
     }
 
     /**
+     * @Route("/restablecer/correo/{userId}/{token}", name="email_reset_do", methods={"GET"})
+     */
+    public function emailResetAction($userId, $token)
+    {
+        /**
+         * @var User
+         */
+        $user = $this->getDoctrine()->getManager()->getRepository('AppBundle:User')->findOneBy([
+            'id' => $userId,
+            'token' => $token
+        ]);
+
+        if (null === $user || $user->getTokenType() === 'password' || $user->getTokenExpiration() < new \DateTime()) {
+            $this->addFlash('error', $this->get('translator')->trans('form.change_email.notvalid', [], 'security'));
+            return $this->redirectToRoute('login');
+        }
+
+        $user
+            ->setEmailAddress($user->getTokenType())
+            ->setToken(null)
+            ->setTokenExpiration(null)
+            ->setTokenType(null);
+
+        $this->getDoctrine()->getManager()->flush();
+
+        // indicar que los cambios se han realizado con éxito y volver a la página de inicio
+        $message = $this->get('translator')->trans('form.change_email.message', [], 'security');
+        $this->addFlash('success', $message);
+        return new RedirectResponse(
+            $this->generateUrl('frontpage')
+        );
+    }
+
+    /**
      * @Route("/restablecer/{userId}/{token}", name="login_password_reset_do", methods={"GET", "POST"})
      */
     public function passwordResetAction(Request $request, $userId, $token)
@@ -162,7 +144,8 @@ class SecurityController extends Controller
          */
         $user = $this->getDoctrine()->getManager()->getRepository('AppBundle:User')->findOneBy([
             'id' => $userId,
-            'token' => $token
+            'token' => $token,
+            'tokenType' => 'password'
         ]);
 
         if (null === $user || ($user->getTokenExpiration() < new \DateTime())) {
@@ -189,7 +172,8 @@ class SecurityController extends Controller
             $user
                 ->setPassword($password)
                 ->setToken(null)
-                ->setTokenExpiration(null);
+                ->setTokenExpiration(null)
+                ->setTokenType(null);
 
             $this->getDoctrine()->getManager()->flush();
 
@@ -253,6 +237,72 @@ class SecurityController extends Controller
                 'form' => $form->createView()
             ]
         );
+    }
+
+    /**
+     * @param $email
+     * @return string|RedirectResponse
+     */
+    private function passwordResetRequest($email)
+    {
+        /** @var User $user */
+        // comprobar que está asociada a un usuario
+        $user = $this->getDoctrine()->getManager()->getRepository('AppBundle:User')->findOneBy(['emailAddress' => $email]);
+
+        $error = '';
+
+        if (null === $user) {
+            $error = $this->get('translator')->trans('form.reset.notfound', [], 'security');
+        } else {
+            // almacenar como último correo electrónico el indicado
+            $this->get('session')->set('_security.last_username', $user->getEmailAddress());
+
+            // obtener tiempo de expiración del token
+            $expire = (int)$this->getParameter('password_reset.expire');
+
+            if ($this->getParameter('external.enabled') && $user->getExternalCheck()) {
+                $this->addFlash('error', $this->get('translator')->trans('form.reset.external_login.error', [], 'security'));
+            } else {
+                // comprobar que no se ha generado un token hace poco
+                if ($user->getToken() && $user->getTokenExpiration() > new \DateTime()) {
+                    $error = $this->get('translator')->trans('form.reset.wait', ['%expiry%' => $expire], 'security');
+                } else {
+                    // generar un nuevo token
+                    $token = bin2hex(random_bytes(16));
+                    $user->setToken($token);
+
+                    // calcular fecha de expiración del token
+                    $validity = new \DateTime();
+                    $validity->add(new \DateInterval('PT' . $expire . 'M'));
+                    $user->setTokenExpiration($validity)->setTokenType('password');
+
+                    // enviar correo
+                    if (0 === $this->get(MailerService::class)->sendEmail([$user],
+                            ['id' => 'form.reset.email.subject', 'parameters' => []],
+                            [
+                                'id' => 'form.reset.email.body',
+                                'parameters' => [
+                                    '%name%' => $user->getFirstName(),
+                                    '%link%' => $this->generateUrl('login_password_reset_do',
+                                        ['userId' => $user->getId(), 'token' => $token],
+                                        UrlGeneratorInterface::ABSOLUTE_URL),
+                                    '%expiry%' => $expire
+                                ]
+                            ], 'security')
+                    ) {
+                        $this->addFlash('error', $this->get('translator')->trans('form.reset.error', [], 'security'));
+                    } else {
+                        // guardar token
+                        $this->get('doctrine')->getManager()->flush();
+
+                        $this->addFlash('success',
+                            $this->get('translator')->trans('form.reset.sent', ['%email%' => $email], 'security'));
+                        return $this->redirectToRoute('login');
+                    }
+                }
+            }
+        }
+        return $error;
     }
 
 }

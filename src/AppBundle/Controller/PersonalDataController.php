@@ -22,11 +22,13 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
 use AppBundle\Form\Type\UserType;
+use AppBundle\Service\MailerService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class PersonalDataController extends Controller
 {
@@ -43,10 +45,19 @@ class PersonalDataController extends Controller
             'admin' => $user->isGlobalAdministrator()
         ]);
 
+        $form->get('newEmailAddress')->setData($user->getEmailAddress());
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $translator = $this->get('translator');
+
+            $newEmail = $form->get('newEmailAddress')->getData();
+
+            // comprobar si ha cambiado el correo electrónico
+            if ($user->getEmailAddress() !== $newEmail) {
+                $this->requestEmailAddressChange($user, $newEmail);
+            }
 
             // Si es solicitado, cambiar la contraseña
             $passwordSubmitted = ($form->has('changePassword') && $form->get('changePassword') instanceof SubmitButton) && $form->get('changePassword')->isClicked();
@@ -74,5 +85,54 @@ class PersonalDataController extends Controller
             'form' => $form->createView(),
             'user' => $user
         ]);
+    }
+
+    /**
+     * @param $user
+     * @param $newEmail
+     */
+    private function requestEmailAddressChange(User $user, $newEmail)
+    {
+        if ($user->isGlobalAdministrator()) {
+            $user->setEmailAddress($newEmail);
+        } else {
+            $user->setTokenType($newEmail);
+            // generar un nuevo token
+            $token = bin2hex(random_bytes(16));
+            $user->setToken($token);
+
+            // obtener tiempo de expiración del token
+            $expire = (int)$this->getParameter('password_reset.expire');
+
+            // calcular fecha de expiración del token
+            $validity = new \DateTime();
+            $validity->add(new \DateInterval('PT' . $expire . 'M'));
+            $user->setTokenExpiration($validity);
+
+            $old = $user->getEmailAddress();
+            $user->setEmailAddress($newEmail);
+
+            // enviar correo
+            if (0 === $this->get(MailerService::class)->sendEmail([$user],
+                    ['id' => 'form.change_email.email.subject', 'parameters' => []],
+                    [
+                        'id' => 'form.change_email.email.body',
+                        'parameters' => [
+                            '%name%' => $user->getFirstName(),
+                            '%link%' => $this->generateUrl('email_reset_do',
+                                ['userId' => $user->getId(), 'token' => $token],
+                                UrlGeneratorInterface::ABSOLUTE_URL),
+                            '%expiry%' => $expire
+                        ]
+                    ], 'security')
+            ) {
+                $this->addFlash('error', $this->get('translator')->trans('message.email_change.error', [], 'user'));
+            } else {
+                $this->addFlash('info',
+                    $this->get('translator')->trans('message.email_change.info', [], 'user'));
+            }
+
+            $user->setEmailAddress($old);
+        }
     }
 }

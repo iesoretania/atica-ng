@@ -40,3 +40,18 @@ form.reset.email.body: |
     Un cordial saludo.
 
 form.reset.message: Contraseña restablecida con éxito
+
+form.change_email.notvalid: No se ha encontrado la petición de cambio de dirección o bien ha caducado. Vuelva a solicitarla
+form.change_email.message: La nueva dirección de correo ha sido confirmada con éxito
+form.change_email.email.subject: Confirmación de cambio de dirección de correo
+form.change_email.email.body: |
+    Estimado %name%:
+
+    Hemos recibido una solicitud de cambio de dirección de correo para su cuenta. En el caso de que desee confirmar
+    la nueva dirección debe hacer clic en el siguiente enlace: %link%
+
+    El enlace caducará en %expiry% minutos a contar desde la solicitud.
+
+    Si cree que ha recibido este mensaje por error ignórelo, no es necesario que realice ninguna acción adicional.
+
+    Un cordial saludo.

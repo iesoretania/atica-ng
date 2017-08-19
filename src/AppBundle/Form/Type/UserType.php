@@ -23,12 +23,16 @@ namespace AppBundle\Form\Type;
 use AppBundle\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -52,8 +56,12 @@ class UserType extends AbstractType
             ->add('lastName', null, [
                 'label' => 'form.last_name'
             ])
-            ->add('emailAddress', null, [
-                'label' => 'form.email_address'
+            ->add('newEmailAddress', EmailType::class, [
+                'label' => 'form.email_address',
+                'mapped' => false,
+                'constraints' => [
+                    new Email()
+                ]
             ])
             ->add('gender', ChoiceType::class, [
                 'label' => 'form.gender',
@@ -90,74 +98,95 @@ class UserType extends AbstractType
                     'required' => false,
                     'disabled' => $options['own']
                 ])
-                ->add('externalCheck', ChoiceType::class, [
-                    'label' => 'form.external_check',
+                ->add('allowExternalCheck', ChoiceType::class, [
+                    'label' => 'form.allow_external_check',
                     'required' => true,
                     'expanded' => true,
                     'choices' => [
-                        'form.external_check.yes' => true,
-                        'form.external_check.no' => false
+                        'form.allow_external_check.yes' => true,
+                        'form.allow_external_check.no' => false
                     ]
                 ]);
         }
 
-        if (!$options['new']) {
-            $builder
-                ->add('submit', SubmitType::class, [
-                    'label' => 'form.save',
-                    'attr' => ['class' => 'btn btn-success']
-                ]);
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
+            $builder = $event->getForm();
+            /** @var User $data */
+            $data = $event->getData();
 
-            if ($options['own']) {
+            if ($data->getAllowExternalCheck() || $options['admin']) {
                 $builder
-                    ->add('oldPassword', PasswordType::class, [
-                        'label' => 'form.old_password',
-                        'required' => false,
-                        'mapped' => false,
-                        'constraints' => [
-                            new UserPassword([
-                                'groups' => ['password']
-                            ]),
-                            new NotBlank([
-                                'groups' => ['password']
-                            ])
+                    ->add('externalCheck', ChoiceType::class, [
+                        'label' => 'form.external_check',
+                        'required' => true,
+                        'expanded' => true,
+                        'choices' => [
+                            'form.external_check.yes' => true,
+                            'form.external_check.no' => false
                         ]
                     ]);
             }
-        }
 
-        if ($options['admin'] || $options['own']) {
-            $builder
-                ->add('newPassword', RepeatedType::class, [
-                    'label' => 'form.new_password',
-                    'required' => $options['new'],
-                    'type' => PasswordType::class,
-                    'mapped' => false,
-                    'invalid_message' => 'password.no_match',
-                    'first_options' => [
+            $passwordChangeAllowed = !($data->getAllowExternalCheck() && $data->getExternalCheck());
+
+            if (!$options['new']) {
+                $builder
+                    ->add('submit', SubmitType::class, [
+                        'label' => 'form.save',
+                        'attr' => ['class' => 'btn btn-success']
+                    ]);
+
+                if ($options['own'] && $passwordChangeAllowed) {
+                    $builder
+                        ->add('oldPassword', PasswordType::class, [
+                            'label' => 'form.old_password',
+                            'required' => false,
+                            'mapped' => false,
+                            'constraints' => [
+                                new UserPassword([
+                                    'groups' => ['password']
+                                ]),
+                                new NotBlank([
+                                    'groups' => ['password']
+                                ])
+                            ]
+                        ]);
+                }
+            }
+
+            if ($options['admin'] || ($options['own'] && $passwordChangeAllowed)) {
+                $builder
+                    ->add('newPassword', RepeatedType::class, [
                         'label' => 'form.new_password',
-                        'constraints' => [
-                            new Length([
-                                'min' => 7,
-                                'minMessage' => 'password.min_length',
-                                'groups' => ['password']
-                            ]),
-                            new NotBlank([
-                                'groups' => ['password']
-                            ])
+                        'required' => $options['new'],
+                        'type' => PasswordType::class,
+                        'mapped' => false,
+                        'invalid_message' => 'password.no_match',
+                        'first_options' => [
+                            'label' => 'form.new_password',
+                            'constraints' => [
+                                new Length([
+                                    'min' => 7,
+                                    'minMessage' => 'password.min_length',
+                                    'groups' => ['password']
+                                ]),
+                                new NotBlank([
+                                    'groups' => ['password']
+                                ])
+                            ]
+                        ],
+                        'second_options' => [
+                            'label' => 'form.new_password_repeat',
+                            'required' => $options['new']
                         ]
-                    ],
-                    'second_options' => [
-                        'label' => 'form.new_password_repeat',
-                        'required' => $options['new']
-                    ]
-                ])
-                ->add('changePassword', SubmitType::class, [
-                    'label' => 'form.change_password',
-                    'attr' => ['class' => 'btn btn-success'],
-                    'validation_groups' => ['Default', 'password']
-                ]);
-        }
+                    ])
+                    ->add('changePassword', SubmitType::class, [
+                        'label' => 'form.change_password',
+                        'attr' => ['class' => 'btn btn-success'],
+                        'validation_groups' => ['Default', 'password']
+                    ]);
+            }
+        });
     }
 
     /**

@@ -108,6 +108,12 @@ class User implements AdvancedUserInterface
     private $token;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string
+     */
+    private $tokenType;
+
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      * @var \DateTime
      */
@@ -441,6 +447,29 @@ class User implements AdvancedUserInterface
         return $this->token;
     }
 
+    /**
+     * Set tokenType
+     *
+     * @param string $tokenType
+     *
+     * @return User
+     */
+    public function setTokenType($tokenType)
+    {
+        $this->tokenType = $tokenType;
+
+        return $this;
+    }
+
+    /**
+     * Get tokenType
+     *
+     * @return string
+     */
+    public function getTokenType()
+    {
+        return $this->tokenType;
+    }
 
     /**
      * Set tokenExpiration
