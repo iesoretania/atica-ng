@@ -85,23 +85,24 @@ class ElementType extends AbstractType
                 ]);
         }
 
-        $form
-            ->add('profile', EntityType::class, [
-                'label' => 'form.profile',
-                'class' => Profile::class,
-                'required' => false,
-                'placeholder' => 'form.none',
-                'disabled' => $data->getCode() !== null,
-                'query_builder' => function(EntityRepository $entityRepository) use ($data) {
-                    return $entityRepository->createQueryBuilder('p')
-                        ->where('p.organization = :organization')
-                        ->setParameter('organization', $data->getOrganization())
-                        ->orderBy('p.nameNeutral');
-                },
-                'choice_attr' => function(Profile $val) use ($data) {
-                    return ['disabled' => $val->getElement() !== null && $val->getElement() !== $data];
-                }
-            ]);
+        if (!$data->getCode()) {
+            $form
+                ->add('profile', EntityType::class, [
+                    'label' => 'form.profile',
+                    'class' => Profile::class,
+                    'required' => false,
+                    'placeholder' => 'form.none',
+                    'query_builder' => function (EntityRepository $entityRepository) use ($data) {
+                        return $entityRepository->createQueryBuilder('p')
+                            ->join('p.element', 'e')
+                            ->where('p.organization = :organization')
+                            ->andWhere('e = :element')
+                            ->setParameter('organization', $data->getOrganization())
+                            ->setParameter('element', $data)
+                            ->orderBy('p.nameNeutral');
+                    }
+                ]);
+        }
 
         // referencias
         $references = $data->getPathReferences();
