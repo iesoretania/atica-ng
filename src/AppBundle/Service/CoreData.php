@@ -44,12 +44,13 @@ class CoreData
             ['management', false, []],
             ['department', true, []],
             ['unit', true, []],
+            ['evaluation', false, []],
             ['subject', true, [
-                ['department', true, false],
-                ['unit', true, false]
+                ['department', false, false],
+                ['unit', true, false],
+                ['evaluation', true, true]
             ]],
             ['other', false, []],
-            ['evaluation', false, []]
         ];
 
         $elements = [];
