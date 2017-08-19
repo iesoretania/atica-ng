@@ -198,12 +198,12 @@ class SubjectController extends Controller
 
                         $tutor = $userData['Profesor/a'];
 
-                        if (isset($teacherCache[$tutor])) {
+                        if (isset($teacherCache[$tutor]) && !in_array($teacherCache[$tutor], $teacherCollection[$subjectName]['teachers'])) {
                             $teacherCollection[$subjectName]['teachers'][] = $teacherCache[$tutor];
                         } else {
                             /** @var User|null $user */
                             $user = $em->getRepository('AppBundle:User')->findOneByOrganizationAndFullName($organization, $tutor, new \DateTime());
-                            if ($user) {
+                            if ($user && !in_array($user, $teacherCollection[$subjectName]['teachers'])) {
                                 $teacherCollection[$subjectName]['teachers'][] = $user;
                                 $teacherCache[$tutor] = $user;
                             }

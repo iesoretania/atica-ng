@@ -131,11 +131,15 @@ class UnitController extends Controller
                     preg_match_all('/\b(.*) \(.*\)/U', $userData['Tutor/a'], $matches, PREG_SET_ORDER, 0);
 
                     $unit->getRoles()->clear();
+                    $matches = array_map(function($element) {
+                        return $element[1];
+                    }, $matches);
+                    $matches = array_unique($matches);
 
                     if (null !== $matches) {
                         foreach ($matches as $tutor) {
                             /** @var User|null $user */
-                            $user = $em->getRepository('AppBundle:User')->findOneByOrganizationAndFullName($organization, $tutor[1], new \DateTime());
+                            $user = $em->getRepository('AppBundle:User')->findOneByOrganizationAndFullName($organization, $tutor, new \DateTime());
                             if ($user) {
                                 $role = new Role();
                                 $role
