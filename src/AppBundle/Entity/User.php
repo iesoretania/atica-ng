@@ -158,6 +158,12 @@ class User implements AdvancedUserInterface
     private $externalCheck;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    protected $allowExternalCheck;
+
+    /**
      * Convertir usuario en cadena
      *
      * @return string
@@ -186,6 +192,7 @@ class User implements AdvancedUserInterface
         $this->managedOrganizations = new \Doctrine\Common\Collections\ArrayCollection();
         $this->assignedRoles = new \Doctrine\Common\Collections\ArrayCollection();
         $this->externalCheck = false;
+        $this->allowExternalCheck = false;
     }
 
     /**
@@ -816,5 +823,33 @@ class User implements AdvancedUserInterface
     public function getExternalCheck()
     {
         return $this->externalCheck;
+    }
+
+    /**
+     * Set allowExternalCheck
+     *
+     * @param boolean $allowExternalCheck
+     *
+     * @return User
+     */
+    public function setAllowExternalCheck($allowExternalCheck)
+    {
+        $this->allowExternalCheck = $allowExternalCheck;
+
+        if (!$allowExternalCheck) {
+            $this->setExternalCheck(false);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get allowExternalCheck
+     *
+     * @return boolean
+     */
+    public function getAllowExternalCheck()
+    {
+        return $this->allowExternalCheck;
     }
 }

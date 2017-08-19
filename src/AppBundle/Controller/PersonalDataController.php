@@ -49,7 +49,7 @@ class PersonalDataController extends Controller
             $translator = $this->get('translator');
 
             // Si es solicitado, cambiar la contraseña
-            $passwordSubmitted = ($form->get('changePassword') instanceof SubmitButton) && $form->get('changePassword')->isClicked();
+            $passwordSubmitted = ($form->has('changePassword') && $form->get('changePassword') instanceof SubmitButton) && $form->get('changePassword')->isClicked();
             if ($passwordSubmitted) {
                 $user->setPassword($this->get('security.password_encoder')
                     ->encodePassword($user, $form->get('newPassword')->get('first')->getData()));

@@ -123,7 +123,8 @@ class TeacherController extends Controller
                                 ->setEnabled(true)
                                 ->setGlobalAdministrator(false)
                                 ->setGender(User::GENDER_NEUTRAL)
-                                ->setExternalCheck($external);
+                                ->setExternalCheck($external)
+                                ->setAllowExternalCheck($external);
 
                             if ($generatePassword) {
                                 $user

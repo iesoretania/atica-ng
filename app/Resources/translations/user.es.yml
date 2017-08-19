@@ -10,8 +10,13 @@ form.enabled: Acceso
 form.enabled.no: El acceso a la aplicación le está denegado
 form.enabled.yes: El acceso a la aplicación le está permitido
 form.global_administrator: El usuario puede administrar todos los centros
+
+form.allow_external_check: Permitir comprobación de contraseña externa
+form.allow_external_check.yes: "El usuario puede activar la autenticación desde Séneca. NOTA: el nombre de usuario deberá ser su usuario IdEA"
+form.allow_external_check.no: El usuario solamente puede utilizar la contraseña almacenada en local
+
 form.external_check: Comprobación de contraseña
-form.external_check.yes: Se comprobará primero en Séneca, luego en local
+form.external_check.yes: Se comprobará primero en Séneca y luego en local si Séneca no está disponible
 form.external_check.no: Sólo se comprobará en local
 
 form.save: Guardar cambios
