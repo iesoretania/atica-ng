@@ -93,13 +93,18 @@ class ElementType extends AbstractType
                     'required' => false,
                     'placeholder' => 'form.none',
                     'query_builder' => function (EntityRepository $entityRepository) use ($data) {
-                        return $entityRepository->createQueryBuilder('p')
-                            ->join('p.element', 'e')
+                        $qb = $entityRepository->createQueryBuilder('p')
                             ->where('p.organization = :organization')
-                            ->andWhere('e = :element')
                             ->setParameter('organization', $data->getOrganization())
-                            ->setParameter('element', $data)
                             ->orderBy('p.nameNeutral');
+                        if ($data->getId()) {
+                            $qb = $qb
+                                ->join('p.element', 'e')
+                                ->andWhere('e = :element')
+                                ->setParameter('element', $data);
+                        }
+
+                        return $qb;
                     }
                 ]);
         }
