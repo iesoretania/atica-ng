@@ -21,10 +21,12 @@
 namespace AppBundle\Service;
 
 
+use AppBundle\Entity\User;
 use AppBundle\Security\OrganizationVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class UserExtensionService
 {
@@ -58,9 +60,13 @@ class UserExtensionService
         return null;
     }
 
-    public function checkCurrentOrganization($user)
+    public function checkCurrentOrganization(UserInterface $user)
     {
-        if ($this->isUserGlobalAdministrator()) {
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        if ($user->isGlobalAdministrator()) {
             return true;
         }
 

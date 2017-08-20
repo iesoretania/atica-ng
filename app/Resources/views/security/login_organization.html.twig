@@ -7,7 +7,13 @@
 {% block login_title %}{{ 'form.login.organization.title'|trans }}{% endblock %}
 
 {% block login_content %}
-    <div class="pull-right"><a href="{{ path('logout') }}"><i class="fa fa-chevron-left"></i> {{ 'form.login.organization.back'|trans }}</a></div>
+<div class="pull-right">
+    {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+        <a href="{{ path('admin_user_form_edit', {'id': app.user.id, '_switch_user': '_exit'}) }}">{{ 'form.user.impersonate.exit'|trans }}</a>
+{% else %}
+    <a href="{{ path('logout') }}"><i class="fa fa-chevron-left"></i> {{ 'form.login.organization.back'|trans }}</a>
+{% endif %}
+</div>
 <form method="post" action="{{ path('login_organization') }}" role="form">
     {{ form_start(form) }}
     <div class="form-group">
