@@ -20,6 +20,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Traits\UserBlameableTrait;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -34,6 +35,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 class User implements AdvancedUserInterface
 {
     use TimestampableEntity;
+    use UserBlameableTrait;
 
     const GENDER_NEUTRAL = 0;
     const GENDER_MALE = 1;
