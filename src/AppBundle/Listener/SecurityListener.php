@@ -46,6 +46,9 @@ class SecurityListener implements EventSubscriberInterface
 
         $em = $this->doctrine->getManager();
 
+        $user->setLastAccess(new \DateTime());
+        $em->flush();
+
         // comprobar si es administrador global y, en ese caso, devolver todas las organizaciones
         if ($user->isGlobalAdministrator()) {
             $organizationsCount = $em->getRepository('AppBundle:Organization')

@@ -7,7 +7,7 @@
 {% block table_header %}
     <th class="col-sm-4"><label><input type="checkbox" id="select"> {{ 'header.name'|trans }}</label></th>
     <th class="col-sm-4">{{ 'header.username'|trans }}</th>
-    <th class="col-sm-4">{{ 'header.profiles'|trans }}</th>
+    <th class="col-sm-4">{{ 'header.last_login'|trans }}</th>
 {% endblock %}
 
 {% block table_body %}
@@ -16,12 +16,13 @@
                 <tr class="clickable-row" data-href="{{ url }}">
                     <td>
                         <label><input type="checkbox" name="users[]" value="{{ user.id }}" {% if user.id == app.user.id %} disabled="disabled"{% else %} class="selectable"{% endif %}> <a href="{{ url }}">{{ user.lastName }}, {{ user.firstName }}</a></label>
+                        {%- if user.globalAdministrator %} <i class="fa fa-wrench"></i>{% endif -%}
                     </td>
                     <td><a href="{{ url }}">
                             {{ user.userNameAndEmailAddress }}
                         </a></td>
                     <td>
-                        {{ user.globalAdministrator ? 'role.global_administrator'|trans }}
+                        {{ user.lastAccess ? user.lastAccess|date('format.datetime'|trans({}, 'general')) }}
                     </td>
                 </tr>
             {% else %}
