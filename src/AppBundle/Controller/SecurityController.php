@@ -101,9 +101,9 @@ class SecurityController extends Controller
     }
 
     /**
-     * @Route("/restablecer/correo/{userId}/{token}", name="email_reset_do", methods={"GET"})
+     * @Route("/restablecer/correo/{userId}/{token}", name="email_reset_do", methods={"GET", "POST"})
      */
-    public function emailResetAction($userId, $token)
+    public function emailResetAction(Request $request, $userId, $token)
     {
         /**
          * @var User
@@ -118,19 +118,32 @@ class SecurityController extends Controller
             return $this->redirectToRoute('login');
         }
 
-        $user
-            ->setEmailAddress($user->getTokenType())
-            ->setToken(null)
-            ->setTokenExpiration(null)
-            ->setTokenType(null);
+        if ($request->getMethod() === 'POST') {
+            $user
+                ->setEmailAddress($user->getTokenType())
+                ->setToken(null)
+                ->setTokenExpiration(null)
+                ->setTokenType(null);
 
-        $this->getDoctrine()->getManager()->flush();
+            try {
+                $this->getDoctrine()->getManager()->flush();
 
-        // indicar que los cambios se han realizado con éxito y volver a la página de inicio
-        $message = $this->get('translator')->trans('form.change_email.message', [], 'security');
-        $this->addFlash('success', $message);
-        return new RedirectResponse(
-            $this->generateUrl('frontpage')
+                // indicar que los cambios se han realizado con éxito y volver a la página de inicio
+                $this->addFlash('success', $this->get('translator')->trans('form.change_email.message', [], 'security'));
+            }
+            catch(\Exception $e) {
+                // indicar que no se ha podido cambiar
+                $this->addFlash('error', $this->get('translator')->trans('form.change_email.error', [], 'security'));
+            }
+            return new RedirectResponse(
+                $this->generateUrl('frontpage')
+            );
+        }
+
+        return $this->render(
+            'security/login_email_change.html.twig', [
+                'user' => $user
+            ]
         );
     }
 
