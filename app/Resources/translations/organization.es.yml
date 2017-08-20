@@ -30,6 +30,7 @@ message.saved: Datos del centro actualizados con éxito.
 message.save_error: No se han podido actualizar los datos del centro.
 message.deleted: Los centros seleccionados han sido eliminados con éxito.
 message.delete_error: No se han podido eliminar los centros seleccionados.
+message.switched: El centro activo es ahora %name%.
 
 title.new: Nuevo centro
 title.edit: Datos del centro
@@ -40,6 +41,9 @@ table.total: "{1} Encontrado un único resultado|]1,Inf[ Encontrados %count% res
 table.no_items: No hay centros
 table.new: Nuevo centro
 table.filter: Filtrar...
+
+table.switch: Cambiar a
+table.active: Activo
 
 header.name: Nombre
 header.short_name: Nombre corto

@@ -118,11 +118,31 @@ class OrganizationController extends Controller
     }
 
     /**
-     * @Route("/eliminar", name="admin_organization_delete", methods={"POST"})
+     * @Route("/cambiar/{code}", name="admin_organization_switch", methods={"GET"})
      */
-    public function deleteAction(Request $request)
+    public function switchAction(Organization $organization)
+    {
+        $this->get('session')->set('organization_id', $organization->getId());
+        $this->addFlash('success', $this->get('translator')->trans('message.switched', ['%name%' => $organization->getName()], 'organization'));
+
+        return $this->redirectToRoute('admin_organization_list');
+    }
+
+    /**
+     * @Route("/operacion", name="admin_organization_operation", methods={"POST"})
+     */
+    public function operationAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
+        if ($request->request->has('switch')) {
+            $organization = $em->getRepository('AppBundle:Organization')->find($request->request->get('switch', null));
+            if ($organization) {
+                $this->get('session')->set('organization_id', $organization->getId());
+                $this->addFlash('success', $this->get('translator')->trans('message.switched', ['%name%' => $organization->getName()], 'organization'));
+            }
+
+            return $this->redirectToRoute('admin_organization_list');
+        }
 
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $em->createQueryBuilder();
