@@ -118,17 +118,6 @@ class OrganizationController extends Controller
     }
 
     /**
-     * @Route("/cambiar/{code}", name="admin_organization_switch", methods={"GET"})
-     */
-    public function switchAction(Organization $organization)
-    {
-        $this->get('session')->set('organization_id', $organization->getId());
-        $this->addFlash('success', $this->get('translator')->trans('message.switched', ['%name%' => $organization->getName()], 'organization'));
-
-        return $this->redirectToRoute('admin_organization_list');
-    }
-
-    /**
      * @Route("/operacion", name="admin_organization_operation", methods={"POST"})
      */
     public function operationAction(Request $request)
