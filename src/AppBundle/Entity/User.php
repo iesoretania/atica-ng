@@ -839,7 +839,7 @@ class User implements AdvancedUserInterface
      */
     public function setExternalCheck($externalCheck)
     {
-        $this->externalCheck = $externalCheck;
+        $this->externalCheck = $this->allowExternalCheck && $externalCheck;
 
         return $this;
     }
@@ -866,7 +866,7 @@ class User implements AdvancedUserInterface
         $this->allowExternalCheck = $allowExternalCheck;
 
         if (!$allowExternalCheck) {
-            $this->setExternalCheck(false);
+            $this->externalCheck = false;
         }
 
         return $this;
