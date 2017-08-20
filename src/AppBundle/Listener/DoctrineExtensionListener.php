@@ -22,7 +22,6 @@ namespace AppBundle\Listener;
 
 use Gedmo\Blameable\BlameableListener;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -40,7 +39,7 @@ class DoctrineExtensionListener implements EventSubscriberInterface
         $this->blameableListener = $blameableListener;
     }
 
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest()
     {
         $tokenStorage = $this->tokenStorage->getToken();
         if (null !== $tokenStorage && $this->authorizationChecker->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
