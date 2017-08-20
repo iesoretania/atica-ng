@@ -130,8 +130,7 @@ class SecurityController extends Controller
 
                 // indicar que los cambios se han realizado con éxito y volver a la página de inicio
                 $this->addFlash('success', $this->get('translator')->trans('form.change_email.message', [], 'security'));
-            }
-            catch(\Exception $e) {
+            } catch (\Exception $e) {
                 // indicar que no se ha podido cambiar
                 $this->addFlash('error', $this->get('translator')->trans('form.change_email.error', [], 'security'));
             }
