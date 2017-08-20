@@ -6,8 +6,9 @@
 
 {% block table_header %}
     <th class="col-sm-4"><label><input type="checkbox" id="select"> {{ 'header.name'|trans }}</label></th>
-    <th class="col-sm-4">{{ 'header.username'|trans }}</th>
-    <th class="col-sm-4">{{ 'header.last_login'|trans }}</th>
+    <th class="col-sm-3">{{ 'header.username'|trans }}</th>
+    <th class="col-sm-3">{{ 'header.email'|trans }}</th>
+    <th class="col-sm-2">{{ 'header.last_login'|trans }}</th>
 {% endblock %}
 
 {% block table_body %}
@@ -17,11 +18,14 @@
                     <td>
                         <label><input type="checkbox" name="users[]" value="{{ user.id }}" {% if user.id == app.user.id %} disabled="disabled"{% else %} class="selectable"{% endif %}> <a href="{{ url }}">{{ user.lastName }}, {{ user.firstName }}</a></label>
                         {%- if user.globalAdministrator %} <i class="fa fa-wrench"></i>{% endif -%}
-                        {%- if user.externalCheck and user.allowExternalCheck %} <i class="fa fa-sign-out"></i>{% endif -%}
+                    </td>
+                    <td>
+                        <a href="{{ url }}">{{ user.loginUsername }}</a>{% if user.externalCheck and user.allowExternalCheck %} <i class="fa fa-sign-out"></i>{% endif -%}
                     </td>
                     <td><a href="{{ url }}">
-                            {{ user.userNameAndEmailAddress }}
-                        </a></td>
+                            {{ user.emailAddress }}
+                        </a>
+                    </td>
                     <td>
                         {{ user.lastAccess ? user.lastAccess|date('format.datetime'|trans({}, 'general')) }}
                     </td>
