@@ -45,9 +45,8 @@ class SwitchUserSubscriber implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return array(
-            // constant for security.switch_user
+        return [
             SecurityEvents::SWITCH_USER => 'onSwitchUser',
-        );
+        ];
     }
 }
