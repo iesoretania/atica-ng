@@ -19,7 +19,7 @@ services:
     # makes classes in src/AppBundle available to be used as services
     AppBundle\:
         resource: '../../src/AppBundle/*'
-        exclude: '../../src/AppBundle/{Entity,Repository,Utils}'
+        exclude: '../../src/AppBundle/{Entity,Repository,Utils,DoctrineExtensions}'
 
     app.menu_builders_chain:
         class: AppBundle\Service\MenuBuilderChain
