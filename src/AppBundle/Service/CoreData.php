@@ -83,8 +83,7 @@ class CoreData
                     ->setNameNeutral($this->translator->trans('profile.'.$item[0].'_neutral', [], 'core'))
                     ->setNameMale($this->translator->trans('profile.'.$item[0].'_male', [], 'core'))
                     ->setNameFemale($this->translator->trans('profile.'.$item[0].'_female', [], 'core'))
-                    ->setInitials($this->translator->trans('profile.'.$item[0].'_initials', [], 'core'))
-                    ->setVisible(true);
+                    ->setInitials($this->translator->trans('profile.'.$item[0].'_initials', [], 'core'));
 
                 $element->setProfile($profile);
 
