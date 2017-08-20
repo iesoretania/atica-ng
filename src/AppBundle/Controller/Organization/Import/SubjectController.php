@@ -147,7 +147,7 @@ class SubjectController extends Controller
                                     ->getQuery()
                                     ->getOneOrNullResult();
 
-                                if (null == $unitFolder) {
+                                if (null === $unitFolder) {
                                     $unitFolder = new Element();
                                     $unitFolder
                                         ->setOrganization($organization)
