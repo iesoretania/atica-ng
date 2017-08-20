@@ -22,6 +22,8 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -31,6 +33,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class User implements AdvancedUserInterface
 {
+    use TimestampableEntity;
+
     const GENDER_NEUTRAL = 0;
     const GENDER_MALE = 1;
     const GENDER_FEMALE = 2;
@@ -55,6 +59,13 @@ class User implements AdvancedUserInterface
      * @var string
      */
     private $password;
+
+    /**
+     * @var \DateTime
+     * @Gedmo\Timestampable(on="change", field="password")
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $passwordChangedAt;
 
     /**
      * @ORM\Column(type="string")
