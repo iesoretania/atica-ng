@@ -102,11 +102,11 @@ class PersonalDataController extends Controller
             $user->setToken($token);
 
             // obtener tiempo de expiración del token
-            $expire = (int)$this->getParameter('password_reset.expire');
+            $expire = (int) $this->getParameter('password_reset.expire');
 
             // calcular fecha de expiración del token
             $validity = new \DateTime();
-            $validity->add(new \DateInterval('PT' . $expire . 'M'));
+            $validity->add(new \DateInterval('PT'.$expire.'M'));
             $user->setTokenExpiration($validity);
 
             $old = $user->getEmailAddress();

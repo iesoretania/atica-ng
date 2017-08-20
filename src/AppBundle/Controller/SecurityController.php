@@ -262,7 +262,7 @@ class SecurityController extends Controller
             $this->get('session')->set('_security.last_username', $user->getEmailAddress());
 
             // obtener tiempo de expiración del token
-            $expire = (int)$this->getParameter('password_reset.expire');
+            $expire = (int) $this->getParameter('password_reset.expire');
 
             if ($this->getParameter('external.enabled') && $user->getExternalCheck()) {
                 $this->addFlash('error', $this->get('translator')->trans('form.reset.external_login.error', [], 'security'));
@@ -277,7 +277,7 @@ class SecurityController extends Controller
 
                     // calcular fecha de expiración del token
                     $validity = new \DateTime();
-                    $validity->add(new \DateInterval('PT' . $expire . 'M'));
+                    $validity->add(new \DateInterval('PT'.$expire.'M'));
                     $user->setTokenExpiration($validity)->setTokenType('password');
 
                     // enviar correo

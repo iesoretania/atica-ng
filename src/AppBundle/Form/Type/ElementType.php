@@ -92,7 +92,7 @@ class ElementType extends AbstractType
                     'class' => Profile::class,
                     'required' => false,
                     'placeholder' => 'form.none',
-                    'query_builder' => function (EntityRepository $entityRepository) use ($data) {
+                    'query_builder' => function(EntityRepository $entityRepository) use ($data) {
                         $qb = $entityRepository->createQueryBuilder('p')
                             ->where('p.organization = :organization')
                             ->setParameter('organization', $data->getOrganization())
