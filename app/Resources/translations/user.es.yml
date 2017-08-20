@@ -22,6 +22,7 @@ form.external_check.no: Sólo se comprobará en local
 form.save: Guardar cambios
 form.delete: Eliminar usuarios seleccionados
 form.back: Volver
+form.impersonate: Acceder como el usuario
 form.delete_confirm: Confirmar borrado
 
 prompt.delete_confirm: |

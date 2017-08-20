@@ -58,6 +58,20 @@ class UserExtensionService
         return null;
     }
 
+    public function checkCurrentOrganization($user)
+    {
+        if ($this->isUserGlobalAdministrator()) {
+            return true;
+        }
+
+        return $this->session->has('organization_id')
+                && $this->em->getRepository('AppBundle:Organization')->getMembershipByUserQueryBuilder($user)
+                    ->andWhere('o = :organization')
+                    ->setParameter('organization', $this->getCurrentOrganization())
+                    ->getQuery()
+                    ->getOneOrNullResult() !== null;
+    }
+
     public function isUserGlobalAdministrator()
     {
         return $this->authorizationChecker->isGranted('ROLE_ADMIN');

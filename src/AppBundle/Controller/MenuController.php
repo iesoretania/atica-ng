@@ -20,16 +20,24 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Service\UserExtensionService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 class MenuController extends Controller
 {
     /**
      * @Route("/", name="frontpage", methods={"GET"})
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
+        if (false === $this->get(UserExtensionService::class)->checkCurrentOrganization($this->getUser())) {
+            $this->get('session')->remove('organization_id');
+            $this->get('session')->set('_security.organization.target_path', $request->getUri());
+            return $this->redirectToRoute('login_organization');
+        }
+
         return $this->render('default/index.html.twig',
             [
                 'menu' => true
