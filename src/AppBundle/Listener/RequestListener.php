@@ -44,7 +44,7 @@ class RequestListener implements EventSubscriberInterface
 
         if (($session->get('organization_id', '') === '') && $event->isMasterRequest()) {
             $route = $event->getRequest()->get('_route');
-            if ($route && substr($route, 0, 3) !== 'log' && $route[0] !== '_') {;
+            if ($route && substr($route, 0, 3) !== 'log' && $route[0] !== '_') {
                 $session->set('_security.organization.target_path', $event->getRequest()->getUri());
                 $event->setResponse(
                     new RedirectResponse($this->router->generate('login_organization'))

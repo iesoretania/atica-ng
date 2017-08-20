@@ -14,7 +14,7 @@ form.login.organization.submit: Entrar en el centro seleccionado
 form.login.organization.back: Volver a la pantalla de entrada
 form.login.error.no_membership: El usuario no pertenece actualmente a ningún centro educativo. Por favor contacte con la dirección de su centro.
 
-form.user.impersonate.exit: < Volver al usuario normal y seleccionar otro centro
+form.user.impersonate.exit: Volver al usuario normal y seleccionar otro centro
 
 form.reset.title: Restablecimiento de contraseña
 form.reset.submit: COMENZAR PROCESO

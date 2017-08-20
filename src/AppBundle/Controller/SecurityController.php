@@ -209,9 +209,11 @@ class SecurityController extends Controller
 
         $data = ['organization' => $this->getUser()->getDefaultOrganization()];
 
+        $count = $this->getDoctrine()->getManager()->getRepository('AppBundle:Organization')->countOrganizationsByUser($this->getUser(), new \DateTime());
+
         $form = $this->createFormBuilder($data)
             ->add('organization', EntityType::class, [
-                'expanded' => $this->getDoctrine()->getManager()->getRepository('AppBundle:Organization')->countOrganizationsByUser($this->getUser(), new \DateTime()) < 5,
+                'expanded' => $count < 5,
                 'class' => Organization::class,
                 'query_builder' => function(OrganizationRepository $er) {
                     return $er->getMembershipByUserQueryBuilder($this->getUser(), new \DateTime());
@@ -226,6 +228,7 @@ class SecurityController extends Controller
         if ($form->isSubmitted() && $form->isValid() && $form->get('organization')->getData()) {
 
             $session->set('organization_id', $form->get('organization')->getData()->getId());
+            $session->set('organization_selected', true);
             $this->getUser()->setDefaultOrganization($form->get('organization')->getData());
             $this->getDoctrine()->getManager()->flush();
 
@@ -234,7 +237,8 @@ class SecurityController extends Controller
             return new RedirectResponse($url);
         }
         return $this->render('security/login_organization.html.twig', [
-                'form' => $form->createView()
+                'form' => $form->createView(),
+                'count' => $count
             ]
         );
     }
