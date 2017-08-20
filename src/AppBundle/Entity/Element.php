@@ -24,16 +24,19 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @Gedmo\Tree(type="nested")
- * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
+ * @Gedmo\SoftDeleteable(timeAware=false)
  * @ORM\Entity(repositoryClass="ElementRepository")
  * @UniqueEntity(fields={"parent", "name"})
  */
 class Element
 {
+    use SoftDeleteableEntity;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -167,12 +170,6 @@ class Element
      * @var Element
      */
     private $linkedTo;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     * @var \DateTime|null
-     */
-    private $deletedAt;
 
     /**
      * Constructor
@@ -804,29 +801,6 @@ class Element
     public function setLinkedTo($linkedTo)
     {
         $this->linkedTo = $linkedTo;
-        return $this;
-    }
-
-    /**
-     * Get deletedAt
-     *
-     * @return mixed
-     */
-    public function getDeletedAt()
-    {
-        return $this->deletedAt;
-    }
-
-    /**
-     * Set deletedAt
-     *
-     * @param mixed $deletedAt
-     *
-     * @return Element
-     */
-    public function setDeletedAt($deletedAt)
-    {
-        $this->deletedAt = $deletedAt;
         return $this;
     }
 }

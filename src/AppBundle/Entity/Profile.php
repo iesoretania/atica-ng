@@ -22,13 +22,16 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 
 /**
  * @ORM\Entity
- * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
+ * @Gedmo\SoftDeleteable(timeAware=false)
  */
 class Profile
 {
+    use SoftDeleteableEntity;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -85,12 +88,6 @@ class Profile
      * @var Organization
      */
     private $organization;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     * @var \DateTime
-     */
-    private $deletedAt;
 
     /**
      * @return string
@@ -306,28 +303,5 @@ class Profile
     public function getOrganization()
     {
         return $this->organization;
-    }
-
-    /**
-     * Get deletedAt
-     *
-     * @return \DateTime
-     */
-    public function getDeletedAt()
-    {
-        return $this->deletedAt;
-    }
-
-    /**
-     * Set deletedAt
-     *
-     * @param \DateTime $deletedAt
-     *
-     * @return Profile
-     */
-    public function setDeletedAt($deletedAt)
-    {
-        $this->deletedAt = $deletedAt;
-        return $this;
     }
 }
