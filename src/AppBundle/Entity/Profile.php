@@ -21,9 +21,11 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
  */
 class Profile
 {
@@ -85,10 +87,10 @@ class Profile
     private $organization;
 
     /**
-     * @ORM\Column(type="boolean", nullable=false)
-     * @var bool
+     * @ORM\Column(type="datetime", nullable=true)
+     * @var \DateTime
      */
-    private $visible;
+    private $deletedAt;
 
     /**
      * @return string
@@ -102,7 +104,6 @@ class Profile
      */
     public function __construct()
     {
-        $this->visible = true;
     }
 
     /**
@@ -284,30 +285,6 @@ class Profile
     }
 
     /**
-     * Set visible
-     *
-     * @param boolean $visible
-     *
-     * @return Profile
-     */
-    public function setVisible($visible)
-    {
-        $this->visible = $visible;
-
-        return $this;
-    }
-
-    /**
-     * Is visible
-     *
-     * @return boolean
-     */
-    public function isVisible()
-    {
-        return $this->visible;
-    }
-
-    /**
      * Set organization
      *
      * @param Organization $organization
@@ -329,5 +306,28 @@ class Profile
     public function getOrganization()
     {
         return $this->organization;
+    }
+
+    /**
+     * Get deletedAt
+     *
+     * @return \DateTime
+     */
+    public function getDeletedAt()
+    {
+        return $this->deletedAt;
+    }
+
+    /**
+     * Set deletedAt
+     *
+     * @param \DateTime $deletedAt
+     *
+     * @return Profile
+     */
+    public function setDeletedAt($deletedAt)
+    {
+        $this->deletedAt = $deletedAt;
+        return $this;
     }
 }
