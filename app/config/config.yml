@@ -64,7 +64,9 @@ doctrine:
         #   3. Uncomment next line:
         #path: '%database_path%'
         types:
-            datetime: AppBundle\DoctrineExtensions\DBAL\Types\UTCDateTimeType
+            datetime:
+              class: AppBundle\DoctrineExtensions\DBAL\Types\UTCDateTimeType
+              commented: false
 
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'
