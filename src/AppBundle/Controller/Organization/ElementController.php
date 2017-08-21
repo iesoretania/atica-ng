@@ -23,12 +23,12 @@ namespace AppBundle\Controller\Organization;
 use AppBundle\Entity\Actor;
 use AppBundle\Entity\Element;
 use AppBundle\Entity\ElementRepository;
+use AppBundle\Entity\Organization;
 use AppBundle\Entity\Reference;
 use AppBundle\Entity\Role;
 use AppBundle\Form\Type\ElementType;
 use AppBundle\Security\OrganizationVoter;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\QueryBuilder;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
@@ -149,8 +149,8 @@ class ElementController extends Controller
 
         $form = $this->createForm(ElementType::class, $element);
 
-        $this->getElementReferences($element, $element->getLabels(), $form);
-        $this->getElementRoles($element, $form, $organization);
+        $this->setElementReferencesInForm($element, $form);
+        $this->setElementRolesInForm($element, $form, $organization);
 
         $form->handleRequest($request);
 
@@ -313,13 +313,14 @@ class ElementController extends Controller
 
     /**
      * @param Element $element
-     * @param Collection $labels
      * @param Form $form
      */
-    private function getElementReferences($element, $labels, $form)
+    private function setElementReferencesInForm($element, $form)
     {
         /** @var ObjectManager $em */
         $em = $this->getDoctrine()->getManager();
+
+        $labels = $element->getLabels();
 
         /** @var Reference $reference */
         foreach ($element->getPathReferences() as $reference) {
@@ -347,10 +348,10 @@ class ElementController extends Controller
 
     /**
      * @param Element $element
-     * @param Collection $roles
      * @param Form $form
+     * @param Organization $organization
      */
-    private function getElementRoles($element, $form, $organization)
+    private function setElementRolesInForm($element, $form, $organization)
     {
         /** @var ObjectManager $em */
         $em = $this->getDoctrine()->getManager();
@@ -380,7 +381,7 @@ class ElementController extends Controller
 
     /**
      * @param $page
-     * @param $element
+     * @param Element|null $element
      * @param $q
      * @return Pagerfanta
      */
@@ -403,7 +404,7 @@ class ElementController extends Controller
         if ($q) {
             $queryBuilder
                 ->andWhere('node.name LIKE :tq')
-                ->setParameter('tq', '%' . $q . '%');
+                ->setParameter('tq', '%'.$q.'%');
         }
 
         $adapter = new DoctrineORMAdapter($queryBuilder, false);
@@ -416,7 +417,7 @@ class ElementController extends Controller
 
     /**
      * @param Request $request
-     * @param $element
+     * @param Element|null $element
      * @return bool
      */
     private function processElementMovementOperation(Request $request, $element)
@@ -424,7 +425,7 @@ class ElementController extends Controller
         $ok = false;
         $em = $this->getDoctrine()->getManager();
 
-        foreach(['up', 'down'] as $op) {
+        foreach (['up', 'down'] as $op) {
             if ($request->get($op)) {
                 $item = $em->getRepository('AppBundle:Element')->find($request->get($op));
                 if (null === $item || $item->getParent() !== $element) {
@@ -440,7 +441,7 @@ class ElementController extends Controller
 
     /**
      * @param $items
-     * @param $element
+     * @param Element|null $element
      * @return array
      */
     private function filterElementsFromItems($items, $element)
@@ -464,7 +465,7 @@ class ElementController extends Controller
 
     /**
      * @param $items
-     * @param $element
+     * @param Element|null $element
      */
     private function deleteElements($items, $element)
     {
