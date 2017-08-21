@@ -51,36 +51,10 @@ class ElementController extends Controller
         $organization = $this->get('AppBundle\Service\UserExtensionService')->getCurrentOrganization();
         $this->denyAccessUnlessGranted(OrganizationVoter::MANAGE, $organization);
 
-        $em = $this->getDoctrine()->getManager();
-
-        /** @var ElementRepository $elementRepository */
-        $elementRepository = $em->getRepository('AppBundle:Element');
-        $element = $this->getSelectedElement($path, $elementRepository, $organization);
-
-        /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $elementRepository->getChildrenQueryBuilder($element, true)
-            ->addSelect('ref')
-            ->addSelect('r')
-            ->addSelect('u')
-            ->addSelect('l')
-            ->leftJoin('node.references', 'ref')
-            ->leftJoin('node.roles', 'r')
-            ->leftJoin('node.labels', 'l')
-            ->leftJoin('r.user', 'u')
-        ;
-
         $q = $request->get('q', null);
-        if ($q) {
-            $queryBuilder
-                ->andWhere('node.name LIKE :tq')
-                ->setParameter('tq', '%'.$q.'%');
-        }
 
-        $adapter = new DoctrineORMAdapter($queryBuilder, false);
-        $pager = new Pagerfanta($adapter);
-        $pager
-            ->setMaxPerPage($this->getParameter('page.size'))
-            ->setCurrentPage($q ? 1 : $page);
+        $element = $this->getSelectedElement($path, $organization);
+        $pager = $this->getElementListPager($page, $element, $q);
 
         $breadcrumb = $this->generateBreadcrumb($element);
 
@@ -103,59 +77,19 @@ class ElementController extends Controller
         $organization = $this->get('AppBundle\Service\UserExtensionService')->getCurrentOrganization();
         $this->denyAccessUnlessGranted(OrganizationVoter::MANAGE, $organization);
 
-        $em = $this->getDoctrine()->getManager();
-
-        $elementRepository = $em->getRepository('AppBundle:Element');
-        $element = $this->getSelectedElement($path, $elementRepository, $organization);
-
-        $ok = false;
-        if ($request->get('up')) {
-            $item = $em->getRepository('AppBundle:Element')->find($request->get('up'));
-            if (null === $item || $item->getParent() !== $element) {
-                throw $this->createNotFoundException();
-            }
-            $em->getRepository('AppBundle:Element')->moveUp($item);
-            $ok = true;
-        }
-        if ($request->get('down')) {
-            $item = $em->getRepository('AppBundle:Element')->find($request->get('down'));
-            if (null === $item || $item->getParent() !== $element) {
-                throw $this->createNotFoundException();
-            }
-            $em->getRepository('AppBundle:Element')->moveDown($item);
-            $ok = true;
-        }
+        $element = $this->getSelectedElement($path, $organization);
+        $ok = $this->processElementMovementOperation($request, $element);
 
         $items = $request->request->get('elements', []);
         if ($ok || count($items) === 0) {
             return $this->redirectToRoute('organization_element_list', ['path' => $path]);
         }
 
-        $elements = $em->createQueryBuilder()
-            ->select('e')
-            ->from('AppBundle:Element', 'e')
-            ->where('e.id IN (:items)')
-            ->andWhere('e.parent = :current')
-            ->andWhere('e.code IS NULL')
-            ->setParameter('items', $items)
-            ->setParameter('current', $element)
-            ->orderBy('e.left')
-            ->getQuery()
-            ->getResult();
+        $elements = $this->filterElementsFromItems($items, $element);
 
         if ($request->get('confirm', '') === 'ok') {
             try {
-                $em->createQueryBuilder()
-                    ->delete('AppBundle:Element', 'e')
-                    ->where('e.id IN (:items)')
-                    ->andWhere('e.parent = :current')
-                    ->andWhere('e.code IS NULL')
-                    ->setParameter('items', $items)
-                    ->setParameter('current', $element)
-                    ->getQuery()
-                    ->execute();
-
-                $em->flush();
+                $this->deleteElements($items, $element);
                 $this->addFlash('success', $this->get('translator')->trans('message.deleted', [], 'element'));
             } catch (\Exception $e) {
                 $this->addFlash('error', $this->get('translator')->trans('message.delete_error', [], 'element'));
@@ -214,8 +148,9 @@ class ElementController extends Controller
         }
 
         $form = $this->createForm(ElementType::class, $element);
-        $this->getElementReferences($element, $em, $element->getLabels(), $form);
-        $this->getElementRoles($element, $em, $element->getRoles(), $form, $organization);
+
+        $this->getElementReferences($element, $element->getLabels(), $form);
+        $this->getElementRoles($element, $form, $organization);
 
         $form->handleRequest($request);
 
@@ -270,12 +205,14 @@ class ElementController extends Controller
 
     /**
      * @param $path
-     * @param ElementRepository $elementRepository
      * @param $organization
      * @return Element
      */
-    private function getSelectedElement($path, ElementRepository $elementRepository, $organization)
+    private function getSelectedElement($path, $organization)
     {
+        /** @var ElementRepository $elementRepository */
+        $elementRepository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Element');
+
         /** @var Element|null $element */
         if (null !== $path) {
             $element = $elementRepository->findOneByOrganizationAndPath($organization, $path);
@@ -376,12 +313,14 @@ class ElementController extends Controller
 
     /**
      * @param Element $element
-     * @param ObjectManager $em
      * @param Collection $labels
      * @param Form $form
      */
-    private function getElementReferences($element, $em, $labels, $form)
+    private function getElementReferences($element, $labels, $form)
     {
+        /** @var ObjectManager $em */
+        $em = $this->getDoctrine()->getManager();
+
         /** @var Reference $reference */
         foreach ($element->getPathReferences() as $reference) {
             $data = [];
@@ -408,12 +347,16 @@ class ElementController extends Controller
 
     /**
      * @param Element $element
-     * @param ObjectManager $em
      * @param Collection $roles
      * @param Form $form
      */
-    private function getElementRoles($element, $em, $roles, $form, $organization)
+    private function getElementRoles($element, $form, $organization)
     {
+        /** @var ObjectManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+        $roles = $element->getRoles();
+
         /** @var Actor $actor */
         foreach ($element->getPathActors() as $actor) {
             $data = [];
@@ -433,5 +376,110 @@ class ElementController extends Controller
                 }
             }
         }
+    }
+
+    /**
+     * @param $page
+     * @param $element
+     * @param $q
+     * @return Pagerfanta
+     */
+    private function getElementListPager($page, $element, $q)
+    {
+        /** @var ElementRepository $elementRepository */
+        $elementRepository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Element');
+
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $elementRepository->getChildrenQueryBuilder($element, true)
+            ->addSelect('ref')
+            ->addSelect('r')
+            ->addSelect('u')
+            ->addSelect('l')
+            ->leftJoin('node.references', 'ref')
+            ->leftJoin('node.roles', 'r')
+            ->leftJoin('node.labels', 'l')
+            ->leftJoin('r.user', 'u');
+
+        if ($q) {
+            $queryBuilder
+                ->andWhere('node.name LIKE :tq')
+                ->setParameter('tq', '%' . $q . '%');
+        }
+
+        $adapter = new DoctrineORMAdapter($queryBuilder, false);
+        $pager = new Pagerfanta($adapter);
+        $pager
+            ->setMaxPerPage($this->getParameter('page.size'))
+            ->setCurrentPage($q ? 1 : $page);
+        return $pager;
+    }
+
+    /**
+     * @param Request $request
+     * @param $element
+     * @return bool
+     */
+    private function processElementMovementOperation(Request $request, $element)
+    {
+        $ok = false;
+        $em = $this->getDoctrine()->getManager();
+
+        foreach(['up', 'down'] as $op) {
+            if ($request->get($op)) {
+                $item = $em->getRepository('AppBundle:Element')->find($request->get($op));
+                if (null === $item || $item->getParent() !== $element) {
+                    throw $this->createNotFoundException();
+                }
+                $method = 'move'.ucfirst($op);
+                $em->getRepository('AppBundle:Element')->$method($item);
+                $ok = true;
+            }
+        }
+        return $ok;
+    }
+
+    /**
+     * @param $items
+     * @param $element
+     * @return array
+     */
+    private function filterElementsFromItems($items, $element)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $elements = $em->createQueryBuilder()
+            ->select('e')
+            ->from('AppBundle:Element', 'e')
+            ->where('e.id IN (:items)')
+            ->andWhere('e.parent = :current')
+            ->andWhere('e.code IS NULL')
+            ->setParameter('items', $items)
+            ->setParameter('current', $element)
+            ->orderBy('e.left')
+            ->getQuery()
+            ->getResult();
+
+        return $elements;
+    }
+
+    /**
+     * @param $items
+     * @param $element
+     */
+    private function deleteElements($items, $element)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $em->createQueryBuilder()
+            ->delete('AppBundle:Element', 'e')
+            ->where('e.id IN (:items)')
+            ->andWhere('e.parent = :current')
+            ->andWhere('e.code IS NULL')
+            ->setParameter('items', $items)
+            ->setParameter('current', $element)
+            ->getQuery()
+            ->execute();
+
+        $em->flush();
     }
 }
