@@ -44,14 +44,17 @@ class LoadInitialOrganizationData extends AbstractFixture implements OrderedFixt
 
         $manager->persist($organization);
 
-        $this->setReference('organization', $organization);
+        $data = $this->container->get('AppBundle\Service\CoreData');
+        $organization->setElement($data->createOrganizationElements($organization));
 
         $manager->flush();
+
+        $this->setReference('organization', $organization);
     }
 
     public function getOrder()
     {
-        return 5;
+        return 20;
     }
 
     /**

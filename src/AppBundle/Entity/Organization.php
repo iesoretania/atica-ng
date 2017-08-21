@@ -114,9 +114,9 @@ class Organization
 
     /**
      * @ORM\OneToOne(targetEntity="Element")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      */
-    private $currentElement;
+    private $element;
 
     /**
      * Constructor
@@ -458,13 +458,13 @@ class Organization
     /**
      * Set currentElement
      *
-     * @param Element $currentElement
+     * @param Element $element
      *
      * @return Organization
      */
-    public function setCurrentElement(Element $currentElement = null)
+    public function setElement(Element $element = null)
     {
-        $this->currentElement = $currentElement;
+        $this->element = $element;
 
         return $this;
     }
@@ -474,8 +474,8 @@ class Organization
      *
      * @return Element
      */
-    public function getCurrentElement()
+    public function getElement()
     {
-        return $this->currentElement;
+        return $this->element;
     }
 }

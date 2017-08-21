@@ -30,6 +30,7 @@ class Reference
     /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Element", inversedBy="references")
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @var Element
      */
     private $source;
@@ -37,6 +38,7 @@ class Reference
     /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Element")
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @var Element
      */
     private $target;

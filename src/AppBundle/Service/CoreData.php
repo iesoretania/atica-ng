@@ -38,7 +38,14 @@ class CoreData
         $this->entityManager = $entityManager;
     }
 
-    public function createOrganizationElements(Organization $organization, $rootName)
+    /**
+     * Crea los elementos básicos de una organización
+     *
+     * @param Organization $organization
+     *
+     * @return Element
+     */
+    public function createOrganizationElements(Organization $organization)
     {
         $data = [
             ['management', false, []],
@@ -59,7 +66,7 @@ class CoreData
         $root
             ->setOrganization($organization)
             ->setFolder(true)
-            ->setName($rootName);
+            ->setName($organization->getName());
 
         $this->entityManager->persist($root);
 
@@ -106,6 +113,7 @@ class CoreData
                 }
             }
         }
-        $this->entityManager->flush();
+
+        return $root;
     }
 }

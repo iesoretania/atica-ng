@@ -92,4 +92,21 @@ class OrganizationRepository extends EntityRepository
         $query = $this->createQueryBuilder('o')->select('count(o)')->getQuery();
         return $query->getSingleScalarResult();
     }
+
+    /**
+     * Pasado un array de ids de organizaciones, devolver la lista de objetos exceptuando la organización actual
+     * @param $items
+     * @param Organization $organization
+     * @return array
+     */
+    public function findAllInListByIdButCurrent($items, Organization $organization) {
+        return $this->createQueryBuilder('o')
+            ->where('o.id IN (:items)')
+            ->andWhere('o != :current')
+            ->setParameter('items', $items)
+            ->setParameter('current', $organization)
+            ->orderBy('o.code')
+            ->getQuery()
+            ->getResult();
+    }
 }

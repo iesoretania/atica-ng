@@ -30,6 +30,7 @@ class Actor
     /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Element", inversedBy="actors")
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @var Element
      */
     private $source;

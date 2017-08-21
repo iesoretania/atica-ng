@@ -22,6 +22,8 @@ namespace AppBundle\Controller\Admin;
 
 use AppBundle\Entity\Organization;
 use AppBundle\Form\Type\OrganizationType;
+use AppBundle\Service\CoreData;
+use AppBundle\Service\UserExtensionService;
 use Doctrine\ORM\QueryBuilder;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
@@ -57,6 +59,9 @@ class OrganizationController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
+                if (null === $organization->getElement()) {
+                    $organization->setElement($this->get(CoreData::class)->createOrganizationElements($organization));
+                }
                 $em->flush();
                 $this->addFlash('success', $this->get('translator')->trans('message.saved', [], 'organization'));
                 return $this->redirectToRoute('admin_organization_list');
@@ -133,47 +138,21 @@ class OrganizationController extends Controller
             return $this->redirectToRoute('admin_organization_list');
         }
 
-        /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $em->createQueryBuilder();
-
         $items = $request->request->get('organizations', []);
         if (count($items) === 0) {
             return $this->redirectToRoute('admin_organization_list');
         }
 
-        $organizations = $queryBuilder
-            ->select('o')
-            ->from('AppBundle:Organization', 'o')
-            ->where('o.id IN (:items)')
-            ->andWhere('o.id != :current')
-            ->setParameter('items', $items)
-            ->setParameter('current', $this->get('session')->get('organization_id'), '')
-            ->orderBy('o.code')
-            ->getQuery()
-            ->getResult();
+        $organizations = $em->getRepository('AppBundle:Organization')->findAllInListByIdButCurrent($items, $this->get(UserExtensionService::class)->getCurrentOrganization());
 
         if ($request->get('confirm', '') === 'ok') {
-            try {
-                /* Borrar primero las pertenencias */
-                $em->createQueryBuilder()
-                    ->delete('AppBundle:Membership', 'm')
-                    ->where('m.organization IN (:items)')
-                    ->setParameter('items', $items)
-                    ->getQuery()
-                    ->execute();
-
-                $em->createQueryBuilder()
-                    ->delete('AppBundle:Organization', 'o')
-                    ->where('o IN (:items)')
-                    ->setParameter('items', $items)
-                    ->getQuery()
-                    ->execute();
-
+            //try {
+                $this->deleteOrganizations($organizations);
                 $em->flush();
                 $this->addFlash('success', $this->get('translator')->trans('message.deleted', [], 'organization'));
-            } catch (\Exception $e) {
-                $this->addFlash('error', $this->get('translator')->trans('message.delete_error', [], 'organization'));
-            }
+            //} catch (\Exception $e) {
+            //    $this->addFlash('error', $this->get('translator')->trans('message.delete_error', [], 'organization'));
+            //}
             return $this->redirectToRoute('admin_organization_list');
         }
 
@@ -183,5 +162,59 @@ class OrganizationController extends Controller
             'title' => $this->get('translator')->trans('title.delete', [], 'organization'),
             'organizations' => $organizations
         ]);
+    }
+
+    /**
+     * Borrar los datos de las organizaciones pasados como parámetros
+     *
+     * @param Organization[] $organizations
+     */
+    private function deleteOrganizations($organizations)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        /* Borrar primero las pertenencias */
+        $em->createQueryBuilder()
+            ->delete('AppBundle:Membership', 'm')
+            ->where('m.organization IN (:items)')
+            ->setParameter('items', $organizations)
+            ->getQuery()
+            ->execute();
+
+        /* Desconectar las organizaciones de los elementos */
+        $em->createQueryBuilder()
+            ->update('AppBundle:Organization', 'o')
+            ->where('o IN (:items)')
+            ->set('o.element', ':value')
+            ->setParameter('items', $organizations)
+            ->setParameter('value', null)
+            ->getQuery()
+            ->execute();
+
+        /* Borrar luegos los perfiles */
+        $em->createQueryBuilder()
+            ->delete('AppBundle:Profile', 'p')
+            ->where('p.organization IN (:items)')
+            ->setParameter('items', $organizations)
+            ->getQuery()
+            ->execute();
+
+        /* Los actores y las referencias se eliminan por el onDelete="CASCADE" de los elementos */
+
+        /* Borrar luegos los elementos */
+        $em->createQueryBuilder()
+            ->delete('AppBundle:Element', 'e')
+            ->where('e.organization IN (:items)')
+            ->setParameter('items', $organizations)
+            ->getQuery()
+            ->execute();
+
+        /* Finalmente las organizaciones */
+        $em->createQueryBuilder()
+            ->delete('AppBundle:Organization', 'o')
+            ->where('o IN (:items)')
+            ->setParameter('items', $organizations)
+            ->getQuery()
+            ->execute();
     }
 }
