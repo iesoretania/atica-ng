@@ -146,13 +146,13 @@ class OrganizationController extends Controller
         $organizations = $em->getRepository('AppBundle:Organization')->findAllInListByIdButCurrent($items, $this->get(UserExtensionService::class)->getCurrentOrganization());
 
         if ($request->get('confirm', '') === 'ok') {
-            //try {
+            try {
                 $this->deleteOrganizations($organizations);
                 $em->flush();
                 $this->addFlash('success', $this->get('translator')->trans('message.deleted', [], 'organization'));
-            //} catch (\Exception $e) {
-            //    $this->addFlash('error', $this->get('translator')->trans('message.delete_error', [], 'organization'));
-            //}
+            } catch (\Exception $e) {
+                $this->addFlash('error', $this->get('translator')->trans('message.delete_error', [], 'organization'));
+            }
             return $this->redirectToRoute('admin_organization_list');
         }
 
