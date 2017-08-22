@@ -25,6 +25,7 @@ use Doctrine\Common\Collections\Collection;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
@@ -36,6 +37,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 class Element
 {
     use SoftDeleteableEntity;
+    use TimestampableEntity;
 
     /**
      * @ORM\Id()
