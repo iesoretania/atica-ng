@@ -59,6 +59,7 @@ class UserType extends AbstractType
             ->add('newEmailAddress', EmailType::class, [
                 'label' => 'form.email_address',
                 'mapped' => false,
+                'required' => false,
                 'constraints' => [
                     new Email()
                 ]
