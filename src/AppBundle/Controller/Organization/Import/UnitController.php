@@ -98,7 +98,7 @@ class UnitController extends Controller
             $tutorProfile = $em->getRepository('AppBundle:Profile')
                 ->findOneByOrganizationAndCode($organization,'tutor');
 
-            if (null == $tutorProfile) {
+            if (null === $tutorProfile) {
                 return null;
             }
 
