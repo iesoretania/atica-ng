@@ -17,7 +17,7 @@ Para facilitar el desarrollo se proporciona un entorno [Vagrant] con todas las d
 
 - PHP 5.5.9 o superior
 - Servidor web Apache2 (podría funcionar con nginx, pero no se ha probado aún)
-- Cualquier sistema gestor de bases de datos que funcione bajo Doctrine (p.ej. MySQL, MariaDB, PosgreSQL, SQLite, etc.)
+- Servidor de base de datos MySQL 5 o derivado (como MariaDB, Percona, etc). En un futuro podría permitirse también PosgreSQL si hay demanda.
 - PHP [Composer]
 - [Node.js] y [npmjs] (si se ha descargado una build completa, no serán necesarios)
 
