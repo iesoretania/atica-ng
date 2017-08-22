@@ -20,6 +20,7 @@
 
 namespace AppBundle\Entity\Documentation;
 
+use AppBundle\Entity\Element;
 use AppBundle\Entity\Traits\UserBlameableTrait;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -76,6 +77,13 @@ class Entry
      * @var Entry
      */
     private $link;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Element")
+     * @ORM\JoinColumn(nullable=true)
+     * @var Element
+     */
+    private $element;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -326,5 +334,29 @@ class Entry
     public function getHistory()
     {
         return $this->history;
+    }
+
+    /**
+     * Set element
+     *
+     * @param Element $element
+     *
+     * @return Entry
+     */
+    public function setElement(Element $element = null)
+    {
+        $this->element = $element;
+
+        return $this;
+    }
+
+    /**
+     * Get element
+     *
+     * @return Element
+     */
+    public function getElement()
+    {
+        return $this->element;
     }
 }

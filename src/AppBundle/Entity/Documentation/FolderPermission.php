@@ -20,7 +20,7 @@
 
 namespace AppBundle\Entity\Documentation;
 
-use AppBundle\Entity\Profile;
+use AppBundle\Entity\Element;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -45,11 +45,11 @@ class FolderPermission
 
     /**
      * @ORM\Id()
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Profile")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Element")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     * @var Profile
+     * @var Element
      */
-    private $profile;
+    private $element;
 
     /**
      * @ORM\Id()
@@ -107,26 +107,26 @@ class FolderPermission
     }
 
     /**
-     * Set profile
+     * Set element
      *
-     * @param Profile $profile
+     * @param Element $element
      *
      * @return FolderPermission
      */
-    public function setProfile(Profile $profile)
+    public function setProfile(Element $element)
     {
-        $this->profile = $profile;
+        $this->element = $element;
 
         return $this;
     }
 
     /**
-     * Get profile
+     * Get element
      *
-     * @return Profile
+     * @return Element
      */
-    public function getProfile()
+    public function getElement()
     {
-        return $this->profile;
+        return $this->element;
     }
 }
