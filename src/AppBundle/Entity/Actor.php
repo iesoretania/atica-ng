@@ -38,6 +38,7 @@ class Actor
     /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Profile")
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @var Profile
      */
     private $profile;

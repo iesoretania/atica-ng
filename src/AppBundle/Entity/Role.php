@@ -24,19 +24,11 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(columns={"element_id", "user_id", "profile_id"})})
  */
 class Role
 {
     /**
      * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
-     * @var int
-     */
-    private $id;
-
-    /**
      * @ORM\ManyToOne(targetEntity="Element", inversedBy="roles")
      * @ORM\JoinColumn(nullable=false)
      * @var Element
@@ -44,6 +36,7 @@ class Role
     private $element;
 
     /**
+     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="User", inversedBy="assignedRoles")
      * @ORM\JoinColumn(nullable=false)
      * @var User
@@ -51,7 +44,9 @@ class Role
     private $user;
 
     /**
+     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Profile")
+     * @ORM\JoinColumn(nullable=false)
      * @var Profile
      */
     private $profile;
@@ -74,16 +69,6 @@ class Role
     public function getProfileCode()
     {
         return 'profile.'.$this->getProfile()->getCode().'.'.($this->getUser()->getGender());
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**
