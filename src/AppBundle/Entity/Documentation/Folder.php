@@ -126,11 +126,18 @@ class Folder
     private $publicToken;
 
     /**
+     * @ORM\OneToMany(targetEntity="Entry", mappedBy="folder")
+     * @var Collection
+     */
+    private $entries;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->entries = new \Doctrine\Common\Collections\ArrayCollection();
         $this->documentFlow = false;
         $this->versionShown = true;
         $this->public = false;
@@ -506,5 +513,39 @@ class Folder
     public function getPublicToken()
     {
         return $this->publicToken;
+    }
+
+    /**
+     * Add entry
+     *
+     * @param Entry $entry
+     *
+     * @return Folder
+     */
+    public function addEntry(Entry $entry)
+    {
+        $this->entries[] = $entry;
+
+        return $this;
+    }
+
+    /**
+     * Remove entry
+     *
+     * @param Entry $entry
+     */
+    public function removeEntry(Entry $entry)
+    {
+        $this->entries->removeElement($entry);
+    }
+
+    /**
+     * Get entries
+     *
+     * @return Collection
+     */
+    public function getEntries()
+    {
+        return $this->entries;
     }
 }
