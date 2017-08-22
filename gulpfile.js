@@ -4,7 +4,7 @@ var plugins = require('gulp-load-plugins')();
 gulp.task('default', function() {
 
     // procesar SCSS
-    gulp.src(['node_modules/select2/dist/css/select2.css', 'web/css/**/*.scss', 'web/css/source-sans-pro/css/fonts.css', 'node_modules/font-awesome-animation/dist/font-awesome-animation.css', 'web/css/atica.css'])
+    gulp.src(['node_modules/select2/dist/css/select2.css', 'web/css/**/*.scss', 'web/css/source-sans-pro/css/fonts.css', 'node_modules/font-awesome-animation/dist/font-awesome-animation.css', 'node_modules/patternfly-bootstrap-treeview/dist/bootstrap-treeview.css', 'web/css/atica.css'])
         .pipe(plugins.sass())
         .pipe(plugins.autoprefixer({
             browsers: [
@@ -35,6 +35,10 @@ gulp.task('default', function() {
 
     // copiar Javascript de Select2
     gulp.src('node_modules/select2/dist/js/*')
+        .pipe(gulp.dest('web/dist/js/select2'));
+
+    // copiar Javascript de patternfly-bootstrap-treeview
+    gulp.src('node_modules/patternfly-bootstrap-treeview/dist/*.js')
         .pipe(gulp.dest('web/dist/js/select2'));
 
     // copiar fuentes

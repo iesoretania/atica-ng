@@ -155,6 +155,11 @@
       "from": "boom@>=2.0.0 <3.0.0",
       "resolved": "https://registry.npmjs.org/boom/-/boom-2.10.1.tgz"
     },
+    "bootstrap": {
+      "version": "3.3.7",
+      "from": "bootstrap@>=3.3.0 <3.4.0",
+      "resolved": "https://registry.npmjs.org/bootstrap/-/bootstrap-3.3.7.tgz"
+    },
     "bootstrap-sass": {
       "version": "3.3.7",
       "from": "bootstrap-sass@3.3.7",
@@ -1411,6 +1416,11 @@
           "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.1.11.tgz"
         }
       }
+    },
+    "patternfly-bootstrap-treeview": {
+      "version": "2.1.5",
+      "from": "patternfly-bootstrap-treeview@latest",
+      "resolved": "https://registry.npmjs.org/patternfly-bootstrap-treeview/-/patternfly-bootstrap-treeview-2.1.5.tgz"
     },
     "performance-now": {
       "version": "0.2.0",
