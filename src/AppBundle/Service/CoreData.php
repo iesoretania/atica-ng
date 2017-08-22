@@ -20,6 +20,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\Actor;
 use AppBundle\Entity\Element;
 use AppBundle\Entity\Organization;
 use AppBundle\Entity\Profile;
@@ -47,17 +48,50 @@ class CoreData
      */
     public function createOrganizationElements(Organization $organization)
     {
+        $profilesData = [
+            'teacher' => [],
+            'tutor' => [],
+            'department_head' => [],
+            'financial_manager' => [],
+            'student' => [],
+            'head_teacher' => [],
+            'staff' => []
+        ];
+
+        $profiles = [];
+
+        foreach($profilesData as $key => $profileData) {
+            $profile = new Profile();
+            $profile
+                ->setOrganization($organization)
+                ->setCode($key)
+                ->setNameNeutral($this->translator->trans('profile.' . $key . '.0', [], 'core'))
+                ->setNameMale($this->translator->trans('profile.' . $key . '.1', [], 'core'))
+                ->setNameFemale($this->translator->trans('profile.' . $key . '.2', [], 'core'))
+                ->setInitials($this->translator->trans('profile.' . $key . '.initials', [], 'core'));
+
+            $profiles[$key] = $profile;
+
+            $this->entityManager->persist($profile);
+        }
+
         $data = [
-            ['management', false, []],
-            ['department', true, []],
-            ['unit', true, []],
-            ['evaluation', false, []],
-            ['subject', true, [
-                ['department', false, false],
-                ['unit', true, false],
-                ['evaluation', true, true]
+            'management' => [false, [], []],
+            'department' => ['department_head', [], []],
+            'unit' => ['tutor', [], [
+                'tutor',
+                'student'
             ]],
-            ['other', false, []],
+            'evaluation' => [false, [], []],
+            'subject' => ['teacher', [
+                'department' => [false, false],
+                'unit' => [true, false],
+                'evaluation' => [true, true]
+            ], [
+                'teacher',
+                'student']
+            ],
+            'other' => [false, [], []]
         ];
 
         $elements = [];
@@ -70,47 +104,50 @@ class CoreData
 
         $this->entityManager->persist($root);
 
-        foreach ($data as $item) {
+        foreach ($data as $key => $item) {
             $element = new Element();
             $element
                 ->setOrganization($organization)
                 ->setParent($root)
-                ->setCode($item[0])
+                ->setCode($key)
                 ->setFolder(true)
                 ->setLocked(true)
-                ->setName($this->translator->trans('list.'.$item[0], [], 'core'));
+                ->setName($this->translator->trans('list.' . $key, [], 'core'));
 
             $this->entityManager->persist($element);
 
-            if ($item[1]) {
-                $profile = new Profile();
-                $profile
-                    ->setOrganization($organization)
-                    ->setCode($item[0])
-                    ->setNameNeutral($this->translator->trans('profile.'.$item[0].'_neutral', [], 'core'))
-                    ->setNameMale($this->translator->trans('profile.'.$item[0].'_male', [], 'core'))
-                    ->setNameFemale($this->translator->trans('profile.'.$item[0].'_female', [], 'core'))
-                    ->setInitials($this->translator->trans('profile.'.$item[0].'_initials', [], 'core'));
-
-                $element->setProfile($profile);
-
-                $this->entityManager->persist($profile);
+            if (false !== $item[0]) {
+                $element->setProfile($profiles[$item[0]]);
             }
 
-            $elements[$item[0]] = $element;
+            $elements[$key] = $element;
+        }
 
-            if (!empty($item[2])) {
-                foreach ($item[2] as $referenceData) {
-                    $reference = new Reference();
-                    $reference
-                        ->setSource($element)
-                        ->setTarget($elements[$referenceData[0]])
-                        ->setMandatory($referenceData[1])
-                        ->setMultiple($referenceData[2]);
+        // referencias
+        foreach ($data as $key => $item) {
+            foreach ($item[1] as $name => $referenceData) {
+                $reference = new Reference();
+                $reference
+                    ->setSource($elements[$key])
+                    ->setTarget($elements[$name])
+                    ->setMandatory($referenceData[0])
+                    ->setMultiple($referenceData[1]);
 
-                    $element->addReference($reference);
-                    $this->entityManager->persist($reference);
-                }
+                $elements[$key]->addReference($reference);
+                $this->entityManager->persist($reference);
+            }
+        }
+
+        // actores
+        foreach ($data as $key => $item) {
+            foreach ($item[2] as $actorData) {
+                $actor = new Actor();
+                $actor
+                    ->setSource($elements[$key])
+                    ->setProfile($profiles[$actorData]);
+                $elements[$key]->addActor($actor);
+
+                $this->entityManager->persist($actor);
             }
         }
 

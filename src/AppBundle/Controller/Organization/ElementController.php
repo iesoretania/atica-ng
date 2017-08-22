@@ -164,7 +164,6 @@ class ElementController extends Controller
             } catch (\Exception $e) {
                 $this->addFlash('error', $this->get('translator')->trans('message.save_error', [], 'element'));
             }
-
         }
 
         return $this->render('organization/element/form.html.twig', [
@@ -279,7 +278,7 @@ class ElementController extends Controller
         /** @var Actor $actor */
         foreach ($element->getPathActors() as $actor) {
             $formData = $form
-                ->get('role'.$actor->getRole())->getData();
+                ->get('role'.$actor->getProfile()->getId())->getData();
 
             if (!is_array($formData)) {
                 $formData = [$formData];
@@ -290,7 +289,7 @@ class ElementController extends Controller
             $oldRoles = $element->getRoles();
 
             foreach ($oldRoles as $role) {
-                if ($role->getRole() === $actor->getRole()) {
+                if ($role->getProfile() === $actor->getProfile()) {
                     if (!$data->contains($role->getUser())) {
                         $em->remove($role);
                     } else {
@@ -303,7 +302,7 @@ class ElementController extends Controller
                 $role = new Role();
                 $role
                     ->setUser($datum)
-                    ->setRole($actor->getRole())
+                    ->setProfile($actor->getProfile())
                     ->setElement($element);
                 $em->persist($role);
             }
@@ -364,17 +363,13 @@ class ElementController extends Controller
             $items = $em->getRepository('AppBundle:User')->findByOrganizationAndDate($organization);
 
             foreach ($roles as $role) {
-                if ($role->getRole() == $actor->getRole() && in_array($role->getUser(), $items)) {
+                if ($role->getProfile() === $actor->getProfile() && in_array($role->getUser(), $items)) {
                     $data[] = $role->getUser();
                 }
             }
 
             if (!empty($data)) {
-                if ($actor->isMultiple()) {
-                    $form->get('role'.$actor->getRole())->setData($data);
-                } else {
-                    $form->get('role'.$actor->getRole())->setData($data[0]);
-                }
+                $form->get('role'.$actor->getProfile()->getId())->setData($data);
             }
         }
     }

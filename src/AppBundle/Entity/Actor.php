@@ -37,70 +37,10 @@ class Actor
 
     /**
      * @ORM\Id
-     * @ORM\Column(type="string", length=10)
-     * @var string
+     * @ORM\ManyToOne(targetEntity="Profile")
+     * @var Profile
      */
-    private $role;
-
-    /**
-     * @ORM\Column(type="boolean")
-     * @var bool
-     */
-    private $multiple;
-
-    /**
-     * @ORM\Column(type="boolean")
-     * @var bool
-     */
-    private $mandatory;
-
-    /**
-     * Set multiple
-     *
-     * @param boolean $multiple
-     *
-     * @return Actor
-     */
-    public function setMultiple($multiple)
-    {
-        $this->multiple = $multiple;
-
-        return $this;
-    }
-
-    /**
-     * Get multiple
-     *
-     * @return boolean
-     */
-    public function isMultiple()
-    {
-        return $this->multiple;
-    }
-
-    /**
-     * Set mandatory
-     *
-     * @param boolean $mandatory
-     *
-     * @return Actor
-     */
-    public function setMandatory($mandatory)
-    {
-        $this->mandatory = $mandatory;
-
-        return $this;
-    }
-
-    /**
-     * Get mandatory
-     *
-     * @return boolean
-     */
-    public function isMandatory()
-    {
-        return $this->mandatory;
-    }
+    private $profile;
 
     /**
      * Set source
@@ -129,22 +69,22 @@ class Actor
     /**
      * Get role
      *
-     * @return string
+     * @return Profile
      */
-    public function getRole()
+    public function getProfile()
     {
-        return $this->role;
+        return $this->profile;
     }
 
     /**
      * Set role
      *
-     * @param string $role
+     * @param Profile $profile
      * @return Actor
      */
-    public function setRole($role)
+    public function setProfile(Profile $profile)
     {
-        $this->role = $role;
+        $this->profile = $profile;
         return $this;
     }
 

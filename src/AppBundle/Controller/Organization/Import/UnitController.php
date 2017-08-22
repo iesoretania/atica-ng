@@ -22,6 +22,7 @@ namespace AppBundle\Controller\Organization\Import;
 
 use AppBundle\Entity\Element;
 use AppBundle\Entity\Organization;
+use AppBundle\Entity\Profile;
 use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
 use AppBundle\Form\Model\UnitImport;
@@ -93,6 +94,14 @@ class UnitController extends Controller
         $unitCollection = [];
 
         try {
+            /** @var Profile $tutorProfile */
+            $tutorProfile = $em->getRepository('AppBundle:Profile')
+                ->findOneByOrganizationAndCode($organization,'tutor');
+
+            if (null == $tutorProfile) {
+                return null;
+            }
+
             while ($data = $importer->get(100)) {
                 foreach ($data as $userData) {
                     if (!isset($userData['Unidad'])) {
@@ -130,7 +139,6 @@ class UnitController extends Controller
 
                     preg_match_all('/\b(.*) \(.*\)/U', $userData['Tutor/a'], $matches, PREG_SET_ORDER, 0);
 
-                    $unit->getRoles()->clear();
                     $matches = array_map(function($element) {
                         return $element[1];
                     }, $matches);
@@ -141,13 +149,20 @@ class UnitController extends Controller
                             /** @var User|null $user */
                             $user = $em->getRepository('AppBundle:User')->findOneByOrganizationAndFullName($organization, $tutor, new \DateTime());
                             if ($user) {
-                                $role = new Role();
-                                $role
-                                    ->setElement($unit)
-                                    ->setRole('TUTOR')
-                                    ->setUser($user);
-                                $em->persist($role);
-                                $unit->addRole($role);
+                                $role = $em->getRepository('AppBundle:Role')->findOneBy([
+                                    'element' => $unit,
+                                    'profile' => $tutorProfile,
+                                    'user' => $user
+                                ]);
+                                if (null === $role) {
+                                    $role = new Role();
+                                    $role
+                                        ->setElement($unit)
+                                        ->setProfile($tutorProfile)
+                                        ->setUser($user);
+                                    $em->persist($role);
+                                    $unit->addRole($role);
+                                }
                             }
                         }
                     }

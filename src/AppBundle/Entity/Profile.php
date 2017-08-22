@@ -25,7 +25,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="ProfileRepository")
  * @Gedmo\SoftDeleteable(timeAware=false)
  */
 class Profile
@@ -94,6 +94,22 @@ class Profile
      */
     public function __toString() {
         return $this->getNameNeutral();
+    }
+
+    /**
+     * Get name
+     *
+     * @param User|null $user
+     * @return Profile
+     */
+    public function getName(User $user = null)
+    {
+        $profileNames = [
+            User::GENDER_NEUTRAL => $this->nameNeutral,
+            User::GENDER_MALE => $this->nameMale,
+            User::GENDER_FEMALE => $this->nameFemale
+        ];
+        return $profileNames[$user ? $user->getGender() : User::GENDER_NEUTRAL];
     }
 
     /**

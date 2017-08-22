@@ -23,6 +23,7 @@ namespace AppBundle\Controller\Organization\Import;
 use AppBundle\Entity\Element;
 use AppBundle\Entity\ElementRepository;
 use AppBundle\Entity\Organization;
+use AppBundle\Entity\Profile;
 use AppBundle\Entity\Role;
 use AppBundle\Entity\User;
 use AppBundle\Form\Model\SubjectImport;
@@ -111,6 +112,14 @@ class SubjectController extends Controller
         $teacherCache = [];
 
         try {
+            /** @var Profile $teacherProfile */
+            $teacherProfile = $em->getRepository('AppBundle:Profile')
+                ->findOneByOrganizationAndCode($organization,'teacher');
+
+            if (null == $teacherProfile) {
+                return null;
+            }
+
             while ($data = $importer->get(100)) {
                 foreach ($data as $userData) {
                     if (!isset($userData['Unidad'], $userData['Materia'], $userData['Profesor/a'])) {
@@ -220,7 +229,7 @@ class SubjectController extends Controller
                     $oldTeachers = [];
                     $oldTeachersReferences = [];
                     foreach ($oldRoles as $role) {
-                        if ($role->getRole() === 'TEACHER') {
+                        if ($role->getProfile() === $teacherProfile) {
                             $oldTeachers[] = $role->getUser();
                             $oldTeachersReferences[$role->getUser()->getId()] = $role;
                         }
@@ -241,7 +250,7 @@ class SubjectController extends Controller
                             $role = new Role();
                             $role
                                 ->setElement($subject)
-                                ->setRole('TEACHER')
+                                ->setProfile($teacherProfile)
                                 ->setUser($teacher);
                             $em->persist($role);
                             $subject->addRole($role);

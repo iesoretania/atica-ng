@@ -24,7 +24,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(columns={"element_id", "user_id", "role"})})
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(columns={"element_id", "user_id", "profile_id"})})
  */
 class Role
 {
@@ -51,10 +51,10 @@ class Role
     private $user;
 
     /**
-     * @ORM\Column(type="string", length=10)
-     * @var string
+     * @ORM\ManyToOne(targetEntity="Profile")
+     * @var Profile
      */
-    private $role;
+    private $profile;
 
     /**
      * Convert role to string
@@ -63,7 +63,17 @@ class Role
      */
     public function __toString()
     {
-        return $this->getUser().' ('.$this->getRole().')';
+        return $this->getUser().' ('.$this->getProfile()->getName($this->getUser()).')';
+    }
+
+    /**
+     * Convert role to profile code
+     *
+     * @return string
+     */
+    public function getProfileCode()
+    {
+        return 'profile.'.$this->getProfile()->getCode().'.'.($this->getUser()->getGender());
     }
 
     /**
@@ -79,13 +89,13 @@ class Role
     /**
      * Set role
      *
-     * @param string $role
+     * @param Profile $profile
      *
      * @return Role
      */
-    public function setRole($role)
+    public function setProfile(Profile $profile)
     {
-        $this->role = $role;
+        $this->profile = $profile;
 
         return $this;
     }
@@ -93,11 +103,11 @@ class Role
     /**
      * Get role
      *
-     * @return string
+     * @return Profile
      */
-    public function getRole()
+    public function getProfile()
     {
-        return $this->role;
+        return $this->profile;
     }
 
     /**

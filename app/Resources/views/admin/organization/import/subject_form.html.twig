@@ -23,7 +23,7 @@
                     <li>
                         {{ element.name }}
                         {%- if element.roles.count() -%}
-                            : {% for role in element.roles %}{{ role.user }} ({{ ('role.'~role.role)|trans({}, 'core') }}){% if not loop.last %}, {% endif %}{% endfor %}
+                            : {% for role in element.roles %}{{ role.user }} ({{ role.profileCode|trans({}, 'core') }}){% if not loop.last %}, {% endif %}{% endfor %}
                         {% endif %}
                     </li>
                 {% endfor %}

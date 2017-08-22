@@ -152,6 +152,7 @@ class TeacherController extends Controller
                         continue;
                     }
 
+                    /** @var Membership $membership */
                     $membership = $em->getRepository('AppBundle:Membership')->findOneBy([
                         'organization' => $organization,
                         'user' => $user,

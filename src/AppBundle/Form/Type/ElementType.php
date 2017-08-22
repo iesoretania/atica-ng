@@ -143,13 +143,13 @@ class ElementType extends AbstractType
         foreach ($actors as $actor) {
             $items = $this->entityManager->getRepository('AppBundle:User')->findByOrganizationAndDate($this->userExtensionService->getCurrentOrganization());
             $form
-                ->add('role'.$actor->getRole(), ChoiceType::class, [
-                    'label' => 'role.'.$actor->getRole(),
+                ->add('role'.$actor->getProfile()->getId(), ChoiceType::class, [
+                    'label' => 'profile.'.$actor->getProfile()->getCode().'.0',
                     'mapped' => false,
                     'translation_domain' => 'core',
                     'choice_translation_domain' => false,
-                    'required' => $actor->isMandatory(),
-                    'multiple' => $actor->isMultiple(),
+                    'required' => false,
+                    'multiple' => true,
                     'expanded' => false,
                     'choices' => $items,
                     'choice_value' => 'id',

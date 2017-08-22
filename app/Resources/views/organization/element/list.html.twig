@@ -24,7 +24,7 @@
                         {% for label in element.labels %} <span class="label label-default">{{ label.name }}</span>{% endfor %}
                     </td>
                     <td>
-                        {% for role in element.roles %}{{ role.user }} ({{ ('role.'~role.role)|trans({}, 'core') }}){% if not loop.last %}, {% endif %}{% endfor %}
+                        {% for role in element.roles %}{{ role.user }} ({{ role.profileCode|trans({}, 'core') }}){% if not loop.last %}, {% endif %}{% endfor %}
                     </td>
                     <td>
                         {% if not loop.first %}<button type="submit" class="btn btn-link btn-xs" name="up" value="{{ element.id }}" title="{{ 'table.move_up'|trans }}"><i class="fa fa-arrow-up"></i></button>{% endif %}

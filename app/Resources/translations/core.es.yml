@@ -6,20 +6,37 @@ list.unit: Unidad
 list.subject: Asignatura
 list.evaluation: Evaluación
 
-profile.department_neutral: Jefe/a de Departamento
-profile.department_male: Jefe de Departamento
-profile.department_female: Jefa de Departamento
-profile.department_initials: JD
+profile.department_head.0: Jefe/a de Departamento
+profile.department_head.1: Jefe de Departamento
+profile.department_head.2: Jefa de Departamento
+profile.department_head.initials: JD
 
-profile.unit_neutral: Tutor/a
-profile.unit_male: Tutor
-profile.unit_female: Tutora
-profile.unit_initials: TUT
+profile.financial_manager.0: Secretario/a
+profile.financial_manager.1: Secretario
+profile.financial_manager.2: Secretaria
+profile.financial_manager.initials: SEC
 
-profile.subject_neutral: Profesor/a
-profile.subject_male: Profesor
-profile.subject_female: Profesora
-profile.subject_initials: PROF
+profile.head_teacher.0: Jefe/a de Estudios
+profile.head_teacher.1: Jefe de Estudios
+profile.head_teacher.2: Jefa de Estudios
+profile.head_teacher.initials: JE
 
-role.TEACHER: Profesor/a
-role.TUTOR: Tutor/a
+profile.staff.0: PAS
+profile.staff.1: PAS
+profile.staff.2: PAS
+profile.staff.initials: PAS
+
+profile.student.0: Estudiante
+profile.student.1: Alumno
+profile.student.2: Alumna
+profile.student.initials: AL
+
+profile.teacher.0: Profesor/a
+profile.teacher.1: Profesor
+profile.teacher.2: Profesora
+profile.teacher.initials: PROF
+
+profile.tutor.0: Tutor/a
+profile.tutor.1: Tutor
+profile.tutor.2: Tutora
+profile.tutor.initials: TUT
