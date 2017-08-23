@@ -21,6 +21,7 @@
 namespace AppBundle\Entity\Documentation;
 
 use AppBundle\Entity\Element;
+use AppBundle\Entity\HistoricPeriod;
 use AppBundle\Entity\Traits\UserBlameableTrait;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -73,10 +74,11 @@ class Entry
 
     /**
      * @Gedmo\SortableGroup()
-     * @ORM\Column(type="boolean")
-     * @var bool
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\HistoricPeriod")
+     * @ORM\JoinColumn(nullable=true)
+     * @var HistoricPeriod
      */
-    private $archived;
+    private $archivedPeriod;
 
     /**
      * @ORM\ManyToOne(targetEntity="Entry")
@@ -119,7 +121,6 @@ class Entry
     {
         $this->versions = new \Doctrine\Common\Collections\ArrayCollection();
         $this->history = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->archived = false;
     }
 
     /**
@@ -369,26 +370,26 @@ class Entry
     }
 
     /**
-     * Set archived
+     * Set archivedPeriod
      *
-     * @param boolean $archived
+     * @param HistoricPeriod $archivedPeriod
      *
      * @return Entry
      */
-    public function setArchived($archived)
+    public function setArchivedPeriod(HistoricPeriod $archivedPeriod = null)
     {
-        $this->archived = $archived;
+        $this->archivedPeriod = $archivedPeriod;
 
         return $this;
     }
 
     /**
-     * Get archived
+     * Get archivedPeriod
      *
-     * @return boolean
+     * @return HistoricPeriod
      */
-    public function isArchived()
+    public function getArchivedPeriod()
     {
-        return $this->archived;
+        return $this->archivedPeriod;
     }
 }
