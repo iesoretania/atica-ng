@@ -36,6 +36,7 @@ class Version
     const STATUS_APPROVED = 2;
     const STATUS_DEPRECATED = 3;
     const STATUS_LOCKED = 4;
+    const STATUS_DISCARDED = 5;
 
     use TimestampableEntity;
     use UserBlameableTrait;

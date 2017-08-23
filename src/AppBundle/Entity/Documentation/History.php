@@ -42,6 +42,7 @@ class History
     const LOG_CHANGE_OK = 9;
     const LOG_CHANGE_REJECTED = 10;
     const LOG_DEPRECATED = 11;
+    const LOG_DISCARDED = 12;
 
     /**
      * @ORM\Id()
