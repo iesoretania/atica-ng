@@ -150,6 +150,17 @@ class CoreMenu implements MenuBuilderInterface
 
         $menu = new MenuItem();
         $menu
+            ->setName('documentation')
+            ->setRouteName('personal_data')
+            ->setCaption('menu.documentation')
+            ->setDescription('menu.documentation.detail')
+            ->setColor('red')
+            ->setIcon('folder-open');
+
+        $root[] = $menu;
+
+        $menu = new MenuItem();
+        $menu
             ->setName('personal_data')
             ->setRouteName('personal_data')
             ->setCaption('menu.personal_data')
