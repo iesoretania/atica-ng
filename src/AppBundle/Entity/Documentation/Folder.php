@@ -32,6 +32,14 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Folder
 {
+    const VISIBILITY_NO_RESTRICTION = 0;
+    const VISIBILITY_OWN_USER = 1;
+    const VISIBILITY_OWN_PROFILE = 2;
+
+    const GROUP_BY_NONE = 0;
+    const GROUP_BY_USER = 1;
+    const GROUP_BY_PROFILE = 2;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -132,6 +140,18 @@ class Folder
     private $entries;
 
     /**
+     * @ORM\Column(type="integer")
+     * @var int
+     */
+    private $visibility;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @var int
+     */
+    private $groupBy;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -141,6 +161,8 @@ class Folder
         $this->documentFlow = false;
         $this->versionShown = true;
         $this->public = false;
+        $this->visibility = $this::VISIBILITY_NO_RESTRICTION;
+        $this->groupBy = $this::GROUP_BY_NONE;
     }
 
     /**
@@ -547,5 +569,53 @@ class Folder
     public function getEntries()
     {
         return $this->entries;
+    }
+
+    /**
+     * Set visibility
+     *
+     * @param integer $visibility
+     *
+     * @return Folder
+     */
+    public function setVisibility($visibility)
+    {
+        $this->visibility = $visibility;
+
+        return $this;
+    }
+
+    /**
+     * Get visibility
+     *
+     * @return integer
+     */
+    public function getVisibility()
+    {
+        return $this->visibility;
+    }
+
+    /**
+     * Set groupBy
+     *
+     * @param integer $groupBy
+     *
+     * @return Folder
+     */
+    public function setGroupBy($groupBy)
+    {
+        $this->groupBy = $groupBy;
+
+        return $this;
+    }
+
+    /**
+     * Get groupBy
+     *
+     * @return integer
+     */
+    public function getGroupBy()
+    {
+        return $this->groupBy;
     }
 }
