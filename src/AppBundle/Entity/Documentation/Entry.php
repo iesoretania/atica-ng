@@ -72,6 +72,13 @@ class Entry
     private $folder;
 
     /**
+     * @Gedmo\SortableGroup()
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $archived;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Entry")
      * @ORM\JoinColumn(nullable=true)
      * @var Entry
@@ -112,6 +119,7 @@ class Entry
     {
         $this->versions = new \Doctrine\Common\Collections\ArrayCollection();
         $this->history = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->archived = false;
     }
 
     /**
@@ -358,5 +366,29 @@ class Entry
     public function getElement()
     {
         return $this->element;
+    }
+
+    /**
+     * Set archived
+     *
+     * @param boolean $archived
+     *
+     * @return Entry
+     */
+    public function setArchived($archived)
+    {
+        $this->archived = $archived;
+
+        return $this;
+    }
+
+    /**
+     * Get archived
+     *
+     * @return boolean
+     */
+    public function isArchived()
+    {
+        return $this->archived;
     }
 }
