@@ -15,34 +15,36 @@ Para facilitar el desarrollo se proporciona un entorno [Vagrant] con todas las d
 
 ## Requisitos
 
-- PHP 5.5.9 o superior
-- Servidor web Apache2 (podría funcionar con nginx, pero no se ha probado aún)
-- Servidor de base de datos MySQL 5 o derivado (como MariaDB, Percona, etc). En un futuro podría permitirse también PosgreSQL si hay demanda.
-- PHP [Composer]
-- [Node.js] y [npmjs] (si se ha descargado una build completa, no serán necesarios)
+- PHP 5.5.9 o superior.
+- Servidor web Apache2 (podría funcionar con nginx, pero no se ha probado aún).
+- Servidor de base de datos MySQL 5 o derivado (como MariaDB, Percona, etc).
+- PHP [Composer].
+- [Node.js] y [npmjs] (si se ha descargado una build completa, no serán necesarios).
 
 ## Instalación
 
 - Ejecutar `composer install` desde la carpeta del proyecto.
-- Ejecutar `npm install -g gulp` (usar `sudo` si fuera necesario)
-- Ejecutar `npm install`.
+  - Puedes modificar la configuración de la aplicación contestando ahora las preguntas o bien posteriormente modificando el fichero `app/config/parameters.yml`.
+- Ejecutar `npm install -g gulp` (usar `sudo` si fuera necesario).
+- Ejecutar `npm install`
 - Ejecutar `gulp`. [Gulp.js] se instala automáticamente con los comandos anteriores.
 - Configurar el sitio de Apache2 para que el `DocumentRoot` sea la carpeta `web/` dentro de la carpeta de instalación.
-- Modificar el fichero `parameters.yml` con los datos de acceso al sistema gestor de bases de datos deseados y otros parámetros de configuración globales que considere interesantes.
-- Para crear la base de datos: `bin/console doctrine:database:create`.
-- Para crear las tablas: `bin/console doctrine:schema:create`.
-- Para insertar los datos iniciales: `bin/console doctrine:fixtures:load -n` (¡cuidado! Esto elimina todos los datos existentes en la base de datos).
+- Si aún no se ha hecho, modificar el fichero `parameters.yml` con los datos de acceso al sistema gestor de bases de datos deseados y otros parámetros de configuración globales que considere interesantes.
+- Para crear la base de datos: `php bin/console doctrine:database:create`
+- Para crear las tablas:
+  - `php bin/console doctrine:schema:create`
+  - `php bin/console doctrine:migrations:version --add --all`
+- Para insertar los datos iniciales: `php bin/console doctrine:fixtures:load -n` (¡cuidado! Esto elimina todos los datos existentes en la base de datos).
 
-## Entorno de desarrollo
+## Actualizaciones
 
-Para poder ejecutar la aplicación en un entorno de desarrollo basta con tener [Vagrant] instalado junto con [VirtualBox]
-y ejecutar el comando `vagrant up`. La aplicación será accesible desde la dirección http://192.168.33.10/
+- Actualizar el repositorio a la última versión oficial.
+- Actualizar la base de datos:
+  - `php bin/console doctrine:migrations:migrate -n`
 
 ## Licencia
 Esta aplicación se ofrece bajo licencia [AGPL versión 3].
 
-[Vagrant]: https://www.vagrantup.com/
-[VirtualBox]: https://www.virtualbox.org
 [Symfony]: http://symfony.com/
 [Composer]: http://getcomposer.org
 [AGPL versión 3]: http://www.gnu.org/licenses/agpl.html

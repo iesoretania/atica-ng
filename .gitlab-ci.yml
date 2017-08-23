@@ -4,6 +4,7 @@ before_script:
   - php composer.phar install
   - php bin/console doctrine:database:create --env=test
   - php bin/console doctrine:schema:create --env=test
+  - php bin/console doctrine:fixtures:load -n --env=test
 
 test:5.5:
   image: php:5.5
