@@ -21,6 +21,7 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Actor;
+use AppBundle\Entity\Documentation\Folder;
 use AppBundle\Entity\Element;
 use AppBundle\Entity\Organization;
 use AppBundle\Entity\Profile;
@@ -60,6 +61,7 @@ class CoreData
 
         $profiles = [];
 
+        $em = $this->entityManager;
         foreach($profilesData as $key => $profileData) {
             $profile = new Profile();
             $profile
@@ -72,7 +74,7 @@ class CoreData
 
             $profiles[$key] = $profile;
 
-            $this->entityManager->persist($profile);
+            $em->persist($profile);
         }
 
         $data = [
@@ -96,13 +98,20 @@ class CoreData
 
         $elements = [];
 
+        $documentRoot = new Folder();
+        $documentRoot
+            ->setOrganization($organization)
+            ->setName('documents');
+
+        $em->persist($documentRoot);
+
         $root = new Element();
         $root
             ->setOrganization($organization)
             ->setFolder(true)
             ->setName($organization->getName());
 
-        $this->entityManager->persist($root);
+        $em->persist($root);
 
         foreach ($data as $key => $item) {
             $element = new Element();
@@ -114,7 +123,7 @@ class CoreData
                 ->setLocked(true)
                 ->setName($this->translator->trans('list.' . $key, [], 'core'));
 
-            $this->entityManager->persist($element);
+            $em->persist($element);
 
             if (false !== $item[0]) {
                 $element->setProfile($profiles[$item[0]]);
@@ -134,7 +143,7 @@ class CoreData
                     ->setMultiple($referenceData[1]);
 
                 $elements[$key]->addReference($reference);
-                $this->entityManager->persist($reference);
+                $em->persist($reference);
             }
         }
 
@@ -147,7 +156,7 @@ class CoreData
                     ->setProfile($profiles[$actorData]);
                 $elements[$key]->addActor($actor);
 
-                $this->entityManager->persist($actor);
+                $em->persist($actor);
             }
         }
 
