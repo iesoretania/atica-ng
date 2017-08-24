@@ -43,3 +43,4 @@ header.user: Enviado por
 
 tree.no_folders: No hay ninguna carpeta. Por favor, cree una desde el botón correspondiente.
 tree.show_all: Mostrar todos los documentos
+tree.manage_folders: Gestionar carpetas

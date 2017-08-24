@@ -56,6 +56,9 @@
             {% endif %}
             <a href="{{ path('documentation') }}"><ul class="list-group"><li class="list-group-item node-treeview {{ current.parent is null ? ' node-selected' }}" ><i class="fa fa-eye"></i> {{ 'tree.show_all'|trans }}</li></ul></a>
             <div id="treeview"></div>
+            {% if user_extension.userLocalAdministrator %}
+                <a href="" class="btn btn-block btn-primary"><i class="fa fa-cog"></i> {{ 'tree.manage_folders'|trans }}</a>
+            {% endif %}
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             {{ parent() }}
@@ -67,12 +70,14 @@
 
 {% block after_table %}
                 <div class="clearfix"></div>
-                <div class="well well-sm">
-                    {{ m.submit_button('delete', 'trash', 'btn-danger enable-on-items', 'form.entry.delete'|trans) }}
-                    {{ m.submit_button('move', 'map-signs', 'btn-primary enable-on-items', 'form.entry.move'|trans) }}
-                    {{ m.submit_button('link', 'link', 'btn-primary enable-on-items', 'form.entry.link'|trans) }}
-                    {{ m.submit_button('archive', 'archive', 'btn-warning enable-on-items', 'form.entry.archive'|trans) }}
-                </div>
+                {% if user_extension.userLocalAdministrator and pager is not empty %}
+                    <div class="well well-sm">
+                        {{ m.submit_button('delete', 'trash', 'btn-danger enable-on-items', 'form.entry.delete'|trans) }}
+                        {{ m.submit_button('move', 'map-signs', 'btn-primary enable-on-items', 'form.entry.move'|trans) }}
+                        {{ m.submit_button('link', 'link', 'btn-primary enable-on-items', 'form.entry.link'|trans) }}
+                        {{ m.submit_button('archive', 'archive', 'btn-warning enable-on-items', 'form.entry.archive'|trans) }}
+                    </div>
+                {% endif %}
                 {{ m.link_button(path('frontpage'), 'arrow-left', 'btn-info', 'form.back'|trans) }}
                 {% if current.parent %}{{ m.link_button(last_url, 'level-up', 'btn-info', 'form.level_up'|trans) }}{% endif %}
             </form>
