@@ -65,14 +65,14 @@
             </div>
         </nav>
         <div class="{% block container %}container{% endblock %}">
-            {% block content_title %}
-            {% if title is defined %}
-                <h1 class="well">{{ title }}</h1>
-            {% endif %}
+            {% block content_header %}
+                {% if title is defined %}
+                    <h1 class="well">{{ title }}</h1>
+                {% endif %}
+                {{ ml.flash_message('info', 'info') }}
+                {{ ml.flash_message('error', 'danger') }}
+                {{ ml.flash_message('success', 'success') }}
             {% endblock %}
-            {{ ml.flash_message('info', 'info') }}
-            {{ ml.flash_message('error', 'danger') }}
-            {{ ml.flash_message('success', 'success') }}
             {% if menu ?? false %}
                 {% include 'layout/partial_menu.html.twig' %}
             {% endif %}

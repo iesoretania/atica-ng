@@ -2,17 +2,14 @@
 {% extends 'generic/list.html.twig' %}
 {% import 'macros.html.twig' as m %}
 
-{% block content_title %}
-    {% if current.parent %}
-        <h1 class="well">{{ current.name }}</h1>
-    {% endif %}
-{% endblock %}
-
 {% block new_action %}
     <div class="form-group col-md-5">
         {% if current.parent is not null and current.children.count() == 0 %}<a href="{{ path('organization_element_new', {'path': current.path}) }}" class="btn btn-success"><i class="fa fa-plus"></i> {{ 'table.entry.new'|trans }}</a>{% endif %}
-        {% if current.parent is null or current.entries.count() == 0 %}<a href="{{ path('documentation_folder_new', {'id': current.id}) }}" class="btn btn-success"><i class="fa fa-folder-open"></i> {{ 'table.folder.new'|trans }}</a>{% endif %}
+        {% if (current.parent is null or current.entries.count() == 0) and (is_granted('FOLDER_MANAGE', current)) %}<a href="{{ path('documentation_folder_new', {'id': current.id}) }}" class="btn btn-success"><i class="fa fa-folder-open"></i> {{ 'table.folder.new'|trans }}</a>{% endif %}
     </div>
+{% endblock %}
+
+{% block content_header %}
 {% endblock %}
 
 {% block container %}container-fluid{% endblock %}
@@ -68,6 +65,12 @@
             {% endif %}
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            {% if current.parent %}
+                <h1 class="well">{{ current.name }}</h1>
+            {% endif %}
+            {{ ml.flash_message('info', 'info') }}
+            {{ ml.flash_message('error', 'danger') }}
+            {{ ml.flash_message('success', 'success') }}
             {{ parent() }}
 {% endblock %}
 
