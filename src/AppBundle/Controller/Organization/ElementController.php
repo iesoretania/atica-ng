@@ -86,14 +86,9 @@ class ElementController extends Controller
 
         $elements = $this->filterElementsFromItems($items, $element);
 
-        if ($request->get('confirm', '') === 'ok') {
-            try {
-                $this->deleteElements($items, $element);
-                $this->addFlash('success', $this->get('translator')->trans('message.deleted', [], 'element'));
-            } catch (\Exception $e) {
-                $this->addFlash('error', $this->get('translator')->trans('message.delete_error', [], 'element'));
-            }
-            return $this->redirectToRoute('organization_element_list', ['path' => $path]);
+        $result = $this->processElementRemoveOperation($path, $request, $items, $element);
+        if (false !== $result) {
+            return $result;
         }
 
         $title = $this->get('translator')->trans('title.delete', [], 'element');
@@ -476,5 +471,26 @@ class ElementController extends Controller
             ->execute();
 
         $em->flush();
+    }
+
+    /**
+     * @param $path
+     * @param Request $request
+     * @param $items
+     * @param $element
+     * @return bool|\Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    private function processElementRemoveOperation($path, Request $request, $items, $element)
+    {
+        if ($request->get('confirm', '') === 'ok') {
+            try {
+                $this->deleteElements($items, $element);
+                $this->addFlash('success', $this->get('translator')->trans('message.deleted', [], 'element'));
+            } catch (\Exception $e) {
+                $this->addFlash('error', $this->get('translator')->trans('message.delete_error', [], 'element'));
+            }
+            return $this->redirectToRoute('organization_element_list', ['path' => $path]);
+        }
+        return false;
     }
 }
