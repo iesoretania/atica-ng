@@ -23,7 +23,7 @@
                 {% set url = '' %}
                 <tr class="clickable-row" data-href="{{ url }}">
                     <td>
-                        <label><input type="checkbox" name="entries[]" value="{{ element.id }}" class="selectable"> <a href="{{ url }}">{{ element.name }}</a></label>
+                        <label><input type="checkbox" name="entries[]" value="{{ entry.id }}" class="selectable"> <a href="{{ url }}">{{ entry.name|e|highlight(q) }}</a></label>
                     </td>
                     <td>
 

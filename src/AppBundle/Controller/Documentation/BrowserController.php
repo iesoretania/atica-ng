@@ -105,7 +105,7 @@ class BrowserController extends Controller
         $entriesRepository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Documentation\Entry');
 
         // obtener las carpetas
-        $folders = $this->getDoctrine()->getManager()->getRepository('AppBundle:Documentation\Folder')->getChildren($folder, false);
+        $folders = $this->getDoctrine()->getManager()->getRepository('AppBundle:Documentation\Folder')->getChildren($folder, false, false, 'ASC', true);
 
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $entriesRepository->createQueryBuilder('e')
