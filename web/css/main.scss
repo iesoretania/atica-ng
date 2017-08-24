@@ -87,15 +87,10 @@ th.calendar-month {
     color: $navbar-default-brand-color;
 }
 
-/* Barra lateral */
+/* Barra lateral desplegable de navegación */
 #wrapper {
   padding-left: 0;
-  transition: all 0.5s ease;
   height: 100%;
-}
-
-#wrapper.toggled {
-  padding-left: 220px;
 }
 
 #sidebar-wrapper {
@@ -183,4 +178,25 @@ p#breadcrumb a.navbar-breadcrumb {
   .navbar-toggle {
     margin-left: 0;
   }
+}
+
+/* Árbol de navegación por la documentación */
+@media (min-width: $container-sm) {
+  .tree-sidebar {
+    position: fixed;
+    top: 51px;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    display: block;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: $table-bg-hover;
+    border-right: 1px solid $gray-lighter;
+  }
+}
+
+.tree-message {
+  overflow:hidden;
 }

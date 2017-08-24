@@ -85,7 +85,8 @@ class CoreMenu implements MenuBuilderInterface
                 ->setCaption('menu.organization')
                 ->setDescription('menu.organization.detail')
                 ->setColor('yellow')
-                ->setIcon('bank');
+                ->setIcon('bank')
+                ->setPriority(8000);
 
             $root[] = $menu1;
 
@@ -150,8 +151,19 @@ class CoreMenu implements MenuBuilderInterface
 
         $menu = new MenuItem();
         $menu
-            ->setName('documentation')
+            ->setName('teaching')
             ->setRouteName('personal_data')
+            ->setCaption('menu.teaching')
+            ->setDescription('menu.teaching.detail')
+            ->setColor('yellow')
+            ->setIcon('graduation-cap');
+
+        $root[] = $menu;
+
+        $menu = new MenuItem();
+        $menu
+            ->setName('documentation')
+            ->setRouteName('documentation')
             ->setCaption('menu.documentation')
             ->setDescription('menu.documentation.detail')
             ->setColor('red')

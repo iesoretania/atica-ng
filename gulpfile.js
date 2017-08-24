@@ -39,7 +39,7 @@ gulp.task('default', function() {
 
     // copiar Javascript de patternfly-bootstrap-treeview
     gulp.src('node_modules/patternfly-bootstrap-treeview/dist/*.js')
-        .pipe(gulp.dest('web/dist/js/select2'));
+        .pipe(gulp.dest('web/dist/js/bootstrap-treeview'));
 
     // copiar fuentes
     gulp.src(['node_modules/font-awesome/fonts/*', 'web/css/source-sans-pro/fonts/**'])

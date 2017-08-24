@@ -1,0 +1,105 @@
+{% trans_default_domain 'documentation' %}
+{% extends 'generic/list.html.twig' %}
+{% import 'macros.html.twig' as m %}
+
+{% block new_action %}
+    <div class="form-group col-md-5">
+        {% if current.parent is not null and current.children.count() == 0 %}<a href="{{ path('organization_element_new', {'path': current.path}) }}" class="btn btn-success"><i class="fa fa-plus"></i> {{ 'table.entry.new'|trans }}</a>{% endif %}
+        {% if current.parent is null or current.entries.count() == 0 %}<a href="{{ path('organization_element_folder_new', {'path': current.path}) }}" class="btn btn-success"><i class="fa fa-folder-open"></i> {{ 'table.folder.new'|trans }}</a>{% endif %}
+    </div>
+{% endblock %}
+
+{% block container %}container-fluid{% endblock %}
+
+{% block table_header %}
+    <th class="col-sm-5"><label><input type="checkbox" id="select"> {{ 'header.name'|trans }}</label></th>
+    <th class="col-sm-2">{{ 'header.version'|trans }}</th>
+    <th class="col-sm-3">{{ 'header.user'|trans }}</th>
+    <th class="col-sm-2"></th>
+{% endblock %}
+
+{% block table_body %}
+            {% for entry in elements %}
+                {% set url = '' %}
+                <tr class="clickable-row" data-href="{{ url }}">
+                    <td>
+                        <label><input type="checkbox" name="entries[]" value="{{ element.id }}" class="selectable"> <a href="{{ url }}">{{ element.name }}</a></label>
+                    </td>
+                    <td>
+
+                    </td>
+                    <td>
+
+                    </td>
+                    <td>
+                        {% if q is empty %}
+                            {% if not loop.first %}<button type="submit" class="btn btn-link btn-xs" name="up" value="{{ element.id }}" title="{{ 'table.move_up'|trans }}"><i class="fa fa-arrow-up"></i></button>{% endif %}
+                            {% if not loop.last %}<button type="submit" class="btn btn-link btn-xs" name="down" value="{{ element.id }}" title="{{ 'table.move_down'|trans }}"><i class="fa fa-arrow-down"></i></button>{% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">{{ 'table.no_items'|trans }}</td>
+                </tr>
+            {% endfor %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-3 col-md-2 tree-sidebar">
+            {% if not tree %}
+                <div class="tree-message text-center">
+                    <i class="fa fa-folder-open-o fa-4x"></i>
+                    <h4>{{ 'tree.no_folders'|trans }}</h4>
+                </div>
+            {% endif %}
+            <a href="{{ path('documentation') }}"><ul class="list-group"><li class="list-group-item node-treeview {{ current.parent is null ? ' node-selected' }}" ><i class="fa fa-eye"></i> {{ 'tree.show_all'|trans }}</li></ul></a>
+            <div id="treeview"></div>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            {{ parent() }}
+{% endblock %}
+
+{% block before_table %}
+            <form action="" method="post">
+{% endblock %}
+
+{% block after_table %}
+                <div class="clearfix"></div>
+                <div class="well well-sm">
+                    {{ m.submit_button('delete', 'trash', 'btn-danger enable-on-items', 'form.entry.delete'|trans) }}
+                    {{ m.submit_button('move', 'map-signs', 'btn-primary enable-on-items', 'form.entry.move'|trans) }}
+                    {{ m.submit_button('link', 'link', 'btn-primary enable-on-items', 'form.entry.link'|trans) }}
+                    {{ m.submit_button('archive', 'archive', 'btn-warning enable-on-items', 'form.entry.archive'|trans) }}
+                </div>
+                {{ m.link_button(path('frontpage'), 'arrow-left', 'btn-info', 'form.back'|trans) }}
+                {% if current.parent %}{{ m.link_button(last_url, 'level-up', 'btn-info', 'form.level_up'|trans) }}{% endif %}
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <!-- Cargar treeview -->
+    <script src="{{ asset('dist/js/bootstrap-treeview/bootstrap-treeview.js') }}"></script>
+    <script type="text/javascript">
+        $(function() {
+            var data = {{ tree|json_encode|raw }};
+
+            $('#treeview').treeview({
+                color: "#428bca",
+                levels: 2,
+                expandIcon: 'fa fa-plus',
+                collapseIcon: 'fa fa-minus',
+                enableLinks: true,
+                data: data,
+                onNodeSelected: function(event, data) {
+                    location.href = data.href;
+                }
+            });
+        });
+    </script>
+{% endblock %}

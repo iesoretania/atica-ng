@@ -1,0 +1,45 @@
+form.name: Nombre
+
+form.save: Guardar cambios
+form.back: Volver
+form.level_up: Subir un nivel
+
+form.entry.delete: Eliminar documentos seleccionados
+form.entry.move: Mover documentos
+form.entry.link: Enlazar documentos
+form.entry.archive: Archivar documentos
+form.entry.delete_confirm: Confirmar borrado
+
+prompt.entry.delete_confirm: |
+  ¿Está seguro de que desea eliminar los siguientes documentos? No se podrán eliminar aquellos que estén asociados a otra información.
+
+  Esta operación no se puede deshacer.
+
+message.entry.saved: Documento actualizado con éxito.
+message.entry.save_error: No se ha podido actualizar el documento.
+message.entry.deleted: Los documentos seleccionados han sido eliminados con éxito.
+message.entry.delete_error: No se han podido eliminar los documentos seleccionados.
+
+title.entry.new: Nuevo documento
+title.folder.new: Nueva carpeta
+title.entry.edit: Modificar documentos
+title.entry.list: Listas de documentos
+title.entry.delete: Eliminar documentos
+
+table.total: "{1} Encontrado un único resultado|]1,Inf[ Encontrados %count% resultados"
+table.no_items: No hay documentos que mostrar
+table.entry.new: Nuevo documento
+table.folder.new: Nueva carpeta
+table.filter: Filtrar...
+
+table.move_up: Subir elemento
+table.move_down: Bajar elemento
+table.locked: Documento bloqueado
+table.folder: Carpeta
+
+header.name: Nombre
+header.version: Revisión (fecha)
+header.user: Enviado por
+
+tree.no_folders: No hay ninguna carpeta. Por favor, cree una desde el botón correspondiente.
+tree.show_all: Mostrar todos los documentos
