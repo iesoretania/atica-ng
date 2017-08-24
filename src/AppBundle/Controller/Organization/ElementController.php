@@ -61,7 +61,6 @@ class ElementController extends Controller
         return $this->render('organization/element/list.html.twig', [
             'breadcrumb' => $breadcrumb,
             'title' => $element->getName(),
-            'elements' => $pager->getIterator(),
             'pager' => $pager,
             'current' => $element,
             'q' => $q,

@@ -115,7 +115,6 @@ class OrganizationController extends Controller
 
         return $this->render('admin/organization/list.html.twig', [
             'title' => $title,
-            'organization' => $pager->getIterator(),
             'pager' => $pager,
             'q' => $q,
             'domain' => 'organization'

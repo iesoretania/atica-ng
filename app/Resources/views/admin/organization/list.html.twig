@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block table_body %}
-            {% for organization in organization %}
+            {% for organization in pager %}
                 {% set url = path('admin_organization_form_edit', {'id': organization.id}) %}
                 <tr class="clickable-row" data-href="{{ url }}">
                     <td>

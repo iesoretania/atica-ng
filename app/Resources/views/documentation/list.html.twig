@@ -19,7 +19,7 @@
 {% endblock %}
 
 {% block table_body %}
-            {% for entry in elements %}
+            {% for entry in pager %}
                 {% set url = '' %}
                 <tr class="clickable-row" data-href="{{ url }}">
                     <td>

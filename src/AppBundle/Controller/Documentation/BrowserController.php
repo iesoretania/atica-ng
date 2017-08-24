@@ -54,7 +54,6 @@ class BrowserController extends Controller
 
         return $this->render('documentation/list.html.twig', [
             'breadcrumb' => $breadcrumb,
-            'elements' => $pager->getIterator(),
             'pager' => $pager,
             'current' => $folder,
             'tree' => $this->getOrganizationTree($this->getRootFolder($organization), $folder),

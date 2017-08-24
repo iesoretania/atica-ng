@@ -138,7 +138,6 @@ class UserController extends Controller
 
         return $this->render('admin/user/list.html.twig', [
             'title' => $title,
-            'users' => $pager->getIterator(),
             'pager' => $pager,
             'q' => $q,
             'domain' => 'user'

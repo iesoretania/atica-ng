@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block table_body %}
-            {% for element in elements %}
+            {% for element in pager %}
                 {% set url = element.folder ? path('organization_element_list', {'path': element.path}) : path('organization_element_form', {'path': element.path}) %}
                 <tr class="clickable-row" data-href="{{ url }}">
                     <td>
