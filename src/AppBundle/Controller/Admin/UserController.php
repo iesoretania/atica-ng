@@ -56,13 +56,9 @@ class UserController extends Controller
             'new' => $user->getId() === null
         ]);
 
-        $form->get('newEmailAddress')->setData($user->getEmailAddress());
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $user->setEmailAddress($form->get('newEmailAddress')->getData());
 
             // Si es solicitado, cambiar la contraseña
             $passwordSubmit = $form->get('changePassword');

@@ -32,7 +32,6 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
-use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -56,13 +55,9 @@ class UserType extends AbstractType
             ->add('lastName', null, [
                 'label' => 'form.last_name'
             ])
-            ->add('newEmailAddress', EmailType::class, [
+            ->add('emailAddress', EmailType::class, [
                 'label' => 'form.email_address',
-                'mapped' => false,
-                'required' => false,
-                'constraints' => [
-                    new Email()
-                ]
+                'required' => false
             ])
             ->add('gender', ChoiceType::class, [
                 'label' => 'form.gender',

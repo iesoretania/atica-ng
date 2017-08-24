@@ -26,6 +26,7 @@ use AppBundle\Service\MailerService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -45,26 +46,14 @@ class PersonalDataController extends Controller
             'admin' => $user->isGlobalAdministrator()
         ]);
 
-        $form->get('newEmailAddress')->setData($user->getEmailAddress());
+        $oldEmail = $user->getEmailAddress();
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $translator = $this->get('translator');
 
-            $newEmail = $form->get('newEmailAddress')->getData();
-
-            // comprobar si ha cambiado el correo electrónico
-            if ($user->getEmailAddress() !== $newEmail) {
-                $this->requestEmailAddressChange($user, $newEmail);
-            }
-
-            // Si es solicitado, cambiar la contraseña
-            $passwordSubmitted = ($form->has('changePassword') && $form->get('changePassword') instanceof SubmitButton) && $form->get('changePassword')->isClicked();
-            if ($passwordSubmitted) {
-                $user->setPassword($this->get('security.password_encoder')
-                    ->encodePassword($user, $form->get('newPassword')->get('first')->getData()));
-            }
+            $passwordSubmitted = $this->processPasswordAndEmailChanges($form, $user, $oldEmail);
             $message = $this->get('translator')->trans($passwordSubmitted ? 'message.password_changed' : 'message.saved', [], 'user');
 
             try {
@@ -88,12 +77,20 @@ class PersonalDataController extends Controller
     }
 
     /**
-     * @param $user
-     * @param $newEmail
+     * Requests an email address change confirmation
+     *
+     * @param User $user
+     * @param string $oldEmail
      */
-    private function requestEmailAddressChange(User $user, $newEmail)
+    private function requestEmailAddressChange(User $user, $oldEmail)
     {
-        if ($user->isGlobalAdministrator()) {
+        $newEmail = $user->getEmailAddress();
+
+        if ($newEmail === '') {
+            $newEmail = null;
+        }
+
+        if ($user->isGlobalAdministrator() || null === $newEmail) {
             $user->setEmailAddress($newEmail);
         } else {
             $user->setTokenType($newEmail);
@@ -109,7 +106,6 @@ class PersonalDataController extends Controller
             $validity->add(new \DateInterval('PT'.$expire.'M'));
             $user->setTokenExpiration($validity);
 
-            $old = $user->getEmailAddress();
             $user->setEmailAddress($newEmail);
 
             // enviar correo
@@ -129,10 +125,33 @@ class PersonalDataController extends Controller
                 $this->addFlash('error', $this->get('translator')->trans('message.email_change.error', [], 'user'));
             } else {
                 $this->addFlash('info',
-                    $this->get('translator')->trans('message.email_change.info', [], 'user'));
+                    $this->get('translator')->trans('message.email_change.info', ['%email%' => $newEmail], 'user'));
             }
 
-            $user->setEmailAddress($old);
+            $user->setEmailAddress($oldEmail);
         }
+    }
+
+    /**
+     * Checks if a password/email change has been requested and process it
+     * @param Form $form
+     * @param User $user
+     * @param string $oldEmail
+     * @return bool
+     */
+    private function processPasswordAndEmailChanges(Form $form, User $user, $oldEmail)
+    {
+        // comprobar si ha cambiado el correo electrónico
+        if ($user->getEmailAddress() !== $oldEmail) {
+            $this->requestEmailAddressChange($user, $oldEmail);
+        }
+
+        // Si es solicitado, cambiar la contraseña
+        $passwordSubmitted = ($form->has('changePassword') && $form->get('changePassword') instanceof SubmitButton) && $form->get('changePassword')->isClicked();
+        if ($passwordSubmitted) {
+            $user->setPassword($this->get('security.password_encoder')
+                ->encodePassword($user, $form->get('newPassword')->get('first')->getData()));
+        }
+        return $passwordSubmitted;
     }
 }
