@@ -28,6 +28,7 @@ use Pagerfanta\Pagerfanta;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -60,15 +61,7 @@ class UserController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            // Si es solicitado, cambiar la contraseña
-            $passwordSubmit = $form->get('changePassword');
-            if (($passwordSubmit instanceof SubmitButton) && $passwordSubmit->isClicked()) {
-                $user->setPassword($this->container->get('security.password_encoder')
-                    ->encodePassword($user, $form->get('newPassword')->get('first')->getData()));
-                $message = $this->get('translator')->trans('message.password_changed', [], 'user');
-            } else {
-                $message = $this->get('translator')->trans('message.saved', [], 'user');
-            }
+            $message = $this->processPasswordChange($user, $form);
 
             try {
                 $em->flush();
@@ -81,13 +74,8 @@ class UserController extends Controller
 
         $title = $this->get('translator')->trans($user->getId() ? 'title.edit' : 'title.new', [], 'user');
 
-        $breadcrumb = [];
 
-        if ($user->getId()) {
-            $breadcrumb[] = ['fixed' => (string) $user];
-        } else {
-            $breadcrumb[] = ['fixed' => $this->get('translator')->trans('title.new', [], 'user')];
-        }
+        $breadcrumb = [$user->getId() ? ['fixed' => (string) $user] : ['fixed' => $this->get('translator')->trans('title.new', [], 'user')]];
 
         return $this->render('admin/user/user_form.html.twig', [
             'menu_path' => 'admin_user_list',
@@ -198,5 +186,24 @@ class UserController extends Controller
             'title' => $this->get('translator')->trans('title.delete', [], 'user'),
             'users' => $users
         ]);
+    }
+
+    /**
+     * @param User $user
+     * @param Form $form
+     * @return string
+     */
+    private function processPasswordChange(User $user, Form $form)
+    {
+// Si es solicitado, cambiar la contraseña
+        $passwordSubmit = $form->get('changePassword');
+        if (($passwordSubmit instanceof SubmitButton) && $passwordSubmit->isClicked()) {
+            $user->setPassword($this->container->get('security.password_encoder')
+                ->encodePassword($user, $form->get('newPassword')->get('first')->getData()));
+            $message = $this->get('translator')->trans('message.password_changed', [], 'user');
+        } else {
+            $message = $this->get('translator')->trans('message.saved', [], 'user');
+        }
+        return $message;
     }
 }

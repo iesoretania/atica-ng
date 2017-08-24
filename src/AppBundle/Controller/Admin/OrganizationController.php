@@ -126,32 +126,9 @@ class OrganizationController extends Controller
      */
     public function operationAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
-        if ($request->request->has('switch')) {
-            $organization = $em->getRepository('AppBundle:Organization')->find($request->request->get('switch', null));
-            if ($organization) {
-                $this->get('session')->set('organization_id', $organization->getId());
-                $this->addFlash('success', $this->get('translator')->trans('message.switched', ['%name%' => $organization->getName()], 'organization'));
-            }
+        list($redirect, $organizations) = $this->processOperations($request);
 
-            return $this->redirectToRoute('admin_organization_list');
-        }
-
-        $items = $request->request->get('organizations', []);
-        if (count($items) === 0) {
-            return $this->redirectToRoute('admin_organization_list');
-        }
-
-        $organizations = $em->getRepository('AppBundle:Organization')->findAllInListByIdButCurrent($items, $this->get(UserExtensionService::class)->getCurrentOrganization());
-
-        if ($request->get('confirm', '') === 'ok') {
-            try {
-                $this->deleteOrganizations($organizations);
-                $em->flush();
-                $this->addFlash('success', $this->get('translator')->trans('message.deleted', [], 'organization'));
-            } catch (\Exception $e) {
-                $this->addFlash('error', $this->get('translator')->trans('message.delete_error', [], 'organization'));
-            }
+        if ($redirect) {
             return $this->redirectToRoute('admin_organization_list');
         }
 
@@ -215,5 +192,69 @@ class OrganizationController extends Controller
             ->setParameter('items', $organizations)
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * @param Request $request
+     * @param $organizations
+     * @param $em
+     * @return bool
+     */
+    private function processRemoveOrganizations(Request $request, $organizations, $em)
+    {
+        $redirect = false;
+        if ($request->get('confirm', '') === 'ok') {
+            try {
+                $this->deleteOrganizations($organizations);
+                $em->flush();
+                $this->addFlash('success', $this->get('translator')->trans('message.deleted', [], 'organization'));
+            } catch (\Exception $e) {
+                $this->addFlash('error', $this->get('translator')->trans('message.delete_error', [], 'organization'));
+            }
+            $redirect = true;
+        }
+        return $redirect;
+    }
+
+    /**
+     * @param Request $request
+     * @param $em
+     * @return bool
+     */
+    private function processSwitchOrganization(Request $request, $em)
+    {
+        $organization = $em->getRepository('AppBundle:Organization')->find($request->request->get('switch', null));
+        if ($organization) {
+            $this->get('session')->set('organization_id', $organization->getId());
+            $this->addFlash('success', $this->get('translator')->trans('message.switched', ['%name%' => $organization->getName()], 'organization'));
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    private function processOperations(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $redirect = false;
+        if ($request->request->has('switch')) {
+            $redirect = $this->processSwitchOrganization($request, $em);
+        }
+
+        $items = $request->request->get('organizations', []);
+        if (count($items) === 0) {
+            $redirect = true;
+        }
+
+        $organizations = [];
+        if (!$redirect) {
+            $organizations = $em->getRepository('AppBundle:Organization')->findAllInListByIdButCurrent($items, $this->get(UserExtensionService::class)->getCurrentOrganization());
+            $redirect = $this->processRemoveOrganizations($request, $organizations, $em);
+        }
+        return array($redirect, $organizations);
     }
 }

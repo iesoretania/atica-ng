@@ -121,25 +121,7 @@ class ElementController extends Controller
             throw $this->createNotFoundException();
         }
 
-        $new = in_array($request->get('_route'), ['organization_element_new', 'organization_element_folder_new'], true);
-        $breadcrumb = $this->generateBreadcrumb($element, !$new);
-
-        if ($new) {
-            $newElement = new Element();
-            $newElement
-                ->setParent($element)
-                ->setOrganization($organization)
-                ->setFolder($request->get('_route') === 'organization_element_folder_new');
-
-            $em->persist($newElement);
-
-            $element = $newElement;
-
-            $title = $this->get('translator')->trans($newElement->isFolder() ? 'title.new_folder' : 'title.new', [], 'element');
-            $breadcrumb[] = ['fixed' => $title];
-        } else {
-            $title = $this->get('translator')->trans('title.edit', [], 'element');
-        }
+        list($breadcrumb, $element, $title) = $this->getElementBreadcrumbAndTitle($request, $element, $organization);
 
         $form = $this->createForm(ElementType::class, $element);
 
@@ -150,6 +132,7 @@ class ElementController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
+                $em->persist($element);
                 $em->flush();
                 $this->updateElementReferences($element, $em, $form);
                 $this->updateElementRoles($element, $em, $form);
@@ -492,5 +475,33 @@ class ElementController extends Controller
             return $this->redirectToRoute('organization_element_list', ['path' => $path]);
         }
         return false;
+    }
+
+    /**
+     * @param Request $request
+     * @param $element
+     * @param $organization
+     * @return array
+     */
+    private function getElementBreadcrumbAndTitle(Request $request, $element, $organization)
+    {
+        $new = in_array($request->get('_route'), ['organization_element_new', 'organization_element_folder_new'], true);
+        $breadcrumb = $this->generateBreadcrumb($element, !$new);
+
+        if ($new) {
+            $newElement = new Element();
+            $newElement
+                ->setParent($element)
+                ->setOrganization($organization)
+                ->setFolder($request->get('_route') === 'organization_element_folder_new');
+
+            $element = $newElement;
+
+            $title = $this->get('translator')->trans($newElement->isFolder() ? 'title.new_folder' : 'title.new', [], 'element');
+            $breadcrumb[] = ['fixed' => $title];
+        } else {
+            $title = $this->get('translator')->trans('title.edit', [], 'element');
+        }
+        return array($breadcrumb, $element, $title);
     }
 }
