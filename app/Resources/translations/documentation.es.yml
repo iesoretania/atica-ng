@@ -1,5 +1,15 @@
 form.name: Nombre
 
+form.version_shown: Número de revisión
+form.version_shown.yes: Mostrar el número de revisión
+form.version_shown.no: Ocultar el número de revisión
+
+form.document_flow: Flujo de trabajo
+form.document_flow.yes: Los documentos subidos pasarán por las fases de edición, revisión y aprobación
+form.document_flow.no: La subida publicará el documento automáticamente
+
+form.description: Notas
+
 form.save: Guardar cambios
 form.back: Volver
 form.level_up: Subir un nivel
@@ -20,11 +30,19 @@ message.entry.save_error: No se ha podido actualizar el documento.
 message.entry.deleted: Los documentos seleccionados han sido eliminados con éxito.
 message.entry.delete_error: No se han podido eliminar los documentos seleccionados.
 
+message.folder.saved: Carpeta actualizada con éxito.
+message.folder.save_error: No se ha podido actualizar la carpeta.
+message.folder.deleted: Las carpetas seleccionadas han sido eliminadas con éxito.
+message.folder.delete_error: No se han podido eliminar las carpetas seleccionadas.
+
 title.entry.new: Nuevo documento
 title.folder.new: Nueva carpeta
-title.entry.edit: Modificar documentos
+title.entry.edit: Modificar documento
+title.folder.edit: Modificar carpeta
 title.entry.list: Listas de documentos
+title.folder.list: Listas de carpetas
 title.entry.delete: Eliminar documentos
+title.folder.delete: Eliminar carpetas
 
 table.total: "{1} Encontrado un único resultado|]1,Inf[ Encontrados %count% resultados"
 table.no_items: No hay documentos que mostrar

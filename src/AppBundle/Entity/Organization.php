@@ -107,7 +107,7 @@ class Organization
     private $memberships;
 
     /**
-     * @ORM\ManyToMany(targetEntity="User", mappedBy="managedOrganizations")
+     * @ORM\ManyToMany(targetEntity="User", inversedBy="managedOrganizations")
      * @var Collection
      */
     private $administrators;
@@ -430,7 +430,10 @@ class Organization
      */
     public function addAdministrator(User $administrator)
     {
-        $this->administrators[] = $administrator;
+        if (!$this->administrators->contains($administrator)) {
+            $this->administrators->add($administrator);
+            $administrator->addManagedOrganization($this);
+        }
 
         return $this;
     }
@@ -442,7 +445,10 @@ class Organization
      */
     public function removeAdministrator(User $administrator)
     {
-        $this->administrators->removeElement($administrator);
+        if ($this->administrators->contains($administrator)) {
+            $this->administrators->removeElement($administrator);
+            $administrator->removeManagedOrganization($this);
+        }
     }
 
     /**

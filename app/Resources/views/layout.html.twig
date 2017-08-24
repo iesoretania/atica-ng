@@ -65,9 +65,11 @@
             </div>
         </nav>
         <div class="{% block container %}container{% endblock %}">
+            {% block content_title %}
             {% if title is defined %}
                 <h1 class="well">{{ title }}</h1>
             {% endif %}
+            {% endblock %}
             {{ ml.flash_message('info', 'info') }}
             {{ ml.flash_message('error', 'danger') }}
             {{ ml.flash_message('success', 'success') }}

@@ -24,17 +24,70 @@ use AppBundle\Entity\Documentation\Folder;
 use AppBundle\Entity\Documentation\FolderRepository;
 use AppBundle\Entity\ElementRepository;
 use AppBundle\Entity\Organization;
+use AppBundle\Form\Type\Documentation\FolderType;
+use AppBundle\Security\OrganizationVoter;
 use Doctrine\ORM\QueryBuilder;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @Route("/documentos")
+ */
 class BrowserController extends Controller
 {
     /**
-     * @Route("/documentos/{id}/{page}", name="documentation", requirements={"page" = "\d+", "id" = "\d+"}, defaults={"page" = "1", "folder" = null}, methods={"GET"})
+     * @Route("/carpeta/{id}/nueva", name="documentation_folder_new", methods={"GET", "POST"})
+     * @Route("/carpeta/{id}", name="documentation_folder_form", requirements={"id" = "\d+"}, methods={"GET", "POST"})
+     * @Security("is_granted('FOLDER_MANAGE', folder)")
+     */
+    public function folderFormAction(Folder $folder = null, Request $request)
+    {
+        $organization = $this->get('AppBundle\Service\UserExtensionService')->getCurrentOrganization();
+        $this->denyAccessUnlessGranted(OrganizationVoter::MANAGE, $organization);
+
+        $em = $this->getDoctrine()->getManager();
+        $new = $request->get('_route') === 'documentation_folder_new';
+        $breadcrumb = $folder->getParent() ? $this->generateBreadcrumb($folder, true) : [];
+        if ($new) {
+            $newFolder = new Folder();
+            $newFolder
+                ->setOrganization($organization)
+                ->setParent($folder);
+            $folder = $newFolder;
+            $em->persist($folder);
+        }
+
+        $form = $this->createForm(FolderType::class, $folder, [
+            'new' => $new
+        ]);
+
+        $form->handleRequest($request);
+        $breadcrumb[] = ['fixed' => $new ? $this->get('translator')->trans('title.folder.new', [], 'documentation') : $folder->getName()];
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                $em->flush();
+                $this->addFlash('success', $this->get('translator')->trans('message.folder.saved', [], 'documentation'));
+                return $this->redirectToRoute('documentation');
+            } catch (\Exception $e) {
+                $this->addFlash('error', $this->get('translator')->trans('message.folder.save_error', [], 'documentation'));
+            }
+        }
+
+        return $this->render('documentation/folder_form.html.twig', [
+            'menu_path' => 'documentation',
+            'breadcrumb' => $breadcrumb,
+            'title' => $this->get('translator')->trans($new ? 'title.folder.new' : 'title.folder.edit', [], 'documentation'),
+            'form' => $form->createView(),
+            'folder' => $folder
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/{page}", name="documentation", requirements={"page" = "\d+", "id" = "\d+"}, defaults={"page" = "1", "folder" = null}, methods={"GET"})
      */
     public function browseAction($page, $id = null, Request $request)
     {

@@ -29,8 +29,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class OrganizationVoter extends Voter
 {
-    const MANAGE = 'AGREEMENT_MANAGE';
-    const ACCESS = 'AGREEMENT_ACCESS';
+    const MANAGE = 'ORGANIZATION_MANAGE';
+    const ACCESS = 'ORGANIZATION_ACCESS';
 
     private $decisionManager;
 
