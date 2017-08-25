@@ -185,3 +185,7 @@ span#search-clear {
 .highlight {
     background-color: yellow;
 }
+
+.highlight-tag {
+    background-color: #a5a500;
+}

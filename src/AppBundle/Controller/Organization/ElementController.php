@@ -370,12 +370,13 @@ class ElementController extends Controller
             ->addSelect('l')
             ->leftJoin('node.references', 'ref')
             ->leftJoin('node.roles', 'r')
+            ->leftJoin('r.profile', 'p')
             ->leftJoin('node.labels', 'l')
             ->leftJoin('r.user', 'u');
 
         if ($q) {
             $queryBuilder
-                ->andWhere('node.name LIKE :tq')
+                ->andWhere('node.name LIKE :tq OR p.nameNeutral LIKE :tq OR l.name LIKE :tq OR u.firstName LIKE :tq OR u.lastName LIKE :tq')
                 ->setParameter('tq', '%'.$q.'%');
         }
 

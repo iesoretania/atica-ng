@@ -72,6 +72,16 @@ class Role
     }
 
     /**
+     * Convert role to profile code
+     *
+     * @return string
+     */
+    public function getProfileCodeNeutral()
+    {
+        return 'profile.'.$this->getProfile()->getCode().'.'.(User::GENDER_NEUTRAL);
+    }
+
+    /**
      * Set role
      *
      * @param Profile $profile
