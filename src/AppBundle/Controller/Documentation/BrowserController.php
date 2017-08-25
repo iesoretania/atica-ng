@@ -51,7 +51,9 @@ class BrowserController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $new = $request->get('_route') === 'documentation_folder_new';
-        $breadcrumb = $folder->getParent() ? $this->generateBreadcrumb($folder, true) : [];
+
+        $sourceFolder = $folder;
+
         if ($new) {
             $newFolder = new Folder();
             $newFolder
@@ -60,18 +62,20 @@ class BrowserController extends Controller
             $folder = $newFolder;
             $em->persist($folder);
         }
+        $breadcrumb = $sourceFolder->getParent() ? $this->generateBreadcrumb($sourceFolder, false) : [];
 
         $form = $this->createForm(FolderType::class, $folder, [
             'new' => $new
         ]);
 
         $form->handleRequest($request);
-        $breadcrumb[] = ['fixed' => $new ? $this->get('translator')->trans('title.folder.new', [], 'documentation') : $folder->getName()];
+        $breadcrumb[] = ['fixed' => $this->get('translator')->trans($new ? 'title.folder.new' : 'title.folder.edit', [], 'documentation')];
+
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $em->flush();
                 $this->addFlash('success', $this->get('translator')->trans('message.folder.saved', [], 'documentation'));
-                return $this->redirectToRoute('documentation');
+                return $this->redirectToRoute('documentation', ['id' => $sourceFolder->getId()]);
             } catch (\Exception $e) {
                 $this->addFlash('error', $this->get('translator')->trans('message.folder.save_error', [], 'documentation'));
             }

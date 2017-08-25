@@ -5,7 +5,10 @@
 {% block new_action %}
     <div class="form-group col-md-5">
         {% if current.parent is not null and current.children.count() == 0 %}<a href="{{ path('organization_element_new', {'path': current.path}) }}" class="btn btn-success"><i class="fa fa-plus"></i> {{ 'table.entry.new'|trans }}</a>{% endif %}
-        {% if (current.parent is null or current.entries.count() == 0) and (is_granted('FOLDER_MANAGE', current)) %}<a href="{{ path('documentation_folder_new', {'id': current.id}) }}" class="btn btn-success"><i class="fa fa-folder-open"></i> {{ 'table.folder.new'|trans }}</a>{% endif %}
+        {% if is_granted('FOLDER_MANAGE', current) %}
+            {% if (current.parent is null or current.entries.count() == 0) %}<a href="{{ path('documentation_folder_new', {'id': current.id}) }}" class="btn btn-success"><i class="fa fa-folder-open"></i> {{ 'table.folder.new'|trans }}</a>{% endif %}
+            <a href="{{ path('documentation_folder_form', {'id': current.id}) }}" class="btn btn-primary"><i class="fa fa-cog"></i> {{ 'table.folder.edit'|trans }}</a>
+        {% endif %}
     </div>
 {% endblock %}
 
@@ -50,7 +53,7 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-sm-3 col-md-2 tree-sidebar">
+        <div class="col-sm-4 col-md-3 tree-sidebar">
             {% if not tree %}
                 <div class="tree-message text-center">
                     <i class="fa fa-folder-open-o fa-4x"></i>
@@ -60,14 +63,11 @@
                 <a href="{{ path('documentation') }}"><ul class="list-group"><li class="list-group-item node-treeview {{ current.parent is null ? ' node-selected' }}" ><i class="fa fa-eye"></i> {{ 'tree.show_all'|trans }}</li></ul></a>
             {% endif %}
             <div id="treeview"></div>
-            {% if user_extension.userLocalAdministrator %}
-                <a href="" class="btn btn-block btn-primary"><i class="fa fa-cog"></i> {{ 'tree.manage_folders'|trans }}</a>
-            {% endif %}
         </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            {% if current.parent %}
-                <h1 class="well">{{ current.name }}</h1>
-            {% endif %}
+        <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main">
+            <h2 class="well">
+                {% if current.parent %}{{ current.name }}{% else %}{{ 'title.all_documents'|trans }}{% endif %}
+            </h2>
             {{ ml.flash_message('info', 'info') }}
             {{ ml.flash_message('error', 'danger') }}
             {{ ml.flash_message('success', 'success') }}

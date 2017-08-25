@@ -43,12 +43,15 @@ title.entry.list: Listas de documentos
 title.folder.list: Listas de carpetas
 title.entry.delete: Eliminar documentos
 title.folder.delete: Eliminar carpetas
+title.all_documents: Toda la documentación
 
 table.total: "{1} Encontrado un único resultado|]1,Inf[ Encontrados %count% resultados"
 table.no_items: No hay documentos que mostrar
 table.entry.new: Nuevo documento
 table.folder.new: Nueva carpeta
 table.filter: Filtrar...
+
+table.folder.edit: Modificar carpeta
 
 table.move_up: Subir elemento
 table.move_down: Bajar elemento
@@ -61,4 +64,3 @@ header.user: Enviado por
 
 tree.no_folders: No hay ninguna carpeta. Por favor, cree una desde el botón correspondiente.
 tree.show_all: Mostrar todos los documentos
-tree.manage_folders: Gestionar carpetas
