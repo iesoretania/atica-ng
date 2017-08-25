@@ -6,8 +6,8 @@
     <div class="form-group col-md-5">
         {% if current.parent is not null and current.children.count() == 0 %}<a href="{{ path('organization_element_new', {'path': current.path}) }}" class="btn btn-success"><i class="fa fa-plus"></i> {{ 'table.entry.new'|trans }}</a>{% endif %}
         {% if is_granted('FOLDER_MANAGE', current) %}
-            {% if (current.parent is null or current.entries.count() == 0) %}<a href="{{ path('documentation_folder_new', {'id': current.id}) }}" class="btn btn-success"><i class="fa fa-folder-open"></i> {{ 'table.folder.new'|trans }}</a>{% endif %}
-            <a href="{{ path('documentation_folder_form', {'id': current.id}) }}" class="btn btn-primary"><i class="fa fa-cog"></i> {{ 'table.folder.edit'|trans }}</a>
+            {% if current.parent is null or current.entries.count() == 0 %}<a href="{{ path('documentation_folder_new', {'id': current.id}) }}" class="btn btn-success"><i class="fa fa-folder-open"></i> {{ 'table.folder.new'|trans }}</a>{% endif %}
+            {% if current.parent is not null %}<a href="{{ path('documentation_folder_form', {'id': current.id}) }}" class="btn btn-primary"><i class="fa fa-cog"></i> {{ 'table.folder.edit'|trans }}</a>{% endif %}
         {% endif %}
     </div>
 {% endblock %}
@@ -60,7 +60,7 @@
                     <h4>{{ 'tree.no_folders'|trans }}</h4>
                 </div>
             {% else %}
-                <a href="" onclick="showAll();"><ul class="list-group"><li class="list-group-item node-treeview {{ current.parent is null ? ' node-selected' }}" id="all"><i class="fa fa-eye"></i> {{ 'tree.show_all'|trans }}</li></ul></a>
+                <ul class="treeview list-group" onclick="showAll();"><li class="list-group-item node-treeview {{ current.parent is null ? ' node-selected' }}" id="all"><i class="fa fa-eye"></i> {{ 'tree.show_all'|trans }}</li></ul>
             {% endif %}
             <div id="treeview"></div>
         </div>

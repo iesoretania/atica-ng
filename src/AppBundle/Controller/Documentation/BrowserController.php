@@ -61,6 +61,10 @@ class BrowserController extends Controller
                 ->setParent($folder);
             $folder = $newFolder;
             $em->persist($folder);
+        } else {
+            if (null === $sourceFolder->getParent()) {
+                throw $this->createAccessDeniedException();
+            }
         }
         $breadcrumb = $sourceFolder->getParent() ? $this->generateBreadcrumb($sourceFolder, false) : [];
 
