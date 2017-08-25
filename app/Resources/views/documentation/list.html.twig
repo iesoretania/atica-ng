@@ -60,11 +60,11 @@
                     <h4>{{ 'tree.no_folders'|trans }}</h4>
                 </div>
             {% else %}
-                <a href="{{ path('documentation') }}"><ul class="list-group"><li class="list-group-item node-treeview {{ current.parent is null ? ' node-selected' }}" ><i class="fa fa-eye"></i> {{ 'tree.show_all'|trans }}</li></ul></a>
+                <a href="" onclick="showAll();"><ul class="list-group"><li class="list-group-item node-treeview {{ current.parent is null ? ' node-selected' }}" id="all"><i class="fa fa-eye"></i> {{ 'tree.show_all'|trans }}</li></ul></a>
             {% endif %}
             <div id="treeview"></div>
         </div>
-        <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 main">
+        <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3" id="main">
             <h2 class="well">
                 {% if current.parent %}{{ current.name }}{% else %}{{ 'title.all_documents'|trans }}{% endif %}
             </h2>
@@ -99,6 +99,35 @@
     <!-- Cargar treeview -->
     <script src="{{ asset('dist/js/bootstrap-treeview/bootstrap-treeview.js') }}"></script>
     <script type="text/javascript">
+
+        var nodeChangeEvent = function(event, data) {
+            var url = data.href;
+            var q = $('input#search').val();
+            if (q) {
+                url = url + '?q='+encodeURIComponent(q);
+            }
+            $('div#main').addClass('loading');
+            if (event) {
+                $('li#all').removeClass('node-selected');
+            }
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(html) {
+                    $('p#breadcrumb').replaceWith(
+                        $(html).find('p#breadcrumb')
+                    );
+                    $('div#main').removeClass('loading').replaceWith(
+                        $(html).find('div#main')
+                    );
+                    dynamicFormInit();
+                },
+                error: function() {
+                    window.location.replace(url);
+                }
+            });
+        };
+
         $(function() {
             var data = {{ tree|json_encode|raw }};
 
@@ -108,11 +137,16 @@
                 expandIcon: 'fa fa-plus',
                 collapseIcon: 'fa fa-minus',
                 enableLinks: true,
+                preventUnselect: true,
                 data: data,
-                onNodeSelected: function(event, data) {
-                    location.href = data.href;
-                }
+                onNodeSelected: nodeChangeEvent
             });
         });
+
+        var showAll = function() {
+            $('#treeview').treeview('unselectNode', [$('#treeview').treeview('getSelected'), {'unselecting': true}]);
+            nodeChangeEvent(null, {href: '{{ path('documentation')|e('js') }}'});
+            $('li#all').addClass('node-selected');
+        }
     </script>
 {% endblock %}
