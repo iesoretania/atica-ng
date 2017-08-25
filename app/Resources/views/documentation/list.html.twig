@@ -68,9 +68,7 @@
             <h2 class="well">
                 {% if current.parent %}{{ current.name }}{% else %}{{ 'title.all_documents'|trans }}{% endif %}
             </h2>
-            {{ ml.flash_message('info', 'info') }}
-            {{ ml.flash_message('error', 'danger') }}
-            {{ ml.flash_message('success', 'success') }}
+            {% include 'layout/partial_flash.html.twig' %}
             {{ parent() }}
 {% endblock %}
 

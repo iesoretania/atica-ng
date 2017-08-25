@@ -69,9 +69,7 @@
                 {% if title is defined %}
                     <h1 class="well">{{ title }}</h1>
                 {% endif %}
-                {{ ml.flash_message('info', 'info') }}
-                {{ ml.flash_message('error', 'danger') }}
-                {{ ml.flash_message('success', 'success') }}
+                {% include 'layout/partial_flash.html.twig' %}
             {% endblock %}
             {% if menu ?? false %}
                 {% include 'layout/partial_menu.html.twig' %}
