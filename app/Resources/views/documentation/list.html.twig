@@ -65,9 +65,15 @@
             <div id="treeview"></div>
         </div>
         <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3" id="main">
+            <form action="{{ path('documentation_operation', {'id': current.id}) }}" method="post">
             <h2 class="well">
                 {% if current.parent %}{{ current.name }}{% else %}{{ 'title.all_documents'|trans }}{% endif %}
+                {% if user_extension.userlocalAdministrator and current.parent %}
+                    {% if current.left != (current.parent.left + 1) %}<button name="up" class="btn-link" value="{{ current.id }}"><i class="fa fa-arrow-up"></i></button>{% endif %}
+                    {% if (current.right + 1) != current.parent.right %}<button name="down" class="btn-link" value="{{ current.id }}"><i class="fa fa-arrow-down"></i></button>{% endif %}
+                {% endif %}
             </h2>
+            </form>
             {% include 'layout/partial_flash.html.twig' %}
             {{ parent() }}
 {% endblock %}

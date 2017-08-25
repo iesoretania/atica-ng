@@ -95,6 +95,30 @@ class BrowserController extends Controller
     }
 
     /**
+     * @Route("/operacion/{id}", name="documentation_operation", requirements={"id" = "\d+"}, methods={"POST"})
+     */
+    public function operationAction($id, Request $request)
+    {
+        $organization = $this->get('AppBundle\Service\UserExtensionService')->getCurrentOrganization();
+
+        $folder = $this->getFolder($organization, $id);
+
+        if (null === $folder || $folder->getOrganization() !== $organization) {
+            throw $this->createNotFoundException();
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        foreach (['up', 'down'] as $op) {
+            if ($request->get($op)) {
+                $method = 'move'.ucfirst($op);
+                $em->getRepository('AppBundle:Documentation\Folder')->$method($folder);
+                $em->flush();
+            }
+        }
+        return $this->redirectToRoute('documentation', ['id' => $folder->getId()]);
+    }
+
+    /**
      * @Route("/{id}/{page}", name="documentation", requirements={"page" = "\d+", "id" = "\d+"}, defaults={"page" = "1", "folder" = null}, methods={"GET"})
      */
     public function browseAction($page, $id = null, Request $request)

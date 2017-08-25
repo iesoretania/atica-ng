@@ -53,6 +53,8 @@
             if (q) {
                 // replace parameter
                 url = url.replace(/(q=).*?(&|$)/,'$1' + encodeURIComponent(q) + '$2');
+            } else {
+                url = url.replace(/(q=).*?(&|$)/,'$1$2');
             }
             $('table#list').addClass('loading');
             $.ajax({
