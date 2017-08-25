@@ -23,8 +23,17 @@ class HighlightFilter extends \Twig_Extension
         if (null === $needle || '' === $needle) {
             return $string;
         }
-        return preg_replace_callback('/'.preg_quote($needle, '/').'/i', function ($match) use ($class) {
-            return '<span class="'.htmlentities($class).'">'.$match[0].'</span>';
-        }, $string);
+
+        $needle = preg_quote($needle, '/');
+
+        $replacements = [
+            'a' => '[áa]', 'e' => '[ée]', 'i' => '[íi]', 'o' => '[óo]', 'u' => '[úu]',
+            'A' => '[ÁA]', 'E' => '[ÉE]', 'I' => '[ÍI]', 'O' => '[ÓO]', 'U' => '[ÚU]',
+            'n' => '[ñn]', 'N' => '[ÑN]'
+        ];
+
+        $needle = str_replace(array_keys($replacements), $replacements, $needle);
+
+        return preg_replace("/(" . $needle . ")/ui", '<span class="'.htmlentities($class).'">\\1</span>', $string);
     }
 }
