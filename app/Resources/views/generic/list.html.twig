@@ -51,7 +51,8 @@
             }
             last_value = q;
             if (q) {
-                url = url + '?q='+encodeURIComponent(q);
+                // replace parameter
+                url = url.replace(/(q=).*?(&|$)/,'$1' + encodeURIComponent(q) + '$2');
             }
             $('table#list').addClass('loading');
             $.ajax({
