@@ -108,6 +108,7 @@ class Organization
 
     /**
      * @ORM\ManyToMany(targetEntity="User", inversedBy="managedOrganizations")
+     * @ORM\JoinTable(name="manager")
      * @var Collection
      */
     private $administrators;

@@ -155,7 +155,6 @@ class User implements AdvancedUserInterface
 
     /**
      * @ORM\ManyToMany(targetEntity="Organization", mappedBy="administrators")
-     * @ORM\JoinTable(name="manager")
      * @var Collection
      */
     private $managedOrganizations;
