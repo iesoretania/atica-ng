@@ -44,17 +44,16 @@
     <script>
         var last_value = "";
         var reload = function() {
-            var url = '{% block path_list %}{{ app.request.uri }}{% endblock %}';
+            var url = window.location.href;
             var q = $('input#search').val();
             if (q === last_value) {
                 return;
             }
             last_value = q;
+            // quitar parámetro
+            url = url.replace(/(q=).*?(&|$)/,'$1$2');
             if (q) {
-                // replace parameter
-                url = url.replace(/(q=).*?(&|$)/,'$1' + encodeURIComponent(q) + '$2');
-            } else {
-                url = url.replace(/(q=).*?(&|$)/,'$1$2');
+                url = url + '?q=' + encodeURIComponent(q);
             }
             $('table#list').addClass('loading');
             $.ajax({

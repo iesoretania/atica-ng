@@ -108,6 +108,7 @@
 
         var nodeChangeEvent = function(event, data) {
             var url = data.href;
+            history.replaceState({}, '', url);
             var q = $('input#search').val();
             if (q) {
                 url = url + '?q='+encodeURIComponent(q);
