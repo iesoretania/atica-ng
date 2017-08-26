@@ -106,14 +106,17 @@ class BrowserController extends Controller
         if (null === $folder || $folder->getOrganization() !== $organization) {
             throw $this->createNotFoundException();
         }
-
+        $ok = false;
         $em = $this->getDoctrine()->getManager();
         foreach (['up', 'down'] as $op) {
             if ($request->get($op)) {
                 $method = 'move'.ucfirst($op);
                 $em->getRepository('AppBundle:Documentation\Folder')->$method($folder);
-                $em->flush();
+                $ok = true;
             }
+        }
+        if ($ok) {
+            $em->flush();
         }
         return $this->redirectToRoute('documentation', ['id' => $folder->getId()]);
     }
