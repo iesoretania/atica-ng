@@ -21,8 +21,6 @@
 namespace AppBundle\Security;
 
 use AppBundle\Entity\Documentation\Folder;
-use AppBundle\Entity\Membership;
-use AppBundle\Entity\Organization;
 use AppBundle\Entity\User;
 use AppBundle\Service\UserExtensionService;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -85,8 +83,6 @@ class FolderVoter extends Voter
         if ($this->extensionService->isUserLocalAdministrator() && $this->extensionService->getCurrentOrganization() === $subject->getOrganization()) {
             return true;
         }
-
-        dump($this->extensionService->isUserLocalAdministrator());
 
         // denegamos en cualquier otro caso
         return false;
