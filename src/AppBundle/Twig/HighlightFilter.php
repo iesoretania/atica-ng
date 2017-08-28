@@ -34,6 +34,6 @@ class HighlightFilter extends \Twig_Extension
 
         $needle = str_replace(array_keys($replacements), $replacements, $needle);
 
-        return preg_replace("/(" . $needle . ")/ui", '<span class="'.htmlentities($class).'">\\1</span>', $string);
+        return preg_replace("/(".$needle.")/ui", '<span class="'.htmlentities($class).'">\\1</span>', $string);
     }
 }

@@ -114,7 +114,7 @@ class SubjectController extends Controller
         try {
             /** @var Profile $teacherProfile */
             $teacherProfile = $em->getRepository('AppBundle:Profile')
-                ->findOneByOrganizationAndCode($organization,'teacher');
+                ->findOneByOrganizationAndCode($organization, 'teacher');
 
             if (null === $teacherProfile) {
                 return null;

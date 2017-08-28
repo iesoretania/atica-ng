@@ -282,13 +282,13 @@ class BrowserController extends Controller
     private function processChildren(array $children, $currentId = null, $parentsId = [])
     {
         $result = [];
-        foreach($children as $child) {
+        foreach ($children as $child) {
             $item = [];
             $item['text'] = $child['name'];
             if ($currentId === $child['id']) {
                 $item['state'] = ['selected' => true, 'expanded' => true];
             }
-            if ($parentsId && in_array($child['id'], $parentsId)) {
+            if (!empty($parentsId) && in_array($child['id'], $parentsId)) {
                 $item['state'] = ['expanded' => true];
             }
             if (count($child['__children']) > 0) {

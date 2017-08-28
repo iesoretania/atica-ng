@@ -461,7 +461,7 @@ class ElementController extends Controller
      * @param $path
      * @param Request $request
      * @param $items
-     * @param $element
+     * @param Element|null $element
      * @return bool|\Symfony\Component\HttpFoundation\RedirectResponse
      */
     private function processElementRemoveOperation($path, Request $request, $items, $element)

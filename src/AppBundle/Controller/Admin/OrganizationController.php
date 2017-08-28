@@ -197,7 +197,7 @@ class OrganizationController extends Controller
     /**
      * @param Request $request
      * @param $organizations
-     * @param $em
+     * @param \Doctrine\Common\Persistence\ObjectManager $em
      * @return bool
      */
     private function processRemoveOrganizations(Request $request, $organizations, $em)
@@ -218,7 +218,7 @@ class OrganizationController extends Controller
 
     /**
      * @param Request $request
-     * @param $em
+     * @param \Doctrine\Common\Persistence\ObjectManager $em
      * @return bool
      */
     private function processSwitchOrganization(Request $request, $em)

@@ -62,15 +62,15 @@ class CoreData
         $profiles = [];
 
         $em = $this->entityManager;
-        foreach($profilesData as $key => $profileData) {
+        foreach ($profilesData as $key => $profileData) {
             $profile = new Profile();
             $profile
                 ->setOrganization($organization)
                 ->setCode($key)
-                ->setNameNeutral($this->translator->trans('profile.' . $key . '.0', [], 'core'))
-                ->setNameMale($this->translator->trans('profile.' . $key . '.1', [], 'core'))
-                ->setNameFemale($this->translator->trans('profile.' . $key . '.2', [], 'core'))
-                ->setInitials($this->translator->trans('profile.' . $key . '.initials', [], 'core'));
+                ->setNameNeutral($this->translator->trans('profile.'.$key.'.0', [], 'core'))
+                ->setNameMale($this->translator->trans('profile.'.$key.'.1', [], 'core'))
+                ->setNameFemale($this->translator->trans('profile.'.$key.'.2', [], 'core'))
+                ->setInitials($this->translator->trans('profile.'.$key.'.initials', [], 'core'));
 
             $profiles[$key] = $profile;
 
@@ -121,7 +121,7 @@ class CoreData
                 ->setCode($key)
                 ->setFolder(true)
                 ->setLocked(true)
-                ->setName($this->translator->trans('list.' . $key, [], 'core'));
+                ->setName($this->translator->trans('list.'.$key, [], 'core'));
 
             $em->persist($element);
 
