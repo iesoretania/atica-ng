@@ -107,7 +107,7 @@ class ElementRepository extends NestedTreeRepository
 
         foreach ($profileElements as $profile) {
             $children = $this->getChildren($profile, false, null, 'ASC', true);
-            foreach($children as $element) {
+            foreach ($children as $element) {
                 if (!$collection->contains($element)) {
                     $collection->add($element);
                 }

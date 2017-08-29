@@ -158,6 +158,7 @@ class Folder
     {
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
         $this->entries = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->permissions = new \Doctrine\Common\Collections\ArrayCollection();
         $this->documentFlow = false;
         $this->versionShown = true;
         $this->public = false;

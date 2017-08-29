@@ -103,10 +103,13 @@ class BrowserController extends Controller
     /**
      * @param Folder $folder
      * @param Form $form
-     * @param Organization $organization
      */
     private function setFolderRolesInForm($folder, $form)
     {
+        if (null === $folder) {
+            return;
+        }
+
         $permissions = $folder->getPermissions();
 
         $permissionTypes = ['access' => FolderPermission::PERMISSION_VISIBLE, 'manager' => FolderPermission::PERMISSION_MANAGE];
