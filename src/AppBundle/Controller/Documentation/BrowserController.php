@@ -21,17 +21,21 @@
 namespace AppBundle\Controller\Documentation;
 
 use AppBundle\Entity\Documentation\Folder;
+use AppBundle\Entity\Documentation\FolderPermission;
 use AppBundle\Entity\Documentation\FolderRepository;
 use AppBundle\Entity\ElementRepository;
 use AppBundle\Entity\Organization;
 use AppBundle\Form\Type\Documentation\FolderType;
 use AppBundle\Security\OrganizationVoter;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -72,11 +76,13 @@ class BrowserController extends Controller
             'new' => $new
         ]);
 
+        $this->setFolderRolesInForm($folder, $form);
         $form->handleRequest($request);
         $breadcrumb[] = ['fixed' => $this->get('translator')->trans($new ? 'title.folder.new' : 'title.folder.edit', [], 'documentation')];
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
+                $this->updateFolderRolesFromForm($folder, $em, $form);
                 $em->flush();
                 $this->addFlash('success', $this->get('translator')->trans('message.folder.saved', [], 'documentation'));
                 return $this->redirectToRoute('documentation', ['id' => $sourceFolder->getId()]);
@@ -92,6 +98,74 @@ class BrowserController extends Controller
             'form' => $form->createView(),
             'folder' => $folder
         ]);
+    }
+
+    /**
+     * @param Folder $folder
+     * @param Form $form
+     * @param Organization $organization
+     */
+    private function setFolderRolesInForm($folder, $form)
+    {
+        $permissions = $folder->getPermissions();
+
+        $permissionTypes = ['access' => FolderPermission::PERMISSION_VISIBLE, 'manager' => FolderPermission::PERMISSION_MANAGE];
+
+        foreach ($permissionTypes as $name => $type) {
+            $data = [];
+
+            /** @var FolderPermission $permission */
+            foreach ($permissions as $permission) {
+                if ($permission->getPermission() === $type) {
+                    $data[] = $permission->getElement();
+                }
+            }
+
+            if (!empty($data)) {
+                $form->get('profiles_'.$name)->setData($data);
+            }
+        }
+    }
+
+    /**
+     * @param Folder $folder
+     * @param EntityManager $em
+     * @param Form $form
+     */
+    private function updateFolderRolesFromForm($folder, EntityManager $em, $form)
+    {
+        $oldPermissions = $folder->getPermissions();
+
+        $permissionTypes = ['access' => FolderPermission::PERMISSION_VISIBLE, 'manager' => FolderPermission::PERMISSION_MANAGE];
+
+        foreach ($permissionTypes as $name => $type) {
+
+            $data = $form->get('profiles_'.$name)->getData();
+            if (!$data instanceof ArrayCollection) {
+                $data = new ArrayCollection($data);
+            }
+
+            /** @var FolderPermission $permission */
+            foreach ($oldPermissions as $permission) {
+                if ($permission->getPermission() === $type) {
+                    if (!$data->contains($permission->getElement())) {
+                        $em->remove($permission);
+                    } else {
+                        $data->removeElement($permission->getElement());
+                    }
+                }
+            }
+
+            foreach ($data as $datum) {
+                $permission = new FolderPermission();
+                $permission
+                    ->setFolder($folder)
+                    ->setPermission($type)
+                    ->setElement($datum);
+                $em->persist($permission);
+            }
+        }
+        $em->flush();
     }
 
     /**

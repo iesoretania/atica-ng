@@ -20,6 +20,8 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\QueryBuilder;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
 class ElementRepository extends NestedTreeRepository
@@ -86,5 +88,35 @@ class ElementRepository extends NestedTreeRepository
             ->setParameter('code', $code)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @param Organization $organization
+     * @return QueryBuilder
+     */
+    public function findAllProfilesByOrganizationQueryBuilder(Organization $organization)
+    {
+        $profileElements = $this->createQueryBuilder('e')
+            ->innerJoin('e.profile', 'p')
+            ->where('e.organization = :organization')
+            ->setParameter('organization', $organization)
+            ->getQuery()
+            ->getResult();
+
+        $collection = new ArrayCollection();
+
+        foreach ($profileElements as $profile) {
+            $children = $this->getChildren($profile, false, null, 'ASC', true);
+            foreach($children as $element) {
+                if (!$collection->contains($element)) {
+                    $collection->add($element);
+                }
+            }
+        }
+
+        return $this->createQueryBuilder('e')
+            ->where('e IN (:profiles)')
+            ->orderBy('e.left')
+            ->setParameter('profiles', $collection);
     }
 }

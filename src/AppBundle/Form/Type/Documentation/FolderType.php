@@ -21,14 +21,28 @@
 namespace AppBundle\Form\Type\Documentation;
 
 use AppBundle\Entity\Documentation\Folder;
+use AppBundle\Entity\Element;
+use AppBundle\Entity\ElementRepository;
+use AppBundle\Service\UserExtensionService;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class FolderType extends AbstractType
 {
+    private $userExtensionService;
+    private $translator;
+
+    public function __construct(UserExtensionService $userExtensionService, TranslatorInterface $translator)
+    {
+        $this->userExtensionService = $userExtensionService;
+        $this->translator = $translator;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -65,6 +79,34 @@ class FolderType extends AbstractType
                     'form.group_by.profile' => Folder::GROUP_BY_PROFILE,
                     'form.group_by.user' => Folder::GROUP_BY_USER
                 ]
+            ])
+            ->add('profiles_manager', EntityType::class, [
+                'label' => 'form.manager_profiles',
+                'class' => Element::class,
+                'mapped' => false,
+                'required' => true,
+                'expanded' => false,
+                'multiple' => true,
+                'choice_label' => function(Element $element) {
+                    return $element->getFullProfileName().($element->isDeleted() ? ' '.$this->translator->trans('state.disabled', [], 'general') : '');
+                },
+                'query_builder' => function(ElementRepository $entityRepository) {
+                    return $entityRepository->findAllProfilesByOrganizationQueryBuilder($this->userExtensionService->getCurrentOrganization());
+                }
+            ])
+            ->add('profiles_access', EntityType::class, [
+                'label' => 'form.access_profiles',
+                'class' => Element::class,
+                'mapped' => false,
+                'required' => false,
+                'expanded' => false,
+                'multiple' => true,
+                'choice_label' => function(Element $element) {
+                    return $element->getFullProfileName().($element->isDeleted() ? ' '.$this->translator->trans('state.disabled', [], 'general') : '');
+                },
+                'query_builder' => function(ElementRepository $entityRepository) {
+                    return $entityRepository->findAllProfilesByOrganizationQueryBuilder($this->userExtensionService->getCurrentOrganization());
+                }
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'form.description',

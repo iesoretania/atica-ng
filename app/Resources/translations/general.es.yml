@@ -9,3 +9,5 @@ format.decimal_separator: ","
 format.thousand_separator: "."
 
 form.lose_changes: Si sale de la página perderá todos los cambios no guardados. ¿Desea continuar?
+
+state.disabled: (desactivado)

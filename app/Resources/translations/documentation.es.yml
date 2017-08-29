@@ -13,6 +13,9 @@ form.group_by.none: No agrupar
 form.group_by.user: Agrupar por autor
 form.group_by.profile: Agrupar por perfil de subida
 
+form.manager_profiles: Responsables de la carpeta
+form.access_profiles: Restringir acceso a
+
 form.description: Notas
 
 form.save: Guardar cambios

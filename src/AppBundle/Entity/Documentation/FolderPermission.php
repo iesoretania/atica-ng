@@ -113,7 +113,7 @@ class FolderPermission
      *
      * @return FolderPermission
      */
-    public function setProfile(Element $element)
+    public function setElement(Element $element)
     {
         $this->element = $element;
 
