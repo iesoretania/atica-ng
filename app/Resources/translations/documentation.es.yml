@@ -8,6 +8,11 @@ form.document_flow: Flujo de trabajo
 form.document_flow.yes: Los documentos subidos pasarán por las fases de edición, revisión y aprobación
 form.document_flow.no: La subida publicará el documento automáticamente
 
+form.group_by: Agrupación de documentos
+form.group_by.none: No agrupar
+form.group_by.user: Agrupar por autor
+form.group_by.profile: Agrupar por perfil de subida
+
 form.description: Notas
 
 form.save: Guardar cambios

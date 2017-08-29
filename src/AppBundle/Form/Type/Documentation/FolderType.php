@@ -56,6 +56,16 @@ class FolderType extends AbstractType
                     'form.document_flow.no' => false
                 ]
             ])
+            ->add('groupBy', ChoiceType::class, [
+                'label' => 'form.group_by',
+                'required' => true,
+                'expanded' => true,
+                'choices' => [
+                    'form.group_by.none' => Folder::GROUP_BY_NONE,
+                    'form.group_by.profile' => Folder::GROUP_BY_PROFILE,
+                    'form.group_by.user' => Folder::GROUP_BY_USER
+                ]
+            ])
             ->add('description', TextareaType::class, [
                 'label' => 'form.description',
                 'required' => false
