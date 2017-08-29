@@ -104,7 +104,7 @@ class BrowserController extends Controller
      * @param Folder $folder
      * @param Form $form
      */
-    private function setFolderRolesInForm($folder, $form)
+    private function setFolderRolesInForm(Folder $folder = null, Form $form)
     {
         if (null === $folder) {
             return;
