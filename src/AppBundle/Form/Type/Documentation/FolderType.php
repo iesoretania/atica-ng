@@ -66,8 +66,8 @@ class FolderType extends AbstractType
                 'required' => true,
                 'expanded' => true,
                 'choices' => [
-                    'form.document_flow.yes' => true,
-                    'form.document_flow.no' => false
+                    'form.document_flow.no' => false,
+                    'form.document_flow.yes' => true
                 ]
             ])
             ->add('groupBy', ChoiceType::class, [
@@ -79,35 +79,32 @@ class FolderType extends AbstractType
                     'form.group_by.profile' => Folder::GROUP_BY_PROFILE,
                     'form.group_by.user' => Folder::GROUP_BY_USER
                 ]
-            ])
-            ->add('profiles_manager', EntityType::class, [
-                'label' => 'form.manager_profiles',
-                'class' => Element::class,
-                'mapped' => false,
-                'required' => true,
-                'expanded' => false,
-                'multiple' => true,
-                'choice_label' => function(Element $element) {
-                    return $element->getFullProfileName().($element->isDeleted() ? ' '.$this->translator->trans('state.disabled', [], 'general') : '');
-                },
-                'query_builder' => function(ElementRepository $entityRepository) {
-                    return $entityRepository->findAllProfilesByOrganizationQueryBuilder($this->userExtensionService->getCurrentOrganization());
-                }
-            ])
-            ->add('profiles_access', EntityType::class, [
-                'label' => 'form.access_profiles',
-                'class' => Element::class,
-                'mapped' => false,
-                'required' => false,
-                'expanded' => false,
-                'multiple' => true,
-                'choice_label' => function(Element $element) {
-                    return $element->getFullProfileName().($element->isDeleted() ? ' '.$this->translator->trans('state.disabled', [], 'general') : '');
-                },
-                'query_builder' => function(ElementRepository $entityRepository) {
-                    return $entityRepository->findAllProfilesByOrganizationQueryBuilder($this->userExtensionService->getCurrentOrganization());
-                }
-            ])
+            ]);
+
+        $types = ['manager' => true, 'access' => false, 'upload' => true, 'review' => false, 'approve' => false];
+
+        foreach ($types as $type => $required) {
+            $builder
+                ->add('profiles_'.$type, EntityType::class, [
+                    'label' => 'form.profiles.'.$type,
+                    'class' => Element::class,
+                    'mapped' => false,
+                    'required' => $required,
+                    'expanded' => false,
+                    'multiple' => true,
+                    'choice_label' => function (Element $element) {
+                        return $element->getFullProfileName() . ($element->isDeleted() ? ' ' . $this->translator->trans('state.disabled', [], 'general') : '');
+                    },
+                    'query_builder' => function (ElementRepository $entityRepository) {
+                        return $entityRepository->findAllProfilesByOrganizationQueryBuilder($this->userExtensionService->getCurrentOrganization());
+                    },
+                    'attr' => [
+                        'data-placeholder' => $this->translator->trans('form.profiles.placeholder', [], 'documentation')
+                    ]
+                ]);
+        }
+
+        $builder
             ->add('description', TextareaType::class, [
                 'label' => 'form.description',
                 'required' => false

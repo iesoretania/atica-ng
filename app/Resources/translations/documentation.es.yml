@@ -13,8 +13,12 @@ form.group_by.none: No agrupar
 form.group_by.user: Agrupar por autor
 form.group_by.profile: Agrupar por perfil de subida
 
-form.manager_profiles: Responsables de la carpeta
-form.access_profiles: Restringir acceso a
+form.profiles.placeholder: Seleccione uno o varios perfiles...
+form.profiles.manager: Responsables de la carpeta
+form.profiles.access: Restringir acceso a (si vacío, todos pueden acceder)
+form.profiles.upload: Pueden subir documentos
+form.profiles.review: Pueden revisar documentos
+form.profiles.approve: Pueden aprobar documentos
 
 form.description: Notas
 
