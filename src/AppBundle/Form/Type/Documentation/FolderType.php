@@ -81,7 +81,7 @@ class FolderType extends AbstractType
                 ]
             ]);
 
-        $types = ['manager' => true, 'access' => false, 'upload' => true, 'review' => false, 'approve' => false];
+        $types = ['manager' => true, 'access' => false, 'upload' => false, 'review' => false, 'approve' => false];
 
         foreach ($types as $type => $required) {
             $builder
