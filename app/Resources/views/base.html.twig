@@ -22,10 +22,12 @@
     <script src="{{ asset('dist/js/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('dist/js/bootstrap/bootstrap.min.js') }}"></script>
     <script src="{{ asset('dist/js/select2/select2.min.js') }}"></script>
+    <script src="{{ asset('dist/js/select2/i18n/'~app.request.locale~'.js') }}"></script>
     {% block javascripts %}{% endblock %}
     <script type="text/javascript">
         $('select').select2({
-            theme: "bootstrap"
+            theme: "bootstrap",
+            language: "{{ app.request.locale }}"
         });
         var trigger = $('[data-toggle="offcanvas"], nav .sidebar-nav li');
 

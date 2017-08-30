@@ -34,11 +34,13 @@ gulp.task('default', function() {
         .pipe(gulp.dest('web/dist/js/bootstrap'));
 
     // copiar Javascript de Select2
-    gulp.src('node_modules/select2/dist/js/*')
+    gulp.src('node_modules/select2/dist/js/select2.min.js')
         .pipe(gulp.dest('web/dist/js/select2'));
+    gulp.src('node_modules/select2/dist/js/i18n/*')
+        .pipe(gulp.dest('web/dist/js/select2/i18n'));
 
     // copiar Javascript de patternfly-bootstrap-treeview
-    gulp.src('node_modules/patternfly-bootstrap-treeview/dist/*.js')
+    gulp.src('node_modules/patternfly-bootstrap-treeview/dist/select2.js')
         .pipe(gulp.dest('web/dist/js/bootstrap-treeview'));
 
     // copiar fuentes
