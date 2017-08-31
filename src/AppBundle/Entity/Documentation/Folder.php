@@ -140,6 +140,12 @@ class Folder
     private $entries;
 
     /**
+     * @ORM\OneToMany(targetEntity="Task", mappedBy="folder")
+     * @var Collection
+     */
+    private $tasks;
+
+    /**
      * @ORM\Column(type="integer")
      * @var int
      */
@@ -158,7 +164,9 @@ class Folder
     {
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
         $this->entries = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
         $this->permissions = new \Doctrine\Common\Collections\ArrayCollection();
+
         $this->documentFlow = false;
         $this->versionShown = true;
         $this->public = false;

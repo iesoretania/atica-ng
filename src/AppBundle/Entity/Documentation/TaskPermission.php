@@ -25,24 +25,17 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
- * @ORM\Table(name="documentation_folder_permission")
+ * @ORM\Table(name="documentation_task_permission")
  */
-class FolderPermission
+class TaskPermission
 {
-    const PERMISSION_VISIBLE = 0;
-    const PERMISSION_UPLOAD = 1;
-    const PERMISSION_REQUEST_CHANGES = 2;
-    const PERMISSION_REVIEW = 3;
-    const PERMISSION_APPROVE = 4;
-    const PERMISSION_MANAGE = 5;
-
     /**
      * @ORM\Id()
-     * @ORM\ManyToOne(targetEntity="Folder", inversedBy="permissions")
+     * @ORM\ManyToOne(targetEntity="Task", inversedBy="permissions")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     * @var Folder
+     * @var Task
      */
-    private $folder;
+    private $task;
 
     /**
      * @ORM\Id()
@@ -64,7 +57,7 @@ class FolderPermission
      *
      * @param integer $permission
      *
-     * @return FolderPermission
+     * @return TaskPermission
      */
     public function setPermission($permission)
     {
@@ -84,27 +77,27 @@ class FolderPermission
     }
 
     /**
-     * Set folder
+     * Set task
      *
-     * @param Folder $folder
+     * @param Task $task
      *
-     * @return FolderPermission
+     * @return TaskPermission
      */
-    public function setFolder(Folder $folder)
+    public function setTask(Task $task)
     {
-        $this->folder = $folder;
+        $this->task = $task;
 
         return $this;
     }
 
     /**
-     * Get folder
+     * Get task
      *
-     * @return Folder
+     * @return Task
      */
-    public function getFolder()
+    public function getTask()
     {
-        return $this->folder;
+        return $this->task;
     }
 
     /**
@@ -112,7 +105,7 @@ class FolderPermission
      *
      * @param Element $element
      *
-     * @return FolderPermission
+     * @return TaskPermission
      */
     public function setElement(Element $element)
     {
