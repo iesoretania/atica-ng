@@ -1,5 +1,9 @@
 /app/config/parameters.yml
+/app/config/custom/*
+!app/config/custom/.gitkeep
 /build/
+/var/data/
+/node_modules/
 /phpunit.xml
 /var/*
 !/var/cache
@@ -15,4 +19,3 @@
 /vendor/
 /web/bundles/
 /web/dist/
-/node_modules/

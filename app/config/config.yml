@@ -2,6 +2,7 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
+    - { resource: "custom/global_*" }
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
@@ -57,6 +58,8 @@ doctrine:
         user: '%database_user%'
         password: '%database_password%'
         charset: '%database_charset%'
+        schema_filter: ~^(?!data)~
+
         # if using pdo_sqlite as your database driver:
         #   1. add the path in parameters.yml
         #     e.g. database_path: "%kernel.root_dir%/../var/data/data.sqlite"
@@ -134,3 +137,18 @@ swiftmailer:
     username: '%mailer_user%'
     password: '%mailer_password%'
     spool: { type: memory }
+
+# Gaufrette configuration
+knp_gaufrette:
+    adapters:
+        local_filesystem:
+            local:
+                directory: "%kernel.project_dir%/var/data"
+        database:
+            doctrine_dbal:
+                connection_name: default
+                table: data
+    filesystems:
+        entries:
+            adapter: '%filesystem_adapter%'
+            alias: entries_filesystem

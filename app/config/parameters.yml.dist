@@ -52,3 +52,8 @@ parameters:
     # El siguiente parámetro evita que se pueda interceptar las credenciales mediante un ataque MITM
     # así que sólo debe ponerse a "false" si existe algún problema con los certificados de la Consejería de Educación
     external.url.force_security: true
+
+    # Dónde almacenar los documentos:
+    #   database         : Dentro de una tabla de la base de datos
+    #   local_filesystem : Dentro de la carpeta var/data/
+    filesystem_adapter: database
