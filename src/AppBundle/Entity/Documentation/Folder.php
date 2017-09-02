@@ -40,6 +40,10 @@ class Folder
     const GROUP_BY_USER = 1;
     const GROUP_BY_PROFILE = 2;
 
+    const TYPE_NORMAL = 0;
+    const TYPE_WORKFLOW = 1;
+    const TYPE_TASKS = 2;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -110,10 +114,10 @@ class Folder
     private $permissions;
 
     /**
-     * @ORM\Column(type="boolean")
-     * @var bool
+     * @ORM\Column(type="integer")
+     * @var int
      */
-    private $documentFlow;
+    private $type;
 
     /**
      * @ORM\Column(type="boolean")
@@ -167,9 +171,9 @@ class Folder
         $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
         $this->permissions = new \Doctrine\Common\Collections\ArrayCollection();
 
-        $this->documentFlow = false;
         $this->versionShown = true;
         $this->public = false;
+        $this->type = $this::TYPE_NORMAL;
         $this->visibility = $this::VISIBILITY_NO_RESTRICTION;
         $this->groupBy = $this::GROUP_BY_NONE;
     }
@@ -451,30 +455,6 @@ class Folder
     }
 
     /**
-     * Set documentFlow
-     *
-     * @param boolean $documentFlow
-     *
-     * @return Folder
-     */
-    public function setDocumentFlow($documentFlow)
-    {
-        $this->documentFlow = $documentFlow;
-
-        return $this;
-    }
-
-    /**
-     * Get documentFlow
-     *
-     * @return boolean
-     */
-    public function hasDocumentFlow()
-    {
-        return $this->documentFlow;
-    }
-
-    /**
      * Set versionShown
      *
      * @param boolean $versionShown
@@ -626,5 +606,63 @@ class Folder
     public function getGroupBy()
     {
         return $this->groupBy;
+    }
+
+    /**
+     * Set type
+     *
+     * @param integer $type
+     *
+     * @return Folder
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return integer
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Add task
+     *
+     * @param Task $task
+     *
+     * @return Folder
+     */
+    public function addTask(Task $task)
+    {
+        $this->tasks[] = $task;
+
+        return $this;
+    }
+
+    /**
+     * Remove task
+     *
+     * @param Task $task
+     */
+    public function removeTask(Task $task)
+    {
+        $this->tasks->removeElement($task);
+    }
+
+    /**
+     * Get tasks
+     *
+     * @return Collection
+     */
+    public function getTasks()
+    {
+        return $this->tasks;
     }
 }

@@ -61,13 +61,14 @@ class FolderType extends AbstractType
                     'form.version_shown.no' => false
                 ]
             ])
-            ->add('documentFlow', ChoiceType::class, [
-                'label' => 'form.document_flow',
+            ->add('type', ChoiceType::class, [
+                'label' => 'form.type',
                 'required' => true,
                 'expanded' => true,
                 'choices' => [
-                    'form.document_flow.no' => false,
-                    'form.document_flow.yes' => true
+                    'form.type.normal' => Folder::TYPE_NORMAL,
+                    'form.type.workflow' => Folder::TYPE_WORKFLOW,
+                    'form.type.tasks' => Folder::TYPE_TASKS
                 ]
             ])
             ->add('groupBy', ChoiceType::class, [

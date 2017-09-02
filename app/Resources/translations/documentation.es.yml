@@ -4,9 +4,10 @@ form.version_shown: Número de revisión
 form.version_shown.yes: Mostrar el número de revisión
 form.version_shown.no: Ocultar el número de revisión
 
-form.document_flow: Flujo de trabajo
-form.document_flow.yes: Los documentos subidos pasarán por las fases de edición, revisión y aprobación
-form.document_flow.no: La subida publicará el documento automáticamente
+form.type: Tipo de carpeta
+form.type.normal: La subida publicará el documento automáticamente
+form.type.workflow: Los documentos subidos pasarán por las fases de edición, revisión y aprobación
+form.type.tasks: Los documentos de la carpeta se subirán mediante tareas
 
 form.group_by: Agrupación de documentos
 form.group_by.none: No agrupar
