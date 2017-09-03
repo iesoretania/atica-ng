@@ -63,16 +63,6 @@ class FolderType extends AbstractType
                     'form.version_shown.no' => false
                 ]
             ])
-            ->add('type', ChoiceType::class, [
-                'label' => 'form.type',
-                'required' => true,
-                'expanded' => true,
-                'choices' => [
-                    'form.type.normal' => Folder::TYPE_NORMAL,
-                    'form.type.workflow' => Folder::TYPE_WORKFLOW,
-                    'form.type.tasks' => Folder::TYPE_TASKS
-                ]
-            ])
             ->add('groupBy', ChoiceType::class, [
                 'label' => 'form.group_by',
                 'required' => true,
@@ -81,6 +71,16 @@ class FolderType extends AbstractType
                     'form.group_by.none' => Folder::GROUP_BY_NONE,
                     'form.group_by.profile' => Folder::GROUP_BY_PROFILE,
                     'form.group_by.user' => Folder::GROUP_BY_USER
+                ]
+            ])
+            ->add('type', ChoiceType::class, [
+                'label' => 'form.type',
+                'required' => true,
+                'expanded' => true,
+                'choices' => [
+                    'form.type.normal' => Folder::TYPE_NORMAL,
+                    'form.type.workflow' => Folder::TYPE_WORKFLOW,
+                    'form.type.tasks' => Folder::TYPE_TASKS
                 ]
             ]);
 
