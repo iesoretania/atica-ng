@@ -41,7 +41,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * @Route("/documentos")
  */
-class BrowserController extends Controller
+class FolderController extends Controller
 {
     /**
      * @Route("/carpeta/{id}/nueva", name="documentation_folder_new", methods={"GET", "POST"})
