@@ -72,15 +72,19 @@ class BrowserController extends Controller
         }
         $breadcrumb = $sourceFolder->getParent() ? $this->generateBreadcrumb($sourceFolder, false) : [];
 
+        if ($request->request->get('folder')) {
+            $folder->setType($request->request->get('folder')['type']);
+        }
         $form = $this->createForm(FolderType::class, $folder, [
-            'new' => $new
+            'new' => $new,
+            'allow_extra_fields' => !$request->request->has('submit')
         ]);
 
         $this->setFolderRolesInForm($folder, $form);
         $form->handleRequest($request);
         $breadcrumb[] = ['fixed' => $this->get('translator')->trans($new ? 'title.folder.new' : 'title.folder.edit', [], 'documentation')];
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid() && $request->request->has('submit')) {
             try {
                 $this->updateFolderRolesFromForm($folder, $em, $form);
                 $em->flush();
@@ -112,20 +116,28 @@ class BrowserController extends Controller
 
         $permissions = $folder->getPermissions();
 
-        $permissionTypes = ['access' => FolderPermission::PERMISSION_VISIBLE, 'manager' => FolderPermission::PERMISSION_MANAGE];
+        $permissionTypes = [
+            'access' => FolderPermission::PERMISSION_VISIBLE,
+            'manager' => FolderPermission::PERMISSION_MANAGE,
+            'upload' => FolderPermission::PERMISSION_UPLOAD,
+            'review' => FolderPermission::PERMISSION_REVIEW,
+            'approve' => FolderPermission::PERMISSION_APPROVE
+        ];
 
         foreach ($permissionTypes as $name => $type) {
-            $data = [];
+            if ($form->has('profiles_'.$name)) {
+                $data = [];
 
-            /** @var FolderPermission $permission */
-            foreach ($permissions as $permission) {
-                if ($permission->getPermission() === $type) {
-                    $data[] = $permission->getElement();
+                /** @var FolderPermission $permission */
+                foreach ($permissions as $permission) {
+                    if ($permission->getPermission() === $type) {
+                        $data[] = $permission->getElement();
+                    }
                 }
-            }
 
-            if (!empty($data)) {
-                $form->get('profiles_'.$name)->setData($data);
+                if (!empty($data)) {
+                    $form->get('profiles_' . $name)->setData($data);
+                }
             }
         }
     }
@@ -139,11 +151,17 @@ class BrowserController extends Controller
     {
         $oldPermissions = $folder->getPermissions();
 
-        $permissionTypes = ['access' => FolderPermission::PERMISSION_VISIBLE, 'manager' => FolderPermission::PERMISSION_MANAGE];
+        $permissionTypes = [
+            'access' => FolderPermission::PERMISSION_VISIBLE,
+            'manager' => FolderPermission::PERMISSION_MANAGE,
+            'upload' => FolderPermission::PERMISSION_UPLOAD,
+            'review' => FolderPermission::PERMISSION_REVIEW,
+            'approve' => FolderPermission::PERMISSION_APPROVE
+        ];
 
         foreach ($permissionTypes as $name => $type) {
 
-            $data = $form->get('profiles_'.$name)->getData();
+            $data = $form->has('profiles_' . $name) ? $form->get('profiles_' . $name)->getData() : [];
             if (!$data instanceof ArrayCollection) {
                 $data = new ArrayCollection($data);
             }

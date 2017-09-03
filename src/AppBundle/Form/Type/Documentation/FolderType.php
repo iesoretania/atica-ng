@@ -29,6 +29,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -82,10 +84,22 @@ class FolderType extends AbstractType
                 ]
             ]);
 
-        $types = ['manager' => true, 'access' => false, 'upload' => false, 'review' => false, 'approve' => false];
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'buildDynamicForm']);
+    }
 
-        foreach ($types as $type => $required) {
-            $builder
+    public function buildDynamicForm(FormEvent $event) {
+        $form = $event->getForm();
+        /** @var Folder $data */
+        $data = $event->getData();
+
+        $types = [
+            Folder::TYPE_NORMAL => ['manager' => true, 'access' => false, 'upload' => true],
+            Folder::TYPE_WORKFLOW => ['manager' => true, 'access' => false, 'upload' => true, 'review' => false, 'approve' => false],
+            Folder::TYPE_TASKS => []
+        ];
+
+        foreach ($types[$data->getType()] as $type => $required) {
+            $form
                 ->add('profiles_'.$type, EntityType::class, [
                     'label' => 'form.profiles.'.$type,
                     'class' => Element::class,
@@ -105,7 +119,7 @@ class FolderType extends AbstractType
                 ]);
         }
 
-        $builder
+        $form
             ->add('description', TextareaType::class, [
                 'label' => 'form.description',
                 'required' => false

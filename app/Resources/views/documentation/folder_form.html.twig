@@ -10,3 +10,36 @@
     {{ m.end_button() }}
     {{ form_end(form) }}
 {% endblock %}
+
+{% block javascripts %}
+    <script>
+        var formType = $("#folder_type input[type=radio]");
+        var form = $('form');
+
+        var refresh = function() {
+            var data = $("form").serialize();
+            var selected = $("#folder_type input[type=radio]:checked");
+            data[selected.attr('name')] = selected.val();
+            $('#folder').addClass('loading');
+            $.ajax({
+                url: form.attr('action'),
+                type: form.attr('method'),
+                data: data,
+                success: function(html) {
+                    $('#folder').replaceWith(
+                        $(html).find('#folder')
+                    );
+                    $("#folder_type input[type=radio]").change(refresh);
+                    $('select').select2({
+                        theme: "bootstrap",
+                        language: "{{ app.request.locale }}"
+                    });
+                },
+                error: function() {
+                    $('#folder_type').replaceWith('<div id="folder_type"><span class="text-danger"><i class="fa fa-times-circle fa-3x"></i></span></div>')
+                }
+            });
+        };
+        formType.change(refresh);
+    </script>
+{% endblock %}
