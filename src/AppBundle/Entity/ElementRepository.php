@@ -20,6 +20,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Documentation\Folder;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\QueryBuilder;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
@@ -91,21 +92,13 @@ class ElementRepository extends NestedTreeRepository
     }
 
     /**
-     * @param Organization $organization
+     * @param Element[] $elements
      * @return QueryBuilder
      */
-    public function findAllProfilesByOrganizationQueryBuilder(Organization $organization)
-    {
-        $profileElements = $this->createQueryBuilder('e')
-            ->innerJoin('e.profile', 'p')
-            ->where('e.organization = :organization')
-            ->setParameter('organization', $organization)
-            ->getQuery()
-            ->getResult();
-
+    public function findAllSubProfilesQueryBuilder(array $elements) {
         $collection = new ArrayCollection();
 
-        foreach ($profileElements as $profile) {
+        foreach ($elements as $profile) {
             $children = $this->getChildren($profile, false, null, 'ASC', true);
             foreach ($children as $element) {
                 if (!$collection->contains($element)) {
@@ -118,5 +111,36 @@ class ElementRepository extends NestedTreeRepository
             ->where('e IN (:profiles)')
             ->orderBy('e.left')
             ->setParameter('profiles', $collection);
+    }
+
+    /**
+     * @param Organization $organization
+     * @return QueryBuilder
+     */
+    public function findAllProfilesByOrganizationQueryBuilder(Organization $organization)
+    {
+        $profileElements = $this->createQueryBuilder('e')
+            ->innerJoin('e.profile', 'p')
+            ->where('e.organization = :organization')
+            ->setParameter('organization', $organization)
+            ->getQuery()
+            ->getResult();
+
+        return $this->findAllSubProfilesQueryBuilder($profileElements);
+    }
+
+    /**
+     * @param Organization $organization
+     * @return Element[]
+     */
+    public function findAllProfilesByFolderPermission(Folder $folder, $permission)
+    {
+        $profileElements = $this->getEntityManager()->createQuery(
+            'SELECT e FROM AppBundle:Element e WHERE e IN (SELECT DISTINCT IDENTITY(fp.element) FROM AppBundle:Documentation\FolderPermission fp WHERE fp.folder = :folder AND fp.permission = :permission)')
+            ->setParameter('folder', $folder)
+            ->setParameter('permission', $permission)
+            ->getResult();
+
+        return $this->findAllSubProfilesQueryBuilder($profileElements)->getQuery()->getResult();
     }
 }

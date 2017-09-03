@@ -21,23 +21,28 @@
 namespace AppBundle\Security;
 
 use AppBundle\Entity\Documentation\Folder;
+use AppBundle\Entity\Documentation\FolderPermission;
 use AppBundle\Entity\User;
 use AppBundle\Service\UserExtensionService;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class FolderVoter extends Voter
 {
     const MANAGE = 'FOLDER_MANAGE';
     const ACCESS = 'FOLDER_ACCESS';
+    const UPLOAD = 'FOLDER_UPLOAD';
+    const APPROVE = 'FOLDER_APPROVE';
+    const REVIEW = 'FOLDER_REVIEW';
+    const REQUEST_CHANGES = 'FOLDER_REQUEST_CHANGES';
 
-    private $decisionManager;
     private $extensionService;
+    private $managerRegistry;
 
-    public function __construct(AccessDecisionManagerInterface $decisionManager, UserExtensionService $extensionService) {
-        $this->decisionManager = $decisionManager;
+    public function __construct(UserExtensionService $extensionService, ManagerRegistry $managerRegistry) {
         $this->extensionService = $extensionService;
+        $this->managerRegistry = $managerRegistry;
     }
 
     /**
@@ -45,12 +50,11 @@ class FolderVoter extends Voter
      */
     protected function supports($attribute, $subject)
     {
-
         if (!$subject instanceof Folder) {
             return false;
         }
 
-        if (!in_array($attribute, [self::MANAGE, self::ACCESS], true)) {
+        if (!in_array($attribute, [self::MANAGE, self::ACCESS, self::UPLOAD, self::APPROVE, self::REVIEW, self::REQUEST_CHANGES], true)) {
             return false;
         }
 
@@ -67,7 +71,7 @@ class FolderVoter extends Voter
         }
 
         // los administradores globales siempre tienen permiso
-        if ($this->decisionManager->decide($token, ['ROLE_ADMIN'])) {
+        if ($this->extensionService->isUserGlobalAdministrator()) {
             return true;
         }
 
@@ -79,12 +83,43 @@ class FolderVoter extends Voter
             return false;
         }
 
-        // Si es administrador de la organización, permitir siempre
-        if ($this->extensionService->isUserLocalAdministrator() && $this->extensionService->getCurrentOrganization() === $subject->getOrganization()) {
+        $organization = $this->extensionService->getCurrentOrganization();
+
+        // si la carpeta no pertence a la organización actual, denegar
+        if ($organization !== $subject->getOrganization()) {
             return true;
         }
 
-        // denegamos en cualquier otro caso
-        return false;
+        // si es administrador de la organización, permitir siempre
+        if ($this->extensionService->isUserLocalAdministrator()) {
+            return true;
+        }
+
+        // comprobar los permisos de la carpeta
+        $table = [
+            self::MANAGE => FolderPermission::PERMISSION_MANAGE,
+            self::ACCESS => FolderPermission::PERMISSION_VISIBLE,
+            self::UPLOAD => FolderPermission::PERMISSION_UPLOAD,
+            self::APPROVE => FolderPermission::PERMISSION_APPROVE,
+            self::REVIEW => FolderPermission::PERMISSION_REVIEW,
+            self::REQUEST_CHANGES => FolderPermission::PERMISSION_REQUEST_CHANGES,
+        ];
+
+        if (!isset($table[$attribute])) {
+            return false;
+        }
+
+        $folderProfiles = $this->managerRegistry->getRepository('AppBundle:Element')
+            ->findAllProfilesByFolderPermission($subject, $table[$attribute]);
+
+        // caso especial: si una carpeta no tiene perfiles en ACCESS es porque se permite a la totalidad de usuarios
+        if (self::ACCESS === $attribute && empty($folderProfiles)) {
+            return true;
+        }
+
+        // si el usuario tiene al menos uno de los perfiles solicitados, permitir acceso
+        $granted = $this->managerRegistry->getRepository('AppBundle:Role')->countByUserAndElements($user, $folderProfiles) > 0;
+
+        return $granted;
     }
 }

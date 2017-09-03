@@ -191,6 +191,7 @@ class FolderController extends Controller
 
     /**
      * @Route("/operacion/{id}", name="documentation_operation", requirements={"id" = "\d+"}, methods={"POST"})
+     * @Security("is_granted('FOLDER_MANAGE', folder)")
      */
     public function operationAction($id, Request $request)
     {
@@ -227,9 +228,10 @@ class FolderController extends Controller
 
         $folder = (null === $id) ? $this->getRootFolder($organization) : $this->getFolder($organization, $id);
 
-        if (null === $folder || $folder->getOrganization() !== $organization) {
+        if (null === $folder) {
             throw $this->createNotFoundException();
         }
+        $this->denyAccessUnlessGranted('FOLDER_ACCESS', $folder);
 
         $pager = $this->getFolderEntriesPager($page, $folder, $q);
 
@@ -349,19 +351,12 @@ class FolderController extends Controller
     {
         /** @var FolderRepository $folderRepository */
         $folderRepository = $this->getDoctrine()->getManager()->getRepository('AppBundle:Documentation\Folder');
+
         $children = $folderRepository->childrenHierarchy($folder);
 
-        $parents = [];
-        if ($current)
-        {
-            $parent = $current->getParent();
-            while ($parent) {
-                $parents[] = $parent->getId();
-                $parent = $parent->getParent();
-            }
-        }
+        $disabled = [];
 
-        $tree = $this->processChildren($children, $current ? $current->getId() : null, $parents);
+        list($tree) = $this->processChildren($children, $current ? $current->getId() : null, $disabled);
 
         return $tree;
     }
@@ -371,30 +366,57 @@ class FolderController extends Controller
      *
      * @param array $children
      * @param integer $currentId
-     * @param array $parentsId
-     * @return array
+     * @param array $disabledId
+     * @return mixed
      */
-    private function processChildren(array $children, $currentId = null, $parentsId = [])
+    private function processChildren(array $children, $currentId = null, $disabledId = [])
     {
         $result = [];
+        $selected = false;
         foreach ($children as $child) {
             $item = [];
             $item['text'] = $child['name'];
+
+            $disabled = in_array($child['id'], $disabledId,false);
+            if ($disabled) {
+                $item['state'] = ['disabled' => true];
+            }
             if ($currentId === $child['id']) {
                 $item['state'] = ['selected' => true, 'expanded' => true];
+                $selected = true;
             }
-            if (!empty($parentsId) && in_array($child['id'], $parentsId)) {
-                $item['state'] = ['expanded' => true];
-            }
-            if (count($child['__children']) > 0) {
-                $item['nodes'] = $this->processChildren($child['__children'], $currentId, $parentsId);
+            if (!$disabled && count($child['__children']) > 0) {
+                list($item['nodes'], $selected) = $this->processChildren($child['__children'], $currentId, $disabledId);
             } else {
                 $item['icon'] = 'fa fa-folder';
+            }
+            if ($selected) {
+                if (!isset($item['state'])) {
+                    $item['state'] = [];
+                }
+                $item['state']['expanded'] = true;
             }
             $item['href'] = $this->generateUrl('documentation', ['id' => $child['id']]);
             $result[] = $item;
         }
 
-        return $result;
+        return [$result, $selected];
+    }
+
+    /**
+     * @Route("/carpeta/{id}/subir", name="documentation_folder_upload", methods={"GET", "POST"})
+     * @Security("is_granted('FOLDER_UPLOAD', folder)")
+     */
+    public function uploadFormAction(Folder $folder = null)
+    {
+        $breadcrumb = $this->generateBreadcrumb($folder, false);
+
+        $breadcrumb[] = ['fixed' => $this->get('translator')->trans('title.entry.new', [], 'documentation')];
+
+        return $this->render('documentation/folder_upload.html.twig', [
+            'menu_path' => 'documentation',
+            'breadcrumb' => $breadcrumb,
+            'folder' => $folder
+        ]);
     }
 }
