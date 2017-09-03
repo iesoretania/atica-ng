@@ -43,6 +43,12 @@ gulp.task('default', function() {
     gulp.src('node_modules/patternfly-bootstrap-treeview/dist/select2.js')
         .pipe(gulp.dest('web/dist/js/bootstrap-treeview'));
 
+    // copiar Javascript y CSS de Dropzone.js
+    gulp.src('node_modules/dropzone/dist/dropzone.js')
+        .pipe(gulp.dest('web/dist/js/dropzone'));
+    gulp.src('node_modules/dropzone/dist/min/dropzone.min.css')
+        .pipe(gulp.dest('web/dist/css'));
+
     // copiar fuentes
     gulp.src(['node_modules/font-awesome/fonts/*', 'web/css/source-sans-pro/fonts/**'])
         .pipe(gulp.dest('web/dist/fonts'));

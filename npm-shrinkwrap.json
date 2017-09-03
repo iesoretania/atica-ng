@@ -356,6 +356,11 @@
       "from": "detect-file@>=0.1.0 <0.2.0",
       "resolved": "https://registry.npmjs.org/detect-file/-/detect-file-0.1.0.tgz"
     },
+    "dropzone": {
+      "version": "5.1.1",
+      "from": "dropzone@latest",
+      "resolved": "https://registry.npmjs.org/dropzone/-/dropzone-5.1.1.tgz"
+    },
     "duplexer2": {
       "version": "0.0.2",
       "from": "duplexer2@0.0.2",

@@ -5,6 +5,7 @@
   "dependencies": {
     "autoprefixer": "^6.1.0",
     "bootstrap-sass": "^3.3.7",
+    "dropzone": "^5.1.1",
     "font-awesome": "^4.7.0",
     "font-awesome-animation": "0.0.10",
     "gulp": "^3.9.0",
