@@ -143,4 +143,52 @@ class ElementRepository extends NestedTreeRepository
 
         return $this->findAllSubProfilesQueryBuilder($profileElements)->getQuery()->getResult();
     }
+
+    /**
+     * @param Element $element
+     * @return Element[]
+     */
+    public function findAllAncestorProfiles(Element $element) {
+        $elements = [$element];
+
+        while ($element->getParent() && $element->getProfile() === null) {
+            $element = $element->getParent();
+            $elements[] = $element;
+        }
+
+        return $elements;
+    }
+
+    /**
+     * @param Element[] $elements
+     * @return Element[]
+     */
+    public function findAllAncestorProfilesInArray(array $elements) {
+        $results = [];
+
+        foreach ($elements as $element) {
+            $results[] = $this->findAllAncestorProfiles($element);
+        }
+
+        return array_unique(call_user_func_array('array_merge', $results));
+    }
+
+    /**
+     * @param User $user
+     * @param Organization $organization
+     * @return Element[]
+     */
+    public function findAllProfilesByUserAndOrganization(User $user, Organization $organization)
+    {
+        $profiles = $this->getEntityManager()->createQuery(
+            'SELECT e FROM AppBundle:Element e WHERE e.organization = :organization AND e.id IN (
+                SELECT IDENTITY(r.element) FROM AppBundle:Role r WHERE r.user = :user
+            )')
+            ->setParameter('organization', $organization)
+            ->setParameter('user', $user)
+            ->getResult();
+
+        return $this->getEntityManager()->getRepository('AppBundle:Element')
+            ->findAllAncestorProfilesInArray($profiles);
+    }
 }

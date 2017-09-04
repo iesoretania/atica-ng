@@ -354,7 +354,10 @@ class FolderController extends Controller
 
         $children = $folderRepository->childrenHierarchy($folder);
 
-        $disabled = [];
+        $organization = $folder->getOrganization();
+        $disabled = $this->isGranted('ORGANIZATION_MANAGE', $organization) ? [] : array_map(function (Folder $f) {
+            return $f->getId();
+        }, $folderRepository->getAccessDeniedFoldersForUserAndOrganizationArray($this->getUser(), $organization));
 
         list($tree) = $this->processChildren($children, $current ? $current->getId() : null, $disabled);
 

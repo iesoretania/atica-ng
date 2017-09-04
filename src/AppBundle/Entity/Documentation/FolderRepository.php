@@ -20,6 +20,28 @@
 
 namespace AppBundle\Entity\Documentation;
 
+use AppBundle\Entity\Organization;
+use AppBundle\Entity\User;
+
 class FolderRepository extends \Gedmo\Tree\Entity\Repository\NestedTreeRepository
 {
+    public function getAccessDeniedFoldersForUserAndOrganizationArray(User $user, Organization $organization)
+    {
+        $userProfiles = $this->getEntityManager()->getRepository('AppBundle:Element')
+            ->findAllProfilesByUserAndOrganization($user, $organization);
+
+        $restrictedFolders = $this->getEntityManager()->createQuery('
+                SELECT f FROM AppBundle:Documentation\Folder f WHERE f NOT IN (
+                  SELECT f2 FROM AppBundle:Documentation\Folder f2 JOIN AppBundle:Documentation\FolderPermission fp WITH fp.folder = f2 WHERE fp.permission = :permission AND fp.element IN (:elements)
+                ) AND f IN (
+                  SELECT DISTINCT f3 FROM AppBundle:Documentation\Folder f3 JOIN AppBundle:Documentation\FolderPermission fp2 WITH fp2.folder = f3 WHERE fp2.permission = :permission
+                ) AND f.organization = :organization
+            ')
+            ->setParameter('permission', FolderPermission::PERMISSION_VISIBLE)
+            ->setParameter('elements', $userProfiles)
+            ->setParameter('organization', $organization)
+            ->getResult();
+
+        return $restrictedFolders;
+    }
 }

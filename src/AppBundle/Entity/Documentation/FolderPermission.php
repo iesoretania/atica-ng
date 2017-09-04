@@ -25,7 +25,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
- * @ORM\Table(name="documentation_folder_permission")
+ * @ORM\Table(name="documentation_folder_permission", indexes={@ORM\Index(columns={"permission"})})
  */
 class FolderPermission
 {
