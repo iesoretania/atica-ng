@@ -130,10 +130,12 @@ class ElementRepository extends NestedTreeRepository
     }
 
     /**
-     * @param Organization $organization
-     * @return Element[]
+     * @param Folder $folder
+     * @param int $permission
+     *
+     * @return QueryBuilder
      */
-    public function findAllProfilesByFolderPermission(Folder $folder, $permission)
+    public function findAllProfilesByFolderPermissionQueryBuilder(Folder $folder, $permission)
     {
         $profileElements = $this->getEntityManager()->createQuery(
             'SELECT e FROM AppBundle:Element e WHERE e IN (SELECT DISTINCT IDENTITY(fp.element) FROM AppBundle:Documentation\FolderPermission fp WHERE fp.folder = :folder AND fp.permission = :permission)')
@@ -141,11 +143,37 @@ class ElementRepository extends NestedTreeRepository
             ->setParameter('permission', $permission)
             ->getResult();
 
-        return $this->findAllSubProfilesQueryBuilder($profileElements)->getQuery()->getResult();
+        return $this->findAllSubProfilesQueryBuilder($profileElements);
+    }
+
+    /**
+     * @param Folder $folder
+     * @param int $permission
+     *
+     * @return Element[]
+     */
+    public function findAllProfilesByFolderPermissionAndUser(Folder $folder, $permission, User $user)
+    {
+        return $this->findAllProfilesByFolderPermissionQueryBuilder($folder, $permission)
+            ->innerJoin('AppBundle:Role', 'r', 'WITH', 'r.element = e')
+            ->join('r.user', 'u')
+            ->andWhere('r.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()->getResult();
+    }
+
+    /**
+     * @param Organization $organization
+     * @return Element[]
+     */
+    public function findAllProfilesByFolderPermission(Folder $folder, $permission)
+    {
+        return $this->findAllProfilesByFolderPermissionQueryBuilder($folder, $permission)->getQuery()->getResult();
     }
 
     /**
      * @param Element $element
+     *
      * @return Element[]
      */
     public function findAllAncestorProfiles(Element $element) {

@@ -1,0 +1,8 @@
+form.title: Título (opcional)
+form.file: Documento
+form.upload_profile: Perfil de subida
+form.description: Notas
+form.create_date: Fecha de creación
+
+form.save: Enviar documento
+form.back: Volver sin enviar nada

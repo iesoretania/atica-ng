@@ -25,7 +25,9 @@ use AppBundle\Entity\Documentation\FolderPermission;
 use AppBundle\Entity\Documentation\FolderRepository;
 use AppBundle\Entity\ElementRepository;
 use AppBundle\Entity\Organization;
+use AppBundle\Form\Model\DocumentUpload;
 use AppBundle\Form\Type\Documentation\FolderType;
+use AppBundle\Form\Type\Documentation\UploadType;
 use AppBundle\Security\OrganizationVoter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
@@ -410,16 +412,38 @@ class FolderController extends Controller
      * @Route("/carpeta/{id}/subir", name="documentation_folder_upload", methods={"GET", "POST"})
      * @Security("is_granted('FOLDER_UPLOAD', folder)")
      */
-    public function uploadFormAction(Folder $folder = null)
+    public function uploadFormAction(Request $request, Folder $folder)
     {
         $breadcrumb = $this->generateBreadcrumb($folder, false);
 
-        $breadcrumb[] = ['fixed' => $this->get('translator')->trans('title.entry.new', [], 'documentation')];
+        $title = $this->get('translator')->trans('title.entry.new', [], 'documentation');
+        $breadcrumb[] = ['fixed' => $title];
+
+        $upload = new DocumentUpload();
+
+        if ($this->isGranted('FOLDER_MANAGE', $folder)) {
+            $profiles = $this->getDoctrine()->getManager()->getRepository('AppBundle:Element')->findAllProfilesByFolderPermission($folder, FolderPermission::PERMISSION_UPLOAD);
+        } else {
+            $profiles = $this->getDoctrine()->getManager()->getRepository('AppBundle:Element')->findAllProfilesByFolderPermissionAndUser($folder, FolderPermission::PERMISSION_UPLOAD, $this->getUser());
+        }
+        $form = $this->createForm(UploadType::class, $upload, ['upload_profiles' => $profiles]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+
+            } catch (\Exception $e) {
+                $this->addFlash('error', $this->get('translator')->trans('message.upload.save_error', [], 'upload'));
+            }
+        }
 
         return $this->render('documentation/folder_upload.html.twig', [
             'menu_path' => 'documentation',
+            'title' => $title,
             'breadcrumb' => $breadcrumb,
-            'folder' => $folder
+            'folder' => $folder,
+            'form' => $form->createView()
         ]);
     }
 }
