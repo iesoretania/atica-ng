@@ -162,6 +162,12 @@ class Folder
     private $groupBy;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $autoArchive;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -173,6 +179,7 @@ class Folder
 
         $this->versionShown = true;
         $this->public = false;
+        $this->autoArchive = false;
         $this->type = $this::TYPE_NORMAL;
         $this->visibility = $this::VISIBILITY_NO_RESTRICTION;
         $this->groupBy = $this::GROUP_BY_NONE;
@@ -665,4 +672,24 @@ class Folder
     {
         return $this->tasks;
     }
+
+    /**
+     * @return bool
+     */
+    public function isAutoArchive()
+    {
+        return $this->autoArchive;
+    }
+
+    /**
+     * @param bool $autoArchive
+     *
+     * @return Folder
+     */
+    public function setAutoArchive($autoArchive)
+    {
+        $this->autoArchive = $autoArchive;
+        return $this;
+    }
+
 }

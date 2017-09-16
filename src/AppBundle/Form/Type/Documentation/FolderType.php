@@ -82,6 +82,15 @@ class FolderType extends AbstractType
                     'form.type.workflow' => Folder::TYPE_WORKFLOW,
                     'form.type.tasks' => Folder::TYPE_TASKS
                 ]
+            ])
+            ->add('autoArchive', ChoiceType::class, [
+                'label' => 'form.auto_archive',
+                'required' => true,
+                'expanded' => true,
+                'choices' => [
+                    'form.auto_archive.no' => false,
+                    'form.auto_archive.yes' => true
+                ]
             ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'buildDynamicForm']);
