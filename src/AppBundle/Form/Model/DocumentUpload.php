@@ -48,9 +48,20 @@ class DocumentUpload
     private $createDate;
 
     /**
+     * @Assert\Range(min = 0)
+     * @var int
+     */
+    private $version;
+
+    /**
      * @var Element
      */
     private $uploadProfile;
+
+    public function __construct()
+    {
+        $this->version = 0;
+    }
 
     /**
      * @return UploadedFile
@@ -125,6 +136,25 @@ class DocumentUpload
     public function setCreateDate($createDate)
     {
         $this->createDate = $createDate;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     * @param int $version
+     *
+     * @return DocumentUpload
+     */
+    public function setVersion($version)
+    {
+        $this->version = $version;
         return $this;
     }
 

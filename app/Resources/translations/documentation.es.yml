@@ -70,8 +70,9 @@ table.filter: Filtrar...
 
 table.folder.edit: Modificar carpeta
 
-table.move_up: Subir elemento
-table.move_down: Bajar elemento
+table.move_up: Subir documento
+table.move_down: Bajar documento
+table.delete: Eliminar documento
 table.locked: Documento bloqueado
 table.folder: Carpeta
 

@@ -5,7 +5,7 @@
 {% block new_action %}
     <div class="form-group col-md-5">
         {% if current.parent is not null and is_granted('FOLDER_UPLOAD', current) %}<a href="{{ path('documentation_folder_upload', {'id': current.id}) }}" class="btn btn-success"><i class="fa fa-plus"></i> {{ 'table.entry.new'|trans }}</a>{% endif %}
-        {% if is_granted('ORGANIZATION_MANAGE', current.organization) %}
+        {% if permissions.is_organization_manager %}
             <a href="{{ path('documentation_folder_new', {'id': current.id}) }}" class="btn btn-success"><i class="fa fa-folder-open"></i> {{ 'table.folder.new'|trans }}</a>
             {% if current.parent is not null%}<a href="{{ path('documentation_folder_form', {'id': current.id}) }}" class="btn btn-primary"><i class="fa fa-cog"></i> {{ 'table.folder.edit'|trans }}</a>{% endif %}
         {% endif %}
@@ -18,7 +18,7 @@
 {% block container %}container-fluid{% endblock %}
 
 {% block table_header %}
-    <th class="col-sm-5"><label><input type="checkbox" id="select"> {{ 'header.name'|trans }}</label></th>
+    <th class="col-sm-5"><label>{% if permissions.is_organization_manager %}<input type="checkbox" id="select"> {% endif %}{{ 'header.name'|trans }}</label></th>
     <th class="col-sm-2">{{ 'header.version'|trans }}</th>
     <th class="col-sm-3">{{ 'header.user'|trans }}</th>
     <th class="col-sm-2"></th>
@@ -29,18 +29,21 @@
                 {% set url = '' %}
                 <tr class="clickable-row" data-href="{{ url }}">
                     <td>
-                        <label><input type="checkbox" name="entries[]" value="{{ entry.id }}" class="selectable"> <a href="{{ url }}">{{ entry.name|e|highlight(q) }}</a></label>
+                        <label> {% if permissions.is_organization_manager %}<input type="checkbox" name="entries[]" value="{{ entry.id }}" class="selectable"> {% endif %}<a href="{{ url }}">{{ entry.name|e|highlight(q) }}</a></label>
                     </td>
                     <td>
-
+                        {{ entry.updatedAt|date('format.datetime'|trans({}, 'general'))  }}
                     </td>
                     <td>
-
+                        {{ entry.createdBy }}
                     </td>
                     <td>
-                        {% if q is empty %}
-                            {% if not loop.first %}<button type="submit" class="btn btn-link btn-xs" name="up" value="{{ element.id }}" title="{{ 'table.move_up'|trans }}"><i class="fa fa-arrow-up"></i></button>{% endif %}
-                            {% if not loop.last %}<button type="submit" class="btn btn-link btn-xs" name="down" value="{{ element.id }}" title="{{ 'table.move_down'|trans }}"><i class="fa fa-arrow-down"></i></button>{% endif %}
+                        {% if permissions.is_folder_manager and entry.folder.id == current.id %}
+                            {% if q is empty %}
+                                <button type="submit" class="btn btn-link btn-xs" name="up" value="{{ entry.id }}" title="{{ 'table.move_up'|trans }}"><i class="fa fa-arrow-up"></i></button>
+                                <button type="submit" class="btn btn-link btn-xs" name="down" value="{{ entry.id }}" title="{{ 'table.move_down'|trans }}"><i class="fa fa-arrow-down"></i></button>
+                            {% endif %}
+                            <button type="submit" class="btn btn-link btn-xs" name="delete" value="{{ entry.id }}" title="{{ 'table.delete'|trans }}"><i class="fa fa-trash"></i></button>
                         {% endif %}
                     </td>
                 </tr>
@@ -84,11 +87,10 @@
 
 {% block after_table %}
                 <div class="clearfix"></div>
-                {% if user_extension.userLocalAdministrator and pager is not empty %}
+                {% if permissions.is_organization_manager and pager is not empty %}
                     <div class="well well-sm">
                         {{ m.submit_button('delete', 'trash', 'btn-danger enable-on-items', 'form.entry.delete'|trans) }}
                         {{ m.submit_button('move', 'map-signs', 'btn-primary enable-on-items', 'form.entry.move'|trans) }}
-                        {{ m.submit_button('link', 'link', 'btn-primary enable-on-items', 'form.entry.link'|trans) }}
                         {{ m.submit_button('archive', 'archive', 'btn-warning enable-on-items', 'form.entry.archive'|trans) }}
                     </div>
                 {% endif %}

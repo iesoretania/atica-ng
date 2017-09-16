@@ -60,6 +60,9 @@ class UploadType extends AbstractType
             ->add('title', null, [
                 'label' => 'form.title'
             ])
+            ->add('version', null, [
+                'label' => 'form.version'
+            ])
             ->add('file', null, [
                 'label' => 'form.file',
                 'required' => true

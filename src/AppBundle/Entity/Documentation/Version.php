@@ -50,12 +50,6 @@ class Version
     private $id;
 
     /**
-     * @ORM\Column(type="string")
-     * @var string
-     */
-    private $name;
-
-    /**
      * @ORM\Column(type="text", nullable=true)
      * @var string
      */
@@ -87,6 +81,12 @@ class Version
      */
     private $entry;
 
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string
+     */
+    private $file;
+
     public function __construct()
     {
         $this->state = $this::STATUS_DRAFT;
@@ -101,30 +101,6 @@ class Version
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set name
-     *
-     * @param string $name
-     *
-     * @return Version
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
     }
 
     /**
@@ -245,5 +221,24 @@ class Version
     public function getEntry()
     {
         return $this->entry;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFile()
+    {
+        return $this->file;
+    }
+
+    /**
+     * @param string $file
+     *
+     * @return Version
+     */
+    public function setFile($file)
+    {
+        $this->file = $file;
+        return $this;
     }
 }

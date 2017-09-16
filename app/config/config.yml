@@ -58,7 +58,6 @@ doctrine:
         user: '%database_user%'
         password: '%database_password%'
         charset: '%database_charset%'
-        schema_filter: ~^(?!data)~
 
         # if using pdo_sqlite as your database driver:
         #   1. add the path in parameters.yml
@@ -104,6 +103,13 @@ services:
 
     gedmo.listener.tree:
         class: Gedmo\Tree\TreeListener
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+        calls:
+            - [ setAnnotationReader, [ "@annotation_reader" ] ]
+
+    gedmo.listener.sortable:
+        class: Gedmo\Sortable\SortableListener
         tags:
             - { name: doctrine.event_subscriber, connection: default }
         calls:

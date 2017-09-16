@@ -1,8 +1,12 @@
 form.title: Título (opcional)
 form.file: Documento
+form.version: Versión
 form.upload_profile: Perfil de subida
 form.description: Notas
 form.create_date: Fecha de creación
 
 form.save: Enviar documento
 form.back: Volver sin enviar nada
+
+message.upload.save_ok: Documento almacenado con éxito
+message.upload.save_error: Ocurrió un error almacenando el documento. Consulte con el administrador

@@ -20,9 +20,11 @@
 
 namespace AppBundle\Controller\Documentation;
 
+use AppBundle\Entity\Documentation\Entry;
 use AppBundle\Entity\Documentation\Folder;
 use AppBundle\Entity\Documentation\FolderPermission;
 use AppBundle\Entity\Documentation\FolderRepository;
+use AppBundle\Entity\Documentation\Version;
 use AppBundle\Entity\ElementRepository;
 use AppBundle\Entity\Organization;
 use AppBundle\Form\Model\DocumentUpload;
@@ -38,6 +40,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -243,6 +246,7 @@ class FolderController extends Controller
             'breadcrumb' => $breadcrumb,
             'pager' => $pager,
             'current' => $folder,
+            'permissions' => ['is_folder_manager' => $this->isGranted('FOLDER_MANAGE', $folder), 'is_organization_manager' => $this->isGranted('ORGANIZATION_MANAGE', $organization)],
             'tree' => $this->getOrganizationTree($this->getRootFolder($organization), $folder),
             'q' => $q,
             'domain' => 'element'
@@ -297,7 +301,10 @@ class FolderController extends Controller
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = $entriesRepository->createQueryBuilder('e')
             ->andWhere('e.folder IN (:folders)')
-            ->setParameter('folders', $folders);
+            ->setParameter('folders', $folders)
+            ->join('e.folder', 'f')
+            ->addOrderBy('f.left')
+            ->addOrderBy('e.position');
 
         if ($q) {
             $queryBuilder
@@ -432,7 +439,39 @@ class FolderController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
+                /** @var UploadedFile $file */
+                $file = $upload->getFile();
+                $fileName = hash_file('sha256', $file->getRealPath());
+                $fileName = substr($fileName, 0, 2).'/'.substr($fileName, 2, 2).'/'.$fileName;
+                $filesystem = $this->get('entries_filesystem');
+                $filesystem->write($fileName, file_get_contents($file->getRealPath()), true);
 
+                $entry = new Entry();
+                $entry
+                    ->setName($upload->getTitle() ?: $file->getClientOriginalName())
+                    ->setFolder($folder)
+                    ->setElement($upload->getUploadProfile())
+                    ->setDescription($upload->getDescription());
+
+                if ($upload->getCreateDate()) {
+                    $entry->setCreatedAt($upload->getCreateDate());
+                }
+
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($entry);
+
+                $version = new Version();
+                $version
+                    ->setEntry($entry)
+                    ->setFile($fileName)
+                    ->setState(Version::STATUS_APPROVED)
+                    ->setVersionNr($upload->getVersion());
+
+                $em->persist($version);
+
+                $em->flush();
+                $this->addFlash('success', $this->get('translator')->trans('message.upload.save_ok', [], 'upload'));
+                return $this->redirectToRoute('documentation', ['id' => $folder->getId()]);
             } catch (\Exception $e) {
                 $this->addFlash('error', $this->get('translator')->trans('message.upload.save_error', [], 'upload'));
             }
