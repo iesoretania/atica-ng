@@ -438,13 +438,18 @@ class FolderController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $processedFileName = null;
+            $filesystem = $this->get('entries_filesystem');
             try {
                 /** @var UploadedFile $file */
                 $file = $upload->getFile();
                 $fileName = hash_file('sha256', $file->getRealPath());
                 $fileName = substr($fileName, 0, 2).'/'.substr($fileName, 2, 2).'/'.$fileName;
-                $filesystem = $this->get('entries_filesystem');
-                $filesystem->write($fileName, file_get_contents($file->getRealPath()), true);
+                if (!$filesystem->has($fileName)) {
+                    $filesystem->write($fileName, file_get_contents($file->getRealPath()));
+                }
+                $processedFileName = $fileName;
 
                 $entry = new Entry();
                 $entry
@@ -457,7 +462,6 @@ class FolderController extends Controller
                     $entry->setCreatedAt($upload->getCreateDate());
                 }
 
-                $em = $this->getDoctrine()->getManager();
                 $em->persist($entry);
 
                 $version = new Version();
@@ -474,6 +478,12 @@ class FolderController extends Controller
                 return $this->redirectToRoute('documentation', ['id' => $folder->getId()]);
             } catch (\Exception $e) {
                 $this->addFlash('error', $this->get('translator')->trans('message.upload.save_error', [], 'upload'));
+            }
+            if ($processedFileName) {
+                // ha ocurrido un error pero el fichero se había almacenado, borrarlo si no se estaba usando
+                if (0 == (int) $em->getRepository('AppBundle:Documentation\Version')->countByFile($processedFileName)) {
+                    $filesystem->delete($processedFileName);
+                }
             }
         }
 
