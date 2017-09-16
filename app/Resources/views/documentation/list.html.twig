@@ -4,7 +4,7 @@
 
 {% block new_action %}
     <div class="form-group col-md-5">
-        {% if is_granted('FOLDER_UPLOAD', current) %}<a href="{{ path('documentation_folder_upload', {'id': current.id}) }}" class="btn btn-success"><i class="fa fa-plus"></i> {{ 'table.entry.new'|trans }}</a>{% endif %}
+        {% if current.parent is not null and is_granted('FOLDER_UPLOAD', current) %}<a href="{{ path('documentation_folder_upload', {'id': current.id}) }}" class="btn btn-success"><i class="fa fa-plus"></i> {{ 'table.entry.new'|trans }}</a>{% endif %}
         {% if is_granted('FOLDER_MANAGE', current) %}
             <a href="{{ path('documentation_folder_new', {'id': current.id}) }}" class="btn btn-success"><i class="fa fa-folder-open"></i> {{ 'table.folder.new'|trans }}</a>
             {% if current.parent is not null %}<a href="{{ path('documentation_folder_form', {'id': current.id}) }}" class="btn btn-primary"><i class="fa fa-cog"></i> {{ 'table.folder.edit'|trans }}</a>{% endif %}
