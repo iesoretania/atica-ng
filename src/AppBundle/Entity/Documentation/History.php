@@ -53,7 +53,7 @@ class History
     private $id;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      * @var string
      */
     private $comment;
@@ -63,6 +63,12 @@ class History
      * @var int
      */
     private $event;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @var int
+     */
+    private $version;
 
     /**
      * @Gedmo\Timestampable(on="create")
@@ -141,6 +147,29 @@ class History
     public function getEvent()
     {
         return $this->event;
+    }
+
+    /**
+     * Get version
+     *
+     * @return integer
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     * Set version
+     *
+     * @param integer $version
+     *
+     * @return History
+     */
+    public function setVersion($version)
+    {
+        $this->version = $version;
+        return $this;
     }
 
     /**

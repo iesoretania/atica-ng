@@ -24,6 +24,7 @@ use AppBundle\Entity\Documentation\Entry;
 use AppBundle\Entity\Documentation\Folder;
 use AppBundle\Entity\Documentation\FolderPermission;
 use AppBundle\Entity\Documentation\FolderRepository;
+use AppBundle\Entity\Documentation\History;
 use AppBundle\Entity\Documentation\Version;
 use AppBundle\Entity\ElementRepository;
 use AppBundle\Entity\Organization;
@@ -471,7 +472,18 @@ class FolderController extends Controller
                     ->setState(Version::STATUS_APPROVED)
                     ->setVersionNr($upload->getVersion());
 
+                $entry->setCurrentVersion($version);
+
                 $em->persist($version);
+
+                $history = new History();
+                $history
+                    ->setEntry($entry)
+                    ->setVersion($upload->getVersion())
+                    ->setCreatedBy($this->getUser())
+                    ->setEvent(History::LOG_CREATE);
+
+                $em->persist($history);
 
                 $em->flush();
                 $this->addFlash('success', $this->get('translator')->trans('message.upload.save_ok', [], 'upload'));

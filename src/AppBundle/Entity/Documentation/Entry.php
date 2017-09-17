@@ -115,6 +115,12 @@ class Entry
     private $history;
 
     /**
+     * @ORM\OneToOne(targetEntity="Version")
+     * @var Version
+     */
+    private $currentVersion;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -391,5 +397,23 @@ class Entry
     public function getArchivedPeriod()
     {
         return $this->archivedPeriod;
+    }
+
+    /**
+     * @return Version
+     */
+    public function getCurrentVersion()
+    {
+        return $this->currentVersion;
+    }
+
+    /**
+     * @param Version $currentVersion
+     * @return Entry
+     */
+    public function setCurrentVersion($currentVersion = null)
+    {
+        $this->currentVersion = $currentVersion;
+        return $this;
     }
 }
