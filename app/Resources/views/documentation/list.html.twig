@@ -38,12 +38,9 @@
                         {{ entry.createdBy }}
                     </td>
                     <td>
-                        {% if permissions.is_folder_manager and entry.folder.id == current.id %}
-                            {% if q is empty %}
-                                <button type="submit" class="btn btn-link btn-xs" name="up" value="{{ entry.id }}" title="{{ 'table.move_up'|trans }}"><i class="fa fa-arrow-up"></i></button>
-                                <button type="submit" class="btn btn-link btn-xs" name="down" value="{{ entry.id }}" title="{{ 'table.move_down'|trans }}"><i class="fa fa-arrow-down"></i></button>
-                            {% endif %}
-                            <button type="submit" class="btn btn-link btn-xs" name="delete" value="{{ entry.id }}" title="{{ 'table.delete'|trans }}"><i class="fa fa-trash"></i></button>
+                        {% if permissions.is_folder_manager and entry.folder.id == current.id and q is empty %}
+                            <button type="submit" class="btn btn-link btn-xs" name="up" value="{{ entry.id }}" title="{{ 'table.move_up'|trans }}"><i class="fa fa-arrow-up"></i></button>
+                            <button type="submit" class="btn btn-link btn-xs" name="down" value="{{ entry.id }}" title="{{ 'table.move_down'|trans }}"><i class="fa fa-arrow-down"></i></button>
                         {% endif %}
                     </td>
                 </tr>
