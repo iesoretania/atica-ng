@@ -93,9 +93,11 @@ class ElementRepository extends NestedTreeRepository
 
     /**
      * @param Element[] $elements
+     * @param boolean $final
+     *
      * @return QueryBuilder
      */
-    public function findAllSubProfilesQueryBuilder(array $elements) {
+    public function findAllSubProfilesQueryBuilder(array $elements, $final = false) {
         $collection = new ArrayCollection();
 
         foreach ($elements as $profile) {
@@ -107,10 +109,17 @@ class ElementRepository extends NestedTreeRepository
             }
         }
 
-        return $this->createQueryBuilder('e')
-            ->where('e IN (:profiles)')
+        $qb = $this->createQueryBuilder('e')
+            ->andWhere('e IN (:profiles)')
             ->orderBy('e.left')
             ->setParameter('profiles', $collection);
+
+        if ($final) {
+            $qb = $qb
+                ->andWhere('e.left = e.right - 1');
+        }
+
+        return $qb;
     }
 
     /**
@@ -131,11 +140,12 @@ class ElementRepository extends NestedTreeRepository
 
     /**
      * @param Folder $folder
-     * @param int $permission
+     * @param integer $permission
+     * @param boolean $final
      *
      * @return QueryBuilder
      */
-    public function findAllProfilesByFolderPermissionQueryBuilder(Folder $folder, $permission)
+    public function findAllProfilesByFolderPermissionQueryBuilder(Folder $folder, $permission, $final = false)
     {
         $profileElements = $this->getEntityManager()->createQuery(
             'SELECT e FROM AppBundle:Element e WHERE e IN (SELECT DISTINCT IDENTITY(fp.element) FROM AppBundle:Documentation\FolderPermission fp WHERE fp.folder = :folder AND fp.permission = :permission)')
@@ -143,18 +153,20 @@ class ElementRepository extends NestedTreeRepository
             ->setParameter('permission', $permission)
             ->getResult();
 
-        return $this->findAllSubProfilesQueryBuilder($profileElements);
+        return $this->findAllSubProfilesQueryBuilder($profileElements, $final);
     }
 
     /**
      * @param Folder $folder
      * @param int $permission
+     * @param User $user
+     * @param boolean $final
      *
      * @return Element[]
      */
-    public function findAllProfilesByFolderPermissionAndUser(Folder $folder, $permission, User $user)
+    public function findAllProfilesByFolderPermissionAndUser(Folder $folder, $permission, User $user, $final = false)
     {
-        return $this->findAllProfilesByFolderPermissionQueryBuilder($folder, $permission)
+        return $this->findAllProfilesByFolderPermissionQueryBuilder($folder, $permission, $final)
             ->innerJoin('AppBundle:Role', 'r', 'WITH', 'r.element = e')
             ->join('r.user', 'u')
             ->andWhere('r.user = :user')
@@ -163,12 +175,15 @@ class ElementRepository extends NestedTreeRepository
     }
 
     /**
-     * @param Organization $organization
+     * @param Folder $folder
+     * @param integer $permission
+     * @param boolean $final
+     *
      * @return Element[]
      */
-    public function findAllProfilesByFolderPermission(Folder $folder, $permission)
+    public function findAllProfilesByFolderPermission(Folder $folder, $permission, $final = false)
     {
-        return $this->findAllProfilesByFolderPermissionQueryBuilder($folder, $permission)->getQuery()->getResult();
+        return $this->findAllProfilesByFolderPermissionQueryBuilder($folder, $permission, $final)->getQuery()->getResult();
     }
 
     /**

@@ -432,9 +432,9 @@ class FolderController extends Controller
         $upload = new DocumentUpload();
 
         if ($this->isGranted('FOLDER_MANAGE', $folder)) {
-            $profiles = $this->getDoctrine()->getManager()->getRepository('AppBundle:Element')->findAllProfilesByFolderPermission($folder, FolderPermission::PERMISSION_UPLOAD);
+            $profiles = $this->getDoctrine()->getManager()->getRepository('AppBundle:Element')->findAllProfilesByFolderPermission($folder, FolderPermission::PERMISSION_UPLOAD, true);
         } else {
-            $profiles = $this->getDoctrine()->getManager()->getRepository('AppBundle:Element')->findAllProfilesByFolderPermissionAndUser($folder, FolderPermission::PERMISSION_UPLOAD, $this->getUser());
+            $profiles = $this->getDoctrine()->getManager()->getRepository('AppBundle:Element')->findAllProfilesByFolderPermissionAndUser($folder, FolderPermission::PERMISSION_UPLOAD, $this->getUser(), true);
         }
         $form = $this->createForm(UploadType::class, $upload, ['upload_profiles' => $profiles]);
 
