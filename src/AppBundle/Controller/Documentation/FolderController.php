@@ -420,7 +420,7 @@ class FolderController extends Controller
 
     /**
      * @Route("/carpeta/{id}/subir", name="documentation_folder_upload", methods={"GET", "POST"})
-     * @Security("is_granted('FOLDER_UPLOAD', folder)")
+     * @Security("is_granted('FOLDER_UPLOAD', folder) and folder.getType() != constant('AppBundle\\Entity\\Documentation\\Folder::TYPE_TASKS')")
      */
     public function uploadFormAction(Request $request, Folder $folder)
     {
