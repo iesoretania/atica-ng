@@ -26,7 +26,7 @@
 
 {% block table_body %}
             {% for entry in pager %}
-                {% set url = '' %}
+                {% set url = entry.currentVersion ? path('documentation_entry_download', {'id': entry.id}) : '' %}
                 <tr class="clickable-row" data-href="{{ url }}">
                     <td>
                         <label> {% if permissions.is_organization_manager %}<input type="checkbox" name="entries[]" value="{{ entry.id }}" class="selectable"> {% endif %}<a href="{{ url }}"{% if entry.retiredAt and entry.retiredAt <= date() %} class="retired"{% endif %}>{{ entry.name|e|highlight(q) }}</a></label>

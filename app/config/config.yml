@@ -146,6 +146,7 @@ swiftmailer:
 
 # Gaufrette Configuration
 knp_gaufrette:
+    stream_wrapper: ~
     adapters:
         local_filesystem:
             local:
