@@ -66,6 +66,12 @@ class DownloadLog
     private $entry;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string
+     */
+    private $ipAddress;
+
+    /**
      * Get id
      *
      * @return integer
@@ -168,5 +174,28 @@ class DownloadLog
     public function getEntry()
     {
         return $this->entry;
+    }
+
+    /**
+     * Get ipAddress
+     *
+     * @return string
+     */
+    public function getIpAddress()
+    {
+        return $this->ipAddress;
+    }
+
+    /**
+     * Set ipAddress
+     *
+     * @param string $ipAddress
+     *
+     * @return DownloadLog
+     */
+    public function setIpAddress($ipAddress)
+    {
+        $this->ipAddress = $ipAddress;
+        return $this;
     }
 }

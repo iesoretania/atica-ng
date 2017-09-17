@@ -121,12 +121,25 @@ class Entry
     private $currentVersion;
 
     /**
+     * @ORM\Column(type="boolean")
+     * @var bool
+     */
+    private $public;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string
+     */
+    private $publicToken;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->versions = new \Doctrine\Common\Collections\ArrayCollection();
         $this->history = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->public = false;
     }
 
     /**
@@ -414,6 +427,52 @@ class Entry
     public function setCurrentVersion($currentVersion = null)
     {
         $this->currentVersion = $currentVersion;
+        return $this;
+    }
+
+    /**
+     * Get public
+     *
+     * @return bool
+     */
+    public function isPublic()
+    {
+        return $this->public;
+    }
+
+    /**
+     * Set public
+     *
+     * @param bool $public
+     *
+     * @return Entry
+     */
+    public function setPublic($public)
+    {
+        $this->public = $public;
+        return $this;
+    }
+
+    /**
+     * Get publicToken
+     *
+     * @return string
+     */
+    public function getPublicToken()
+    {
+        return $this->publicToken;
+    }
+
+    /**
+     * Set publicToken
+     *
+     * @param string $publicToken
+     *
+     * @return Entry
+     */
+    public function setPublicToken($publicToken)
+    {
+        $this->publicToken = $publicToken;
         return $this;
     }
 }

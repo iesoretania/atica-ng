@@ -22,7 +22,7 @@ security:
             security: false
 
         login:
-            pattern:  ^/(entrar|restablecer)
+            pattern:  ^/(entrar|restablecer|publico)
             anonymous: ~
 
         main:

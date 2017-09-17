@@ -22,44 +22,78 @@ namespace AppBundle\Controller\Documentation;
 
 use AppBundle\Entity\Documentation\DownloadLog;
 use AppBundle\Entity\Documentation\Entry;
+use AppBundle\Entity\User;
+use AppBundle\Entity\Documentation\Version;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
-/**
- * @Route("/documentos")
- */
 class EntryController extends Controller
 {
     /**
-     * @Route("/descargar/{id}", name="documentation_entry_download", methods={"GET"})
+     * @Route("/publico/{id}/{publicToken}", name="documentation_entry_public_download", requirements={"id" = "\d+"}, methods={"GET"})
+     * @Security("entry.isPublic()")
+     */
+    public function publicDownloadEntryAction(Request $request, Entry $entry)
+    {
+        return $this->doDownloadEntry($request, $entry, null);
+    }
+
+    /**
+     * @Route("/documentos/descargar/{id}", name="documentation_entry_download", requirements={"id" = "\d+"}, methods={"GET"})
      * @Security("is_granted('ENTRY_ACCESS', entry)")
      */
-    public function folderFormAction(Entry $entry)
+    public function downloadEntryAction(Request $request, Entry $entry)
+    {
+        return $this->doDownloadEntry($request, $entry, $this->getUser());
+    }
+
+    /**
+     * @param Request $request
+     * @param Entry $entry
+     * @param User|null $user
+     *
+     * @return BinaryFileResponse
+     */
+    private function doDownloadEntry(Request $request, Entry $entry, User $user = null)
     {
         $version = $entry->getCurrentVersion();
         if (null === $version || null === $version->getFile()) {
             throw $this->createNotFoundException();
         }
-        $filepath = 'gaufrette://entries/'.$version->getFile();
+        return $this->doDownloadVersion($request, $version, $user);
+    }
+
+    /**
+     * @param Request $request
+     * @param Version $version
+     * @param User|null $user
+     *
+     * @return BinaryFileResponse
+     */
+    private function doDownloadVersion(Request $request, Version $version, User $user = null)
+    {
+        $filepath = 'gaufrette://entries/' . $version->getFile();
 
         $response = new BinaryFileResponse($filepath);
 
         $response
             ->setContentDisposition(
                 ResponseHeaderBag::DISPOSITION_INLINE,
-                $entry->getName()
+                $version->getEntry()->getName()
             );
 
         $em = $this->getDoctrine()->getManager();
 
         $log = new DownloadLog();
         $log
-            ->setUser($this->getUser())
+            ->setUser($user)
             ->setVersion($version->getVersionNr())
-            ->setEntry($entry);
+            ->setEntry($version->getEntry())
+            ->setIpAddress($request->getClientIp());
 
         $em->persist($log);
 
