@@ -305,7 +305,9 @@ class FolderController extends Controller
             ->setParameter('folders', $folders)
             ->join('e.folder', 'f')
             ->addOrderBy('f.left')
-            ->addOrderBy('e.position');
+            ->addOrderBy('e.position')
+            ->addSelect('v')
+            ->leftJoin('e.currentVersion', 'v');
 
         if ($q) {
             $queryBuilder

@@ -29,10 +29,10 @@
                 {% set url = '' %}
                 <tr class="clickable-row" data-href="{{ url }}">
                     <td>
-                        <label> {% if permissions.is_organization_manager %}<input type="checkbox" name="entries[]" value="{{ entry.id }}" class="selectable"> {% endif %}<a href="{{ url }}">{{ entry.name|e|highlight(q) }}</a></label>
+                        <label> {% if permissions.is_organization_manager %}<input type="checkbox" name="entries[]" value="{{ entry.id }}" class="selectable"> {% endif %}<a href="{{ url }}"{% if entry.retiredAt and entry.retiredAt <= date() %} class="retired"{% endif %}>{{ entry.name|e|highlight(q) }}</a></label>
                     </td>
                     <td>
-                        {{ entry.updatedAt|date('format.datetime'|trans({}, 'general'))  }}
+                        {{ entry.currentVersion ? entry.currentVersion.versionNr~' ('~entry.currentVersion.createdAt|date('format.datetime'|trans({}, 'general'))~')' : entry.updatedAt|date('format.datetime'|trans({}, 'general'))  }}
                     </td>
                     <td>
                         {{ entry.createdBy }}
