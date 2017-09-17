@@ -441,64 +441,11 @@ class FolderController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $processedFileName = null;
-            $filesystem = $this->get('entries_filesystem');
-            try {
-                /** @var UploadedFile $file */
-                $file = $upload->getFile();
-                $fileName = hash_file('sha256', $file->getRealPath());
-                $fileName = substr($fileName, 0, 2).'/'.substr($fileName, 2, 2).'/'.$fileName;
-                if (!$filesystem->has($fileName)) {
-                    $filesystem->write($fileName, file_get_contents($file->getRealPath()));
-                }
-                $processedFileName = $fileName;
-
-                $entry = new Entry();
-                $entry
-                    ->setName($upload->getTitle() ?: $file->getClientOriginalName())
-                    ->setFolder($folder)
-                    ->setElement($upload->getUploadProfile())
-                    ->setDescription($upload->getDescription());
-
-                if ($upload->getCreateDate()) {
-                    $entry->setCreatedAt($upload->getCreateDate());
-                }
-
-                $em->persist($entry);
-
-                $version = new Version();
-                $version
-                    ->setEntry($entry)
-                    ->setFile($fileName)
-                    ->setState(Version::STATUS_APPROVED)
-                    ->setVersionNr($upload->getVersion());
-
-                $entry->setCurrentVersion($version);
-
-                $em->persist($version);
-
-                $history = new History();
-                $history
-                    ->setEntry($entry)
-                    ->setVersion($upload->getVersion())
-                    ->setCreatedBy($this->getUser())
-                    ->setEvent(History::LOG_CREATE);
-
-                $em->persist($history);
-
-                $em->flush();
+            if ($this->processFileUpload($folder, $upload)) {
                 $this->addFlash('success', $this->get('translator')->trans('message.upload.save_ok', [], 'upload'));
                 return $this->redirectToRoute('documentation', ['id' => $folder->getId()]);
-            } catch (\Exception $e) {
-                $this->addFlash('error', $this->get('translator')->trans('message.upload.save_error', [], 'upload'));
             }
-            if ($processedFileName) {
-                // ha ocurrido un error pero el fichero se había almacenado, borrarlo si no se estaba usando
-                if (0 == (int) $em->getRepository('AppBundle:Documentation\Version')->countByFile($processedFileName)) {
-                    $filesystem->delete($processedFileName);
-                }
-            }
+            $this->addFlash('error', $this->get('translator')->trans('message.upload.save_error', [], 'upload'));
         }
 
         return $this->render('documentation/folder_upload.html.twig', [
@@ -508,5 +455,69 @@ class FolderController extends Controller
             'folder' => $folder,
             'form' => $form->createView()
         ]);
+    }
+
+    private function processFileUpload(Folder $folder, DocumentUpload $upload)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $processedFileName = null;
+        $filesystem = $this->get('entries_filesystem');
+        try {
+            /** @var UploadedFile $file */
+            $file = $upload->getFile();
+            $fileName = hash_file('sha256', $file->getRealPath());
+            $fileName = substr($fileName, 0, 2).'/'.substr($fileName, 2, 2).'/'.$fileName;
+            if (!$filesystem->has($fileName)) {
+                $filesystem->write($fileName, file_get_contents($file->getRealPath()));
+            }
+            $processedFileName = $fileName;
+
+            $entry = new Entry();
+            $entry
+                ->setName($upload->getTitle() ?: $file->getClientOriginalName())
+                ->setFolder($folder)
+                ->setElement($upload->getUploadProfile())
+                ->setDescription($upload->getDescription());
+
+            if ($upload->getCreateDate()) {
+                $entry->setCreatedAt($upload->getCreateDate());
+            }
+
+            $em->persist($entry);
+
+            $version = new Version();
+            $version
+                ->setEntry($entry)
+                ->setFile($fileName)
+                ->setState(Version::STATUS_APPROVED)
+                ->setVersionNr($upload->getVersion());
+
+            $entry->setCurrentVersion($version);
+
+            $em->persist($version);
+
+            $history = new History();
+            $history
+                ->setEntry($entry)
+                ->setVersion($upload->getVersion())
+                ->setCreatedBy($this->getUser())
+                ->setEvent(History::LOG_CREATE);
+
+            $em->persist($history);
+
+            $em->flush();
+
+            return true;
+        } catch (\Exception $e) {
+        }
+
+        if ($processedFileName) {
+            // ha ocurrido un error pero el fichero se había almacenado, borrarlo si no se estaba usando
+            if (0 == (int) $em->getRepository('AppBundle:Documentation\Version')->countByFile($processedFileName)) {
+                $filesystem->delete($processedFileName);
+            }
+        }
+
+        return false;
     }
 }
