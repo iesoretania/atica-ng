@@ -76,7 +76,7 @@ class EntryController extends Controller
      */
     private function doDownloadVersion(Request $request, Version $version, User $user = null)
     {
-        $filepath = 'gaufrette://entries/' . $version->getFile();
+        $filepath = 'gaufrette://entries/'.$version->getFile();
 
         $response = new BinaryFileResponse($filepath);
 

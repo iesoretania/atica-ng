@@ -71,8 +71,8 @@ class UploadType extends AbstractType
                 'label' => 'form.upload_profile',
                 'required' => true,
                 'class' => Element::class,
-                'choice_label' => function (Element $element) {
-                    return $element->getFullProfileName() . ($element->isDeleted() ? ' ' . $this->translator->trans('state.disabled', [], 'general') : '');
+                'choice_label' => function(Element $element) {
+                    return $element->getFullProfileName().($element->isDeleted() ? ' '.$this->translator->trans('state.disabled', [], 'general') : '');
                 },
                 'choices' => $options['upload_profiles']
             ])
