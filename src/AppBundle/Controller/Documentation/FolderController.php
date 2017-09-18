@@ -509,9 +509,10 @@ class FolderController extends Controller
 
             return true;
         } catch (\Exception $e) {
+            // seguir la ejecución si ha ocurrido una excepción por el camino
         }
 
-        if ($processedFileName) {
+        if (null !== $processedFileName) {
             // ha ocurrido un error pero el fichero se había almacenado, borrarlo si no se estaba usando
             if (0 == (int) $em->getRepository('AppBundle:Documentation\Version')->countByFile($processedFileName)) {
                 $filesystem->delete($processedFileName);
