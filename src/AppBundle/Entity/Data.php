@@ -47,4 +47,100 @@ class Data
      * @ORM\Column(type="string")
      */
     private $checksum;
+
+    /**
+     * Set key
+     *
+     * @param string $key
+     *
+     * @return Data
+     */
+    public function setKey($key)
+    {
+        $this->key = $key;
+
+        return $this;
+    }
+
+    /**
+     * Get key
+     *
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * Set content
+     *
+     * @param string $content
+     *
+     * @return Data
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+
+        return $this;
+    }
+
+    /**
+     * Get content
+     *
+     * @return string
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
+
+    /**
+     * Set mtime
+     *
+     * @param integer $mtime
+     *
+     * @return Data
+     */
+    public function setMtime($mtime)
+    {
+        $this->mtime = $mtime;
+
+        return $this;
+    }
+
+    /**
+     * Get mtime
+     *
+     * @return integer
+     */
+    public function getMtime()
+    {
+        return $this->mtime;
+    }
+
+    /**
+     * Set checksum
+     *
+     * @param string $checksum
+     *
+     * @return Data
+     */
+    public function setChecksum($checksum)
+    {
+        $this->checksum = $checksum;
+
+        return $this;
+    }
+
+    /**
+     * Get checksum
+     *
+     * @return string
+     */
+    public function getChecksum()
+    {
+        return $this->checksum;
+    }
 }
