@@ -223,9 +223,9 @@
       }
     },
     "clean-css": {
-      "version": "4.1.7",
-      "from": "clean-css@4.1.7",
-      "resolved": "https://registry.npmjs.org/clean-css/-/clean-css-4.1.7.tgz"
+      "version": "4.1.8",
+      "from": "clean-css@4.1.8",
+      "resolved": "https://registry.npmjs.org/clean-css/-/clean-css-4.1.8.tgz"
     },
     "cliui": {
       "version": "3.2.0",
@@ -658,9 +658,9 @@
       "resolved": "https://registry.npmjs.org/gulp-autoprefixer/-/gulp-autoprefixer-3.1.1.tgz"
     },
     "gulp-clean-css": {
-      "version": "3.7.0",
-      "from": "gulp-clean-css@3.7.0",
-      "resolved": "https://registry.npmjs.org/gulp-clean-css/-/gulp-clean-css-3.7.0.tgz"
+      "version": "3.8.0",
+      "from": "gulp-clean-css@3.8.0",
+      "resolved": "https://registry.npmjs.org/gulp-clean-css/-/gulp-clean-css-3.8.0.tgz"
     },
     "gulp-concat": {
       "version": "2.6.1",
