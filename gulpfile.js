@@ -40,7 +40,7 @@ gulp.task('default', function() {
         .pipe(gulp.dest('web/dist/js/select2/i18n'));
 
     // copiar Javascript de patternfly-bootstrap-treeview
-    gulp.src('node_modules/patternfly-bootstrap-treeview/dist/select2.js')
+    gulp.src('node_modules/patternfly-bootstrap-treeview/dist/*.min.js')
         .pipe(gulp.dest('web/dist/js/bootstrap-treeview'));
 
     // copiar Javascript y CSS de Dropzone.js
