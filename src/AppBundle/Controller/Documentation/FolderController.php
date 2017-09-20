@@ -442,14 +442,7 @@ class FolderController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $state = null;
-            switch ($folder->getType()) {
-                case Folder::TYPE_NORMAL:
-                    $state = Version::STATUS_APPROVED;
-                    break;
-                case Folder::TYPE_WORKFLOW:
-                    $state = ($request->request->has('approve') && $this->isGranted(FolderVoter::APPROVE, $folder)) ? Version::STATUS_APPROVED : Version::STATUS_DRAFT;
-            }
+            $state = $this->getUploadStatus($request, $folder);
             if (null !== $state && $this->processFileUpload($folder, $upload, $state)) {
                 $this->addFlash('success', $this->get('translator')->trans('message.upload.save_ok', [], 'upload'));
                 return $this->redirectToRoute('documentation', ['id' => $folder->getId()]);
@@ -529,5 +522,23 @@ class FolderController extends Controller
         }
 
         return false;
+    }
+
+    /**
+     * @param Request $request
+     * @param Folder $folder
+     * @return int|null
+     */
+    private function getUploadStatus(Request $request, Folder $folder)
+    {
+        $state = null;
+        switch ($folder->getType()) {
+            case Folder::TYPE_NORMAL:
+                $state = Version::STATUS_APPROVED;
+                break;
+            case Folder::TYPE_WORKFLOW:
+                $state = ($request->request->has('approve') && $this->isGranted(FolderVoter::APPROVE, $folder)) ? Version::STATUS_APPROVED : Version::STATUS_DRAFT;
+        }
+        return $state;
     }
 }
