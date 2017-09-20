@@ -31,6 +31,7 @@ use AppBundle\Entity\Organization;
 use AppBundle\Form\Model\DocumentUpload;
 use AppBundle\Form\Type\Documentation\FolderType;
 use AppBundle\Form\Type\Documentation\UploadType;
+use AppBundle\Security\FolderVoter;
 use AppBundle\Security\OrganizationVoter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
@@ -431,7 +432,7 @@ class FolderController extends Controller
 
         $upload = new DocumentUpload();
 
-        if ($this->isGranted('FOLDER_MANAGE', $folder)) {
+        if ($this->isGranted(FolderVoter::MANAGE, $folder)) {
             $profiles = $this->getDoctrine()->getManager()->getRepository('AppBundle:Element')->findAllProfilesByFolderPermission($folder, FolderPermission::PERMISSION_UPLOAD, true);
         } else {
             $profiles = $this->getDoctrine()->getManager()->getRepository('AppBundle:Element')->findAllProfilesByFolderPermissionAndUser($folder, FolderPermission::PERMISSION_UPLOAD, $this->getUser(), true);
@@ -441,7 +442,15 @@ class FolderController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($this->processFileUpload($folder, $upload)) {
+            $state = null;
+            switch ($folder->getType()) {
+                case Folder::TYPE_NORMAL:
+                    $state = Version::STATUS_APPROVED;
+                    break;
+                case Folder::TYPE_WORKFLOW:
+                    $state = ($request->request->has('approve') && $this->isGranted(FolderVoter::APPROVE, $folder)) ? Version::STATUS_APPROVED : Version::STATUS_DRAFT;
+            }
+            if (null !== $state && $this->processFileUpload($folder, $upload, $state)) {
                 $this->addFlash('success', $this->get('translator')->trans('message.upload.save_ok', [], 'upload'));
                 return $this->redirectToRoute('documentation', ['id' => $folder->getId()]);
             }
@@ -457,7 +466,7 @@ class FolderController extends Controller
         ]);
     }
 
-    private function processFileUpload(Folder $folder, DocumentUpload $upload)
+    private function processFileUpload(Folder $folder, DocumentUpload $upload, $state = Version::STATUS_APPROVED)
     {
         $em = $this->getDoctrine()->getManager();
         $processedFileName = null;
@@ -489,7 +498,7 @@ class FolderController extends Controller
             $version
                 ->setEntry($entry)
                 ->setFile($fileName)
-                ->setState(Version::STATUS_APPROVED)
+                ->setState($state)
                 ->setVersionNr($upload->getVersion());
 
             $entry->setCurrentVersion($version);

@@ -8,8 +8,8 @@
     {% if folder.type == constant('AppBundle\\Entity\\Documentation\\Folder::TYPE_NORMAL') %}
         {{ m.submit_button('submit', 'check', 'btn-success', 'form.save'|trans) }}
     {% else %}
-        {{ m.submit_button('submit', 'send', 'btn-success', 'form.apply'|trans) }}
-        {{ m.submit_button('submit', 'thumbs-up', 'btn-success', 'form.approve'|trans) }}
+        {{ m.submit_button('apply', 'send', 'btn-success', 'form.apply'|trans) }}
+        {{ m.submit_button('approve', 'thumbs-up', 'btn-success', 'form.approve'|trans) }}
     {% endif %}
     {{ m.link_button(last_url, 'arrow-left', 'btn-info', 'form.back'|trans) }}
     {{ m.end_button() }}
