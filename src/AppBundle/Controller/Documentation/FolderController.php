@@ -459,7 +459,7 @@ class FolderController extends Controller
         ]);
     }
 
-    private function processFileUpload(Folder $folder, DocumentUpload $upload, $state = Version::STATUS_APPROVED)
+    private function processFileUpload(Folder $folder, DocumentUpload $upload, $versionState = Version::STATUS_APPROVED, $entryState = Entry::STATUS_APPROVED)
     {
         $em = $this->getDoctrine()->getManager();
         $processedFileName = null;
@@ -478,6 +478,7 @@ class FolderController extends Controller
             $entry
                 ->setName($upload->getTitle() ?: $file->getClientOriginalName())
                 ->setFolder($folder)
+                ->setState($entryState)
                 ->setElement($upload->getUploadProfile())
                 ->setDescription($upload->getDescription());
 
@@ -491,7 +492,7 @@ class FolderController extends Controller
             $version
                 ->setEntry($entry)
                 ->setFile($fileName)
-                ->setState($state)
+                ->setState($versionState)
                 ->setVersionNr($upload->getVersion());
 
             $entry->setCurrentVersion($version);

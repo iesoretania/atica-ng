@@ -34,6 +34,10 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
  */
 class Entry
 {
+    const STATUS_APPROVED = 2;
+    const STATUS_DRAFT = 0;
+    const STATUS_RETIRED = 6;
+
     use TimestampableEntity;
     use UserBlameableTrait;
 
@@ -131,6 +135,19 @@ class Entry
      * @var string
      */
     private $publicToken;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @var int
+     */
+    private $state;
+
+    /**
+     * @Gedmo\Timestampable(on="change", field="state")
+     * @ORM\Column(type="datetime")
+     * @var \DateTime
+     */
+    private $stateChangedAt;
 
     /**
      * Constructor
@@ -474,5 +491,53 @@ class Entry
     {
         $this->publicToken = $publicToken;
         return $this;
+    }
+
+    /**
+     * Set state
+     *
+     * @param integer $state
+     *
+     * @return Entry
+     */
+    public function setState($state)
+    {
+        $this->state = $state;
+
+        return $this;
+    }
+
+    /**
+     * Get state
+     *
+     * @return integer
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * Set stateChangedAt
+     *
+     * @param \DateTime $stateChangedAt
+     *
+     * @return Entry
+     */
+    public function setStateChangedAt($stateChangedAt)
+    {
+        $this->stateChangedAt = $stateChangedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get stateChangedAt
+     *
+     * @return \DateTime
+     */
+    public function getStateChangedAt()
+    {
+        return $this->stateChangedAt;
     }
 }
