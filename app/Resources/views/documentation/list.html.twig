@@ -31,12 +31,17 @@
                     <td>
                         <label> {% if permissions.is_organization_manager %}<input type="checkbox" name="entries[]" value="{{ entry.id }}" class="selectable"> {% endif %}<a href="{{ url }}"{% if entry.retiredAt and entry.retiredAt <= date() %} class="retired"{% endif %}>{{ entry.name|e|highlight(q) }}</a></label>
                     </td>
-                    <td>
-                        {{ entry.currentVersion ? entry.currentVersion.versionNr~' ('~entry.currentVersion.createdAt|date('format.datetime'|trans({}, 'general'))~')' : entry.updatedAt|date('format.datetime'|trans({}, 'general'))  }}
-                    </td>
-                    <td>
-                        {{ entry.createdBy }}
-                    </td>
+                    {% if entry.currentVersion %}
+                        <td>
+                            {{ entry.folder.versionShown ? entry.currentVersion.versionNr~' ('~entry.currentVersion.createdAt|date('format.datetime'|trans({}, 'general'))~')' : entry.currentVersion.createdAt|date('format.datetime'|trans({}, 'general'))  }}
+                        </td>
+                        <td>
+                            {{ entry.currentVersion.createdBy }}
+                        </td>
+                    {% else %}
+                        <td></td>
+                        <td></td>
+                    {% endif %}
                     <td>
                         {% if permissions.is_folder_manager and entry.folder.id == current.id and q is empty %}
                             <button type="submit" class="btn btn-link btn-xs" name="up" value="{{ entry.id }}" title="{{ 'table.move_up'|trans }}"><i class="fa fa-arrow-up"></i></button>
