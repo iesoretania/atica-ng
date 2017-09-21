@@ -77,8 +77,14 @@ table.locked: Documento bloqueado
 table.folder: Carpeta
 
 header.name: Nombre
-header.version: Revisión (fecha últ. camb.)
+header.version: Última revisión
 header.user: Enviado por
+
+state.upload.done: Enviado
+state.review.done: Revisado
+state.review.pending: Pendiente de revisión
+state.approve.done: Aprobado
+state.approve.pending: Pendiente de aprobación
 
 tree.no_folders: No hay ninguna carpeta. Por favor, cree una desde el botón correspondiente.
 tree.show_all: Mostrar todos los documentos

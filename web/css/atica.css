@@ -189,3 +189,15 @@ span#search-clear {
 .highlight-tag {
     background-color: #a5a500;
 }
+
+.status-done {
+    color: green;
+}
+
+.status-pending {
+    color: darkorange;
+}
+
+.status-rejected {
+    color: red;
+}

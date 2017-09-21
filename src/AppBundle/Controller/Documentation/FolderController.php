@@ -443,7 +443,7 @@ class FolderController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $state = $this->getUploadStatus($request, $folder);
-            if (null !== $state && $this->processFileUpload($folder, $upload, $state)) {
+            if (null !== $state && $this->processFileUpload($folder, $upload, $state, $state)) {
                 $this->addFlash('success', $this->get('translator')->trans('message.upload.save_ok', [], 'upload'));
                 return $this->redirectToRoute('documentation', ['id' => $folder->getId()]);
             }

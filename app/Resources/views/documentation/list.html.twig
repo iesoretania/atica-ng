@@ -19,21 +19,43 @@
 
 {% block table_header %}
     <th class="col-sm-5"><label>{% if permissions.is_organization_manager %}<input type="checkbox" id="select"> {% endif %}{{ 'header.name'|trans }}</label></th>
-    <th class="col-sm-2">{{ 'header.version'|trans }}</th>
+    <th class="col-sm-3">{{ 'header.version'|trans }}</th>
     <th class="col-sm-3">{{ 'header.user'|trans }}</th>
-    <th class="col-sm-2"></th>
+    <th class="col-sm-1"></th>
 {% endblock %}
 
 {% block table_body %}
             {% for entry in pager %}
                 {% set url = entry.currentVersion ? path('documentation_entry_download', {'id': entry.id}) : '' %}
-                <tr class="clickable-row" data-href="{{ url }}">
+                <tr>
                     <td>
                         <label> {% if permissions.is_organization_manager %}<input type="checkbox" name="entries[]" value="{{ entry.id }}" class="selectable"> {% endif %}<a href="{{ url }}"{% if entry.retiredAt and entry.retiredAt <= date() %} class="retired"{% endif %}>{{ entry.name|e|highlight(q) }}</a></label>
                     </td>
                     {% if entry.currentVersion %}
                         <td>
                             {{ entry.folder.versionShown ? entry.currentVersion.versionNr~' ('~entry.currentVersion.createdAt|date('format.datetime'|trans({}, 'general'))~')' : entry.currentVersion.createdAt|date('format.datetime'|trans({}, 'general'))  }}
+                            {% if entry.state == 2 %}<i class="fa fa-check status-done"></i>{% endif %}
+                            {% if entry.state == 6 %}<i class="fa fa-times status-rejected"></i>{% endif %}
+                            {% if entry.state == 0 %}
+                                &nbsp;
+                                <span title="{{ 'state.upload.done'|trans }}">
+                                    <i class="fa fa-file-o"></i><i class="fa fa-check status-done"></i>
+                                </span>
+                                <i class="fa fa-arrow-right"></i>
+                                {% if entry.currentVersion.state == 0 %}
+                                    <span title="{{ 'state.review.pending'|trans }}">
+                                        <i class="fa fa-search"></i><i class="fa fa-question status-pending"></i>
+                                    </span>
+                                {% elseif entry.currentVersion.state == 1 %}
+                                    <span title="{{ 'state.review.done'|trans }}">
+                                        <i class="fa fa-search"></i><i class="fa fa-check status-done"></i>
+                                    </span>
+                                    <i class="fa fa-arrow-right"></i>
+                                    <span title="{{ 'state.approve.pending'|trans }}">
+                                        <i class="fa fa-gavel"></i><i class="fa fa-question status-pending"></i>
+                                    </span>
+                                {% endif %}
+                            {% endif %}
                         </td>
                         <td>
                             {{ entry.currentVersion.createdBy }}

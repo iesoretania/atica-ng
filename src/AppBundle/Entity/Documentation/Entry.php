@@ -156,6 +156,7 @@ class Entry
     {
         $this->versions = new \Doctrine\Common\Collections\ArrayCollection();
         $this->history = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->stateChangedAt = new \DateTime();
         $this->public = false;
     }
 
