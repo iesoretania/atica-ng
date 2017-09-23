@@ -28,7 +28,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @Gedmo\Tree(type="nested")
  * @ORM\Entity(repositoryClass="FolderRepository")
- * @ORM\Table(name="documentation_folder")
+ * @ORM\Table(name="documentation_folder", indexes={@ORM\Index(columns={"lft"}), @ORM\Index(columns={"rght"})}))
  */
 class Folder
 {
