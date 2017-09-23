@@ -205,6 +205,17 @@ a.retired {
   text-decoration: line-through !important;
 }
 
+table.table-fixed {
+  table-layout: fixed;
+  min-width: $screen-md;
+}
+
+td.ellipsis-overflow {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 td.table-highlight {
   background-color: $table-bg-hover !important;
 }

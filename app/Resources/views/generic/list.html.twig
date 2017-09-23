@@ -19,7 +19,7 @@
         {% if pager and pager.count %}
             <h4>{{ 'table.total'|transchoice(pager.count) }}</h4>
         {% endif %}
-        <table id="list" class="table table-bordered table-hover table-striped">
+        <table id="list" class="table table-bordered table-hover table-striped table-fixed">
             <thead>
             <tr>
                 {% block table_header %}{% endblock %}

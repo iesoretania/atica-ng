@@ -18,10 +18,9 @@
 {% block container %}container-fluid{% endblock %}
 
 {% block table_header %}
-    <th class="col-sm-5"><label>{% if permissions.is_organization_manager %}<input type="checkbox" id="select"> {% endif %}{{ 'header.name'|trans }}</label></th>
-    <th class="col-sm-3">{{ 'header.version'|trans }}</th>
-    <th class="col-sm-3">{{ 'header.user'|trans }}</th>
-    <th class="col-sm-1"></th>
+    <th class="col-sm-8"><label>{% if permissions.is_organization_manager %}<input type="checkbox" id="select"> {% endif %}{{ 'header.name'|trans }}</label></th>
+    <th class="col-sm-2">{{ 'header.version'|trans }}</th>
+    <th class="col-sm-2">{{ 'header.user'|trans }}</th>
 {% endblock %}
 
 {% block table_body %}
@@ -30,19 +29,16 @@
                 {% if last != entry.folder %}
                     {% set last = entry.folder %}
                     <tr>
-                        <td colspan="99" class="table-highlight"><i class="fa fa-folder"></i> {{ entry.folder.name }}</td>
+                        <td colspan="3" class="table-highlight"><i class="fa fa-folder"></i> {{ entry.folder.name }}</td>
                     </tr>
                 {% endif %}
                 {% set url = entry.currentVersion ? path('documentation_entry_download', {'id': entry.id}) : '' %}
                 <tr>
-                    <td>
+                    <td class="ellipsis-overflow">
                         <label> {% if permissions.is_organization_manager %}<input type="checkbox" name="entries[]" value="{{ entry.id }}" class="selectable"> {% endif %}<a href="{{ url }}"{% if entry.retiredAt and entry.retiredAt <= date() %} class="retired"{% endif %}>{{ entry.name|e|highlight(q) }}</a></label>
-                    </td>
-                    {% if entry.currentVersion %}
-                        <td>
-                            {{ entry.folder.versionShown ? entry.currentVersion.versionNr~' ('~entry.currentVersion.createdAt|date('format.datetime'|trans({}, 'general'))~')' : entry.currentVersion.createdAt|date('format.datetime'|trans({}, 'general'))  }}
-                            {% if entry.state == 2 %}<i class="fa fa-check status-done"></i>{% endif %}
-                            {% if entry.state == 6 %}<i class="fa fa-times status-rejected"></i>{% endif %}
+                        <span class="pull-right">
+                            {% if entry.state == 2 %}<i class="fa fa-check status-done" title="{{ 'state.approve.done'|trans }}"></i>{% endif %}
+                            {% if entry.state == 6 %}<i class="fa fa-times status-rejected" title="{{ 'state.rejected'|trans }}"></i>{% endif %}
                             {% if entry.state == 0 %}
                                 &nbsp;
                                 <span title="{{ 'state.upload.done'|trans }}">
@@ -59,28 +55,31 @@
                                     </span>
                                     <i class="fa fa-angle-right"></i>
                                     <span title="{{ 'state.approve.pending'|trans }}">
-                                        <i class="fa fa-gavel"></i><i class="fa fa-question status-pending"></i>
+                                            <i class="fa fa-gavel"></i><i class="fa fa-question status-pending"></i>
                                     </span>
                                 {% endif %}
                             {% endif %}
+                            {% if permissions.is_folder_manager and entry.folder.id == current.id and q is empty %}
+                                <button type="submit" class="btn btn-link btn-xs" name="up" value="{{ entry.id }}" title="{{ 'table.move_up'|trans }}"><i class="fa fa-arrow-up"></i></button>
+                                <button type="submit" class="btn btn-link btn-xs" name="down" value="{{ entry.id }}" title="{{ 'table.move_down'|trans }}"><i class="fa fa-arrow-down"></i></button>
+                            {% endif %}
+                        </span>
+                    </td>
+                    {% if entry.currentVersion %}
+                        <td class="ellipsis-overflow">
+                            {{ entry.folder.versionShown ? entry.currentVersion.versionNr~' ('~entry.currentVersion.createdAt|date('format.datetime'|trans({}, 'general'))~')' : entry.currentVersion.createdAt|date('format.datetime'|trans({}, 'general'))  }}
                         </td>
-                        <td>
+                        <td class="ellipsis-overflow">
                             {{ entry.currentVersion.createdBy }}
                         </td>
                     {% else %}
                         <td></td>
                         <td></td>
                     {% endif %}
-                    <td>
-                        {% if permissions.is_folder_manager and entry.folder.id == current.id and q is empty %}
-                            <button type="submit" class="btn btn-link btn-xs" name="up" value="{{ entry.id }}" title="{{ 'table.move_up'|trans }}"><i class="fa fa-arrow-up"></i></button>
-                            <button type="submit" class="btn btn-link btn-xs" name="down" value="{{ entry.id }}" title="{{ 'table.move_down'|trans }}"><i class="fa fa-arrow-down"></i></button>
-                        {% endif %}
-                    </td>
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="4">{{ 'table.no_items'|trans }}</td>
+                    <td colspan="3">{{ 'table.no_items'|trans }}</td>
                 </tr>
             {% endfor %}
 {% endblock %}
