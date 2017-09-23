@@ -38,10 +38,7 @@
                     <td class="ellipsis-overflow">
                         <label> {% if permissions.is_organization_manager %}<input type="checkbox" name="entries[]" value="{{ entry.id }}" class="selectable"> {% endif %}<a href="{{ url }}"{% if entry.retiredAt and entry.retiredAt <= date() %} class="retired"{% endif %}>{{ entry.name|e|highlight(q) }}</a></label>
                         <span class="pull-right">
-                            {% if entry.state == 2 %}<i class="fa fa-check status-done" title="{{ 'state.approve.done'|trans }}"></i>{% endif %}
-                            {% if entry.state == 6 %}<i class="fa fa-times status-rejected" title="{{ 'state.rejected'|trans }}"></i>{% endif %}
                             {% if entry.state == 0 %}
-                                &nbsp;
                                 <span title="{{ 'state.upload.done'|trans }}">
                                     <i class="fa fa-file-o"></i><i class="fa fa-check status-done"></i>
                                 </span>
@@ -99,7 +96,7 @@
             <div id="treeview"></div>
         </div>
         <div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3" id="main">
-            <form action="{{ path('documentation_operation', {'id': current.id}) }}" method="post">
+            <form action="{{ path('documentation_folder_operation', {'id': current.id}) }}" method="post">
             <h2 class="well">
                 {% if current.parent %}{{ current.name }}{% else %}{{ 'title.all_documents'|trans }}{% endif %}
                 {% if user_extension.userlocalAdministrator and current.parent %}
@@ -113,7 +110,7 @@
 {% endblock %}
 
 {% block before_table %}
-            <form action="" method="post">
+            <form action="{{ path('documentation_entry_operation', {'id': current.id}) }}" method="post">
 {% endblock %}
 
 {% block after_table %}

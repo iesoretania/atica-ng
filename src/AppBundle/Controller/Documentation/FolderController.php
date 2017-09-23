@@ -36,6 +36,7 @@ use AppBundle\Security\OrganizationVoter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
+use Gedmo\Sortable\Entity\Repository\SortableRepository;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -197,10 +198,39 @@ class FolderController extends Controller
     }
 
     /**
-     * @Route("/operacion/{id}", name="documentation_operation", requirements={"id" = "\d+"}, methods={"POST"})
+     * @Route("/operacion/entrada/{id}", name="documentation_entry_operation", requirements={"id" = "\d+"}, methods={"POST"})
      * @Security("is_granted('FOLDER_MANAGE', folder)")
      */
-    public function operationAction($id, Request $request)
+    public function entryOperationAction(Request $request, Folder $folder)
+    {
+        $ok = false;
+
+        $em = $this->getDoctrine()->getManager();
+        foreach (['up' => -1, 'down' => 1] as $op => $step) {
+            if ($request->get($op)) {
+                /** @var SortableRepository $repository */
+                $repository = $em->getRepository('AppBundle:Documentation\Entry');
+
+                $entry = $repository->find($request->get($op));
+
+                if ($entry && $entry->getFolder() === $folder) {
+                    $entry->setPosition(max($entry->getPosition() + $step, 0));
+                    $ok = true;
+                }
+            }
+        }
+        if ($ok) {
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('documentation', ['id' => $folder->getId()]);
+    }
+
+    /**
+     * @Route("/operacion/{id}", name="documentation_folder_operation", requirements={"id" = "\d+"}, methods={"POST"})
+     * @Security("is_granted('FOLDER_MANAGE', folder)")
+     */
+    public function folderOperationAction($id, Request $request)
     {
         $organization = $this->get('AppBundle\Service\UserExtensionService')->getCurrentOrganization();
 
@@ -209,19 +239,30 @@ class FolderController extends Controller
         if (null === $folder || $folder->getOrganization() !== $organization) {
             throw $this->createNotFoundException();
         }
+        $this->doOperation($request, $folder);
+        return $this->redirectToRoute('documentation', ['id' => $folder->getId()]);
+    }
+
+
+    /**
+     * @param Request $request
+     * @param $item
+     */
+    private function doOperation(Request $request, $item)
+    {
         $ok = false;
+
         $em = $this->getDoctrine()->getManager();
         foreach (['up', 'down'] as $op) {
             if ($request->get($op)) {
-                $method = 'move'.ucfirst($op);
-                $em->getRepository('AppBundle:Documentation\Folder')->$method($folder);
+                $method = 'move' . ucfirst($op);
+                $em->getRepository(get_class($item))->$method($item);
                 $ok = true;
             }
         }
         if ($ok) {
             $em->flush();
         }
-        return $this->redirectToRoute('documentation', ['id' => $folder->getId()]);
     }
 
     /**
