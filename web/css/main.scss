@@ -219,3 +219,12 @@ td.ellipsis-overflow {
 td.table-highlight {
   background-color: $table-bg-hover !important;
 }
+
+a.hidden-link {
+  color: $text-color !important;
+  text-decoration: none !important;
+}
+a.hidden-link:hover {
+  color: $link-color !important;
+  text-decoration: underline !important;
+}

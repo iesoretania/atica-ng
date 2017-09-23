@@ -1,6 +1,7 @@
 {% trans_default_domain 'documentation' %}
 {% extends 'generic/list.html.twig' %}
 {% import 'macros.html.twig' as m %}
+{% import 'documentation/macros_folder.html.twig' as mf %}
 
 {% block new_action %}
     <div class="form-group col-md-5">
@@ -29,7 +30,7 @@
                 {% if last != entry.folder %}
                     {% set last = entry.folder %}
                     <tr>
-                        <td colspan="3" class="table-highlight"><i class="fa fa-folder"></i> {{ entry.folder.name }}</td>
+                        <td colspan="3" class="table-highlight ellipsis-overflow">{{ mf.folder_path(last, current) }}</td>
                     </tr>
                 {% endif %}
                 {% set url = entry.currentVersion ? path('documentation_entry_download', {'id': entry.id}) : '' %}

@@ -216,6 +216,25 @@ class Folder
     }
 
     /**
+     * Get element path array from specified root
+     *
+     * @param Folder|null $root
+     *
+     * @return Folder[]
+     */
+    public function getPathArray(Folder $root = null)
+    {
+        $path = [];
+        $item = $this;
+
+        while ($item && $item !== $root) {
+            array_unshift($path, $item);
+            $item = $item->getParent();
+        }
+        return $path;
+    }
+
+    /**
      * Get id
      *
      * @return integer

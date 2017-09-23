@@ -1,0 +1,7 @@
+{% trans_default_domain 'documentation' %}
+{% macro folder_path(folder, root) %}
+    {% for folder in folder.pathArray(root) %}
+        <i class="fa fa-folder"></i> <a href="{{ path('documentation', {'id': folder.id}) }}" class="hidden-link">{{ folder }}</a>
+        {% if not loop.last %} <i class="fa fa-angle-right"></i> {% endif %}
+    {% endfor %}
+{% endmacro %}
