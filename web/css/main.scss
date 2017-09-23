@@ -204,3 +204,7 @@ p#breadcrumb a.navbar-breadcrumb {
 a.retired {
   text-decoration: line-through !important;
 }
+
+td.table-highlight {
+  background-color: $table-bg-hover !important;
+}

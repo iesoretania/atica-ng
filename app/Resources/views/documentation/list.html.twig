@@ -25,7 +25,14 @@
 {% endblock %}
 
 {% block table_body %}
+            {% set last = current %}
             {% for entry in pager %}
+                {% if last != entry.folder %}
+                    {% set last = entry.folder %}
+                    <tr>
+                        <td colspan="99" class="table-highlight"><i class="fa fa-folder"></i> {{ entry.folder.name }}</td>
+                    </tr>
+                {% endif %}
                 {% set url = entry.currentVersion ? path('documentation_entry_download', {'id': entry.id}) : '' %}
                 <tr>
                     <td>
