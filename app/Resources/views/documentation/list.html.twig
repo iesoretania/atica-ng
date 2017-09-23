@@ -36,7 +36,7 @@
                 {% set url = entry.currentVersion ? path('documentation_entry_download', {'id': entry.id}) : '' %}
                 <tr>
                     <td class="ellipsis-overflow">
-                        <label> {% if permissions.is_organization_manager %}<input type="checkbox" name="entries[]" value="{{ entry.id }}" class="selectable"> {% endif %}<a href="{{ url }}"{% if entry.retiredAt and entry.retiredAt <= date() %} class="retired"{% endif %}>{{ entry.name|e|highlight(q) }}</a></label>
+                        <label> {% if permissions.is_organization_manager %}<input type="checkbox" name="entries[]" value="{{ entry.id }}" class="selectable"> {% endif %}<a href="{{ url }}" class="entry-link{% if entry.retiredAt and entry.retiredAt <= date() %} retired{% endif %}">{{ entry.name|e|highlight(q) }}</a></label>
                         <span class="pull-right">
                             {% if entry.state == 0 %}
                                 <span title="{{ 'state.upload.done'|trans }}">
@@ -58,9 +58,9 @@
                                 {% endif %}
                             {% endif %}
                             {% if permissions.is_folder_manager and entry.folder.id == current.id and q is empty %}
-                                <button type="submit" class="btn btn-link btn-xs" name="up" value="{{ entry.id }}" title="{{ 'table.move_up'|trans }}"><i class="fa fa-arrow-up"></i></button>
-                                <button type="submit" class="btn btn-link btn-xs" name="down" value="{{ entry.id }}" title="{{ 'table.move_down'|trans }}"><i class="fa fa-arrow-down"></i></button>
+                                <button type="submit" class="btn btn-link btn-xs" name="up" value="{{ entry.id }}" title="{{ 'table.move_up'|trans }}"><i class="fa fa-arrow-up"></i></button><button type="submit" class="btn btn-link btn-xs" name="down" value="{{ entry.id }}" title="{{ 'table.move_down'|trans }}"><i class="fa fa-arrow-down"></i></button>
                             {% endif %}
+                            <a href="{{ url }}"><i class="fa fa-download" title="{{ 'table.download'|trans }}"></i></a>
                         </span>
                     </td>
                     {% if entry.currentVersion %}

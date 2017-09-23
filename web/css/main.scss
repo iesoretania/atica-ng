@@ -224,7 +224,16 @@ a.hidden-link {
   color: $text-color !important;
   text-decoration: none !important;
 }
+
 a.hidden-link:hover {
   color: $link-color !important;
+  text-decoration: underline !important;
+}
+
+a.entry-link {
+  text-decoration: none !important;
+}
+
+a.entry-link:hover {
   text-decoration: underline !important;
 }

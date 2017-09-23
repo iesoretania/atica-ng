@@ -75,6 +75,7 @@ table.move_down: Bajar documento
 table.delete: Eliminar documento
 table.locked: Documento bloqueado
 table.folder: Carpeta
+table.download: Descargar
 
 header.name: Nombre
 header.version: Última revisión
