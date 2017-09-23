@@ -82,7 +82,7 @@
             jQuery(document).ready(function($) {
 
                 var updateButton = function() {
-                    $(".enable-on-items").prop('disabled', $(".clickable-row input[type='checkbox']:checked").length === 0);
+                    $(".enable-on-items").prop('disabled', $("input[type='checkbox']:checked").length === 0);
                 };
 
                 $("section#exchange")
@@ -93,12 +93,12 @@
                     })
                     .on("click", ".clickable-row input[type='checkbox']", updateButton)
                     .on("click", "#select", function(item) {
-                        $(".clickable-row input[type='checkbox'].selectable").prop('checked', item.currentTarget.checked);
+                        $("input[type='checkbox'].selectable").prop('checked', item.currentTarget.checked);
                         updateButton();
                     });
 
                 $("input[type='checkbox']#select").click(function(item) {
-                    $(".clickable-row input[type='checkbox'].selectable").prop('checked', item.currentTarget.checked);
+                    $("input[type='checkbox'].selectable").prop('checked', item.currentTarget.checked);
                     updateButton();
                 });
 
