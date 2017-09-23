@@ -102,8 +102,8 @@ class FolderType extends AbstractType
         $data = $event->getData();
 
         $types = [
-            Folder::TYPE_NORMAL => ['manager' => true, 'access' => false, 'upload' => true],
-            Folder::TYPE_WORKFLOW => ['manager' => true, 'access' => false, 'upload' => true, 'review' => false, 'approve' => false],
+            Folder::TYPE_NORMAL => ['upload' => true, 'manager' => false, 'access' => false],
+            Folder::TYPE_WORKFLOW => ['upload' => true, 'manager' => false, 'access' => false, 'review' => false, 'approve' => false],
             Folder::TYPE_TASKS => []
         ];
 
