@@ -76,6 +76,7 @@ table.delete: Eliminar documento
 table.locked: Documento bloqueado
 table.folder: Carpeta
 table.download: Descargar
+table.info: Detalles
 
 header.name: Nombre
 header.version: Última revisión
