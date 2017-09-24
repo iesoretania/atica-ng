@@ -144,7 +144,7 @@ class FolderController extends Controller
                 }
 
                 if (!empty($data)) {
-                    $form->get('profiles_' . $name)->setData($data);
+                    $form->get('profiles_'.$name)->setData($data);
                 }
             }
         }
@@ -169,7 +169,7 @@ class FolderController extends Controller
 
         foreach ($permissionTypes as $name => $type) {
 
-            $data = $form->has('profiles_' . $name) ? $form->get('profiles_' . $name)->getData() : [];
+            $data = $form->has('profiles_'.$name) ? $form->get('profiles_'.$name)->getData() : [];
             if (!$data instanceof ArrayCollection) {
                 $data = new ArrayCollection($data);
             }
@@ -246,7 +246,7 @@ class FolderController extends Controller
 
     /**
      * @param Request $request
-     * @param $item
+     * @param Folder $item
      */
     private function doOperation(Request $request, $item)
     {
@@ -255,7 +255,7 @@ class FolderController extends Controller
         $em = $this->getDoctrine()->getManager();
         foreach (['up', 'down'] as $op) {
             if ($request->get($op)) {
-                $method = 'move' . ucfirst($op);
+                $method = 'move'.ucfirst($op);
                 $em->getRepository(get_class($item))->$method($item);
                 $ok = true;
             }
@@ -409,7 +409,7 @@ class FolderController extends Controller
         $children = $folderRepository->childrenHierarchy($folder);
 
         $organization = $folder->getOrganization();
-        $disabled = $this->isGranted('ORGANIZATION_MANAGE', $organization) ? [] : array_map(function (Folder $f) {
+        $disabled = $this->isGranted('ORGANIZATION_MANAGE', $organization) ? [] : array_map(function(Folder $f) {
             return $f->getId();
         }, $folderRepository->getAccessDeniedFoldersForUserAndOrganizationArray($this->getUser(), $organization));
 
@@ -434,7 +434,7 @@ class FolderController extends Controller
             $item = [];
             $item['text'] = $child['name'];
 
-            $disabled = in_array($child['id'], $disabledId,false);
+            $disabled = in_array($child['id'], $disabledId, false);
             if ($disabled) {
                 $item['state'] = ['disabled' => true];
             }
@@ -500,6 +500,12 @@ class FolderController extends Controller
         ]);
     }
 
+    /**
+     * @param Folder $folder
+     * @param DocumentUpload $upload
+     * @param integer $versionState
+     * @param integer $entryState
+     */
     private function processFileUpload(Folder $folder, DocumentUpload $upload, $versionState = Version::STATUS_APPROVED, $entryState = Entry::STATUS_APPROVED)
     {
         $em = $this->getDoctrine()->getManager();
