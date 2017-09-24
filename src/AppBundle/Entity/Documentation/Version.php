@@ -87,6 +87,18 @@ class Version
      */
     private $file;
 
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string
+     */
+    private $fileMimeType;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     * @var string
+     */
+    private $fileExtension;
+
     public function __construct()
     {
         $this->state = $this::STATUS_DRAFT;
@@ -239,6 +251,44 @@ class Version
     public function setFile($file)
     {
         $this->file = $file;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFileMimeType()
+    {
+        return $this->fileMimeType;
+    }
+
+    /**
+     * @param string $fileMimeType
+     * @return Version
+     *
+     */
+    public function setFileMimeType($fileMimeType)
+    {
+        $this->fileMimeType = $fileMimeType;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFileExtension()
+    {
+        return $this->fileExtension;
+    }
+
+    /**
+     * @param string $fileExtension
+     *
+     * @return Version
+     */
+    public function setFileExtension($fileExtension)
+    {
+        $this->fileExtension = $fileExtension;
         return $this;
     }
 }

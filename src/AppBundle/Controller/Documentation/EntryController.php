@@ -80,10 +80,12 @@ class EntryController extends Controller
 
         $response = new BinaryFileResponse($filepath);
 
+        $fileName = $version->getFileExtension() ? $version->getEntry()->getName().'.'.$version->getFileExtension() : $version->getEntry()->getName();
+
         $response
             ->setContentDisposition(
                 ResponseHeaderBag::DISPOSITION_INLINE,
-                $version->getEntry()->getName()
+                $fileName
             );
 
         $em = $this->getDoctrine()->getManager();

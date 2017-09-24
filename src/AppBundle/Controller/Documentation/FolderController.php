@@ -521,9 +521,10 @@ class FolderController extends Controller
             }
             $processedFileName = $fileName;
 
+            $name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
             $entry = new Entry();
             $entry
-                ->setName($upload->getTitle() ?: $file->getClientOriginalName())
+                ->setName($upload->getTitle() ?: $name)
                 ->setFolder($folder)
                 ->setState($entryState)
                 ->setElement($upload->getUploadProfile())
@@ -539,6 +540,8 @@ class FolderController extends Controller
             $version
                 ->setEntry($entry)
                 ->setFile($fileName)
+                ->setFileExtension($file->getClientOriginalExtension())
+                ->setFileMimeType($file->getMimeType())
                 ->setState($versionState)
                 ->setVersionNr($upload->getVersion());
 
