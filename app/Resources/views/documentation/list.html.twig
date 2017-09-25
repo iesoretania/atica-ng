@@ -26,11 +26,19 @@
 
 {% block table_body %}
             {% set last = current %}
+            {% set last_profile = null %}
             {% for entry in pager %}
                 {% if last != entry.folder %}
                     {% set last = entry.folder %}
+                    {% set last_profile = null %}
                     <tr>
                         <td colspan="3" class="table-highlight ellipsis-overflow">{{ mf.folder_path(last, current) }}</td>
+                    </tr>
+                {% endif %}
+                {% if last_profile != entry.element %}
+                    {% set last_profile = entry.element %}
+                    <tr>
+                        <td colspan="3" class="table-profile ellipsis-overflow">{{ entry.element.fullProfileName }}</td>
                     </tr>
                 {% endif %}
                 {% set url = entry.currentVersion ? path('documentation_entry_download', {'id': entry.id}) : '' %}

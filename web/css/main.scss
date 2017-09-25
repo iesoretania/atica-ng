@@ -220,6 +220,12 @@ td.table-highlight {
   background-color: $table-bg-hover !important;
 }
 
+td.table-profile {
+  background-color: $table-bg-hover !important;
+  text-align: right;
+  font-size: 80%;
+}
+
 a.hidden-link {
   color: $text-color !important;
   text-decoration: none !important;

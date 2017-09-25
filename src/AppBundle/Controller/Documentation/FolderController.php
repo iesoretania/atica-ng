@@ -346,7 +346,9 @@ class FolderController extends Controller
             ->andWhere('e.folder IN (:folders)')
             ->setParameter('folders', $folders)
             ->join('e.folder', 'f')
+            ->leftJoin('e.element', 'el')
             ->addOrderBy('f.left')
+            ->addOrderBy('el.left')
             ->addOrderBy('e.position')
             ->addSelect('v')
             ->leftJoin('e.currentVersion', 'v');
