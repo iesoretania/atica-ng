@@ -116,10 +116,10 @@ class FolderType extends AbstractType
                     'required' => $required,
                     'expanded' => false,
                     'multiple' => true,
-                    'choice_label' => function (Element $element) {
-                        return $element->getFullProfileName() . ($element->isDeleted() ? ' ' . $this->translator->trans('state.disabled', [], 'general') : '');
+                    'choice_label' => function(Element $element) {
+                        return $element->getFullProfileName().($element->isDeleted() ? ' '.$this->translator->trans('state.disabled', [], 'general') : '');
                     },
-                    'query_builder' => function (ElementRepository $entityRepository) {
+                    'query_builder' => function(ElementRepository $entityRepository) {
                         return $entityRepository->findAllProfilesByOrganizationQueryBuilder($this->userExtensionService->getCurrentOrganization());
                     },
                     'attr' => [

@@ -53,6 +53,6 @@ class RoleRepository extends EntityRepository
             ->getQuery()
             ->getSingleScalarResult();
 
-        return (int)($count);
+        return (int) ($count);
     }
 }
