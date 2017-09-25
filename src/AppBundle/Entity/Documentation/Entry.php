@@ -92,6 +92,7 @@ class Entry
     private $link;
 
     /**
+     * @Gedmo\SortableGroup()
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Element")
      * @ORM\JoinColumn(nullable=true)
      * @var Element
