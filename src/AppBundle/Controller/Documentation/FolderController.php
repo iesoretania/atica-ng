@@ -20,18 +20,12 @@
 
 namespace AppBundle\Controller\Documentation;
 
-use AppBundle\Entity\Documentation\Entry;
 use AppBundle\Entity\Documentation\Folder;
 use AppBundle\Entity\Documentation\FolderPermission;
 use AppBundle\Entity\Documentation\FolderRepository;
-use AppBundle\Entity\Documentation\History;
-use AppBundle\Entity\Documentation\Version;
 use AppBundle\Entity\ElementRepository;
 use AppBundle\Entity\Organization;
-use AppBundle\Form\Model\DocumentUpload;
 use AppBundle\Form\Type\Documentation\FolderType;
-use AppBundle\Form\Type\Documentation\UploadType;
-use AppBundle\Security\FolderVoter;
 use AppBundle\Security\OrganizationVoter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
@@ -43,7 +37,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -374,7 +367,7 @@ class FolderController extends Controller
      * @param bool $ignoreLast
      * @return array
      */
-    private function generateBreadcrumb(Folder $folder = null, $ignoreLast = true)
+    static public function generateBreadcrumb(Folder $folder = null, $ignoreLast = true)
     {
         $breadcrumb = [];
 
@@ -462,136 +455,4 @@ class FolderController extends Controller
         return [$result, $selected];
     }
 
-    /**
-     * @Route("/carpeta/{id}/subir", name="documentation_folder_upload", methods={"GET", "POST"})
-     * @Security("is_granted('FOLDER_UPLOAD', folder) and folder.getType() != constant('AppBundle\\Entity\\Documentation\\Folder::TYPE_TASKS')")
-     */
-    public function uploadFormAction(Request $request, Folder $folder)
-    {
-        $breadcrumb = $this->generateBreadcrumb($folder, false);
-
-        $title = $this->get('translator')->trans('title.entry.new', [], 'documentation');
-        $breadcrumb[] = ['fixed' => $title];
-
-        $upload = new DocumentUpload();
-
-        if ($this->isGranted(FolderVoter::MANAGE, $folder)) {
-            $profiles = $this->getDoctrine()->getManager()->getRepository('AppBundle:Element')->findAllProfilesByFolderPermission($folder, FolderPermission::PERMISSION_UPLOAD, true);
-        } else {
-            $profiles = $this->getDoctrine()->getManager()->getRepository('AppBundle:Element')->findAllProfilesByFolderPermissionAndUser($folder, FolderPermission::PERMISSION_UPLOAD, $this->getUser(), true);
-        }
-        $form = $this->createForm(UploadType::class, $upload, ['upload_profiles' => $profiles]);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $state = $this->getUploadStatus($request, $folder);
-            if (null !== $state && $this->processFileUpload($folder, $upload, $state, $state)) {
-                $this->addFlash('success', $this->get('translator')->trans('message.upload.save_ok', [], 'upload'));
-                return $this->redirectToRoute('documentation', ['id' => $folder->getId()]);
-            }
-            $this->addFlash('error', $this->get('translator')->trans('message.upload.save_error', [], 'upload'));
-        }
-
-        return $this->render('documentation/folder_upload.html.twig', [
-            'menu_path' => 'documentation',
-            'title' => $title,
-            'breadcrumb' => $breadcrumb,
-            'folder' => $folder,
-            'form' => $form->createView()
-        ]);
-    }
-
-    /**
-     * @param Folder $folder
-     * @param DocumentUpload $upload
-     * @param integer $versionState
-     * @param integer $entryState
-     */
-    private function processFileUpload(Folder $folder, DocumentUpload $upload, $versionState = Version::STATUS_APPROVED, $entryState = Entry::STATUS_APPROVED)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $processedFileName = null;
-        $filesystem = $this->get('entries_filesystem');
-        try {
-            /** @var UploadedFile $file */
-            $file = $upload->getFile();
-            $fileName = hash_file('sha256', $file->getRealPath());
-            $fileName = substr($fileName, 0, 2).'/'.substr($fileName, 2, 2).'/'.$fileName;
-            if (!$filesystem->has($fileName)) {
-                $filesystem->write($fileName, file_get_contents($file->getRealPath()));
-            }
-            $processedFileName = $fileName;
-
-            $name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            $entry = new Entry();
-            $entry
-                ->setName($upload->getTitle() ?: $name)
-                ->setFolder($folder)
-                ->setState($entryState)
-                ->setElement($upload->getUploadProfile())
-                ->setDescription($upload->getDescription());
-
-            if ($upload->getCreateDate()) {
-                $entry->setCreatedAt($upload->getCreateDate());
-            }
-
-            $em->persist($entry);
-
-            $version = new Version();
-            $version
-                ->setEntry($entry)
-                ->setFile($fileName)
-                ->setFileExtension($file->getClientOriginalExtension())
-                ->setFileMimeType($file->getMimeType())
-                ->setState($versionState)
-                ->setVersionNr($upload->getVersion());
-
-            $entry->setCurrentVersion($version);
-
-            $em->persist($version);
-
-            $history = new History();
-            $history
-                ->setEntry($entry)
-                ->setVersion($upload->getVersion())
-                ->setCreatedBy($this->getUser())
-                ->setEvent(History::LOG_CREATE);
-
-            $em->persist($history);
-
-            $em->flush();
-
-            return true;
-        } catch (\Exception $e) {
-            // seguir la ejecución si ha ocurrido una excepción por el camino
-        }
-
-        if (null !== $processedFileName) {
-            // ha ocurrido un error pero el fichero se había almacenado, borrarlo si no se estaba usando
-            if (0 == (int) $em->getRepository('AppBundle:Documentation\Version')->countByFile($processedFileName)) {
-                $filesystem->delete($processedFileName);
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @param Request $request
-     * @param Folder $folder
-     * @return int|null
-     */
-    private function getUploadStatus(Request $request, Folder $folder)
-    {
-        $state = null;
-        switch ($folder->getType()) {
-            case Folder::TYPE_NORMAL:
-                $state = Version::STATUS_APPROVED;
-                break;
-            case Folder::TYPE_WORKFLOW:
-                $state = ($request->request->has('approve') && $this->isGranted(FolderVoter::APPROVE, $folder)) ? Version::STATUS_APPROVED : Version::STATUS_DRAFT;
-        }
-        return $state;
-    }
 }

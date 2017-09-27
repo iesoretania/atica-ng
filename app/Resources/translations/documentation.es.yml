@@ -1,4 +1,7 @@
 form.name: Nombre
+form.created_at: Fecha de creación
+form.updated_at: Fecha de último cambio
+form.upload_profile: Perfil asociado
 
 form.version_shown: Número de revisión
 form.version_shown.yes: Mostrar el número de revisión
@@ -37,6 +40,18 @@ form.entry.link: Enlazar documentos
 form.entry.archive: Archivar documentos
 form.entry.delete_confirm: Confirmar borrado
 
+form.entry.new_revision: Crear una nueva revisión
+form.entry.request_changes: Solicitar modificación
+form.entry.retire: Retirar documento
+form.entry.show_versions: Mostrar historial
+form.entry.download_report: Informe de descargas
+
+form.entry.review.ok: Revisión afirmativa
+form.entry.review.reject: Revisión negativa
+
+form.entry.approve.ok: Aprobar documento
+form.entry.approve.reject: Rechazar documento
+
 prompt.entry.delete_confirm: |
   ¿Está seguro de que desea eliminar los siguientes documentos? No se podrán eliminar aquellos que estén asociados a otra información.
 
@@ -54,7 +69,7 @@ message.folder.delete_error: No se han podido eliminar las carpetas seleccionada
 
 title.entry.new: Nuevo documento
 title.folder.new: Nueva carpeta
-title.entry.edit: Modificar documento
+title.entry.edit: Detalles del documento
 title.folder.edit: Modificar carpeta
 title.entry.list: Listas de documentos
 title.folder.list: Listas de carpetas

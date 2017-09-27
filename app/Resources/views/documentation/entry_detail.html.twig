@@ -1,0 +1,38 @@
+{% trans_default_domain 'documentation' %}
+{% extends 'layout.html.twig' %}
+{% import 'macros.html.twig' as m %}
+{% block content %}
+    <div class="well well-sm">
+        {% if permissions.is_owner or permissions.is_manager %}
+            {{ m.link_button('', 'plus', 'btn-success', 'form.entry.new_revision'|trans) }}
+        {% endif %}
+        {{ m.link_button('', 'lightbulb-o', 'btn-default', 'form.entry.request_changes'|trans) }}
+        {{ m.link_button('', 'history', 'btn-default', 'form.entry.show_versions'|trans) }}
+        {% if permissions.is_manager %}
+            {{ m.link_button('', 'download', 'btn-default', 'form.entry.download_report'|trans) }}
+            {{ m.link_button('', 'trash', 'btn-danger', 'form.entry.retire'|trans) }}
+        {% endif %}
+    </div>
+    {% if permissions.is_reviewer or permissions.is_approver %}
+    <div class="well well-sm">
+            {% if permissions.is_reviewer %}
+                {{ m.link_button('', 'check', 'btn-success', 'form.entry.review.ok'|trans) }}
+                {{ m.link_button('', 'times', 'btn-danger', 'form.entry.review.reject'|trans) }}
+            {% endif %}
+            {% if permissions.is_approver %}
+                {{ m.link_button('', 'thumbs-up', 'btn-success', 'form.entry.approve.ok'|trans) }}
+                {{ m.link_button('', 'thumbs-down', 'btn-danger', 'form.entry.approve.reject'|trans) }}
+            {% endif %}
+        </div>
+    {% endif %}
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ m.start_button() }}
+        {{ m.submit_button('submit', 'check', 'btn-success', 'form.save'|trans) }}
+        {{ m.link_button(last_url, 'arrow-left', 'btn-info', 'form.back'|trans) }}
+    {{ m.end_button() }}
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}
