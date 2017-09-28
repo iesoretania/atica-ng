@@ -34,9 +34,10 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
  */
 class Entry
 {
-    const STATUS_APPROVED = 2;
     const STATUS_DRAFT = 0;
-    const STATUS_RETIRED = 6;
+    const STATUS_REVIEWED = 1;
+    const STATUS_APPROVED = 2;
+    const STATUS_RETIRED = 100;
 
     use TimestampableEntity;
     use UserBlameableTrait;
