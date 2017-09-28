@@ -47,22 +47,10 @@
                         <label> {% if permissions.is_organization_manager %}<input type="checkbox" name="entries[]" value="{{ entry.id }}" class="selectable"> {% endif %}<a href="{{ url }}" class="entry-link{% if entry.retiredAt and entry.retiredAt <= date() %} retired{% endif %}" title="{{ 'table.download'|trans }}">{{ entry.name|e|highlight(q) }}</a></label>
                         <span class="pull-right">
                             {% if entry.state == 0 %}
-                                <span title="{{ 'state.upload.done'|trans }}">
-                                    <i class="fa fa-file-o"></i><i class="fa fa-check status-done"></i>
-                                </span>
-                                <i class="fa fa-angle-right"></i>
                                 {% if entry.currentVersion.state == 0 %}
-                                    <span title="{{ 'state.review.pending'|trans }}">
-                                        <i class="fa fa-search"></i><i class="fa fa-question status-pending"></i>
-                                    </span>
+                                    <a href="" title="{{ 'state.review.pending'|trans }}"><i class="fa fa-search"></i><i class="fa fa-question status-pending"></i></a>
                                 {% elseif entry.currentVersion.state == 1 %}
-                                    <span title="{{ 'state.review.done'|trans }}">
-                                        <i class="fa fa-search"></i><i class="fa fa-check status-done"></i>
-                                    </span>
-                                    <i class="fa fa-angle-right"></i>
-                                    <span title="{{ 'state.approve.pending'|trans }}">
-                                            <i class="fa fa-gavel"></i><i class="fa fa-question status-pending"></i>
-                                    </span>
+                                    <a href="" title="{{ 'state.approve.pending'|trans }}"><i class="fa fa-gavel"></i><i class="fa fa-question status-pending"></i></a>
                                 {% endif %}
                             {% endif %}
                             {% if permissions.is_folder_manager and entry.folder.id == current.id and q is empty %}

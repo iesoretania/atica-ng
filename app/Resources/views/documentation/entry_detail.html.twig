@@ -2,6 +2,27 @@
 {% extends 'layout.html.twig' %}
 {% import 'macros.html.twig' as m %}
 {% block content %}
+    {% if entry.state == 0 %}
+        <div class="well" style="text-align: center">
+            <span title="{{ 'state.upload.done'|trans }}">
+                <i class="fa fa-file-o fa-4x"></i><i class="fa fa-check status-done fa-4x"></i>
+            </span>
+            <i class="fa fa-angle-right fa-4x"></i>
+            {% if entry.currentVersion.state == 0 %}
+                <span title="{{ 'state.review.pending'|trans }}">
+                    <i class="fa fa-search fa-4x"></i><i class="fa fa-question status-pending fa-4x"></i>
+                </span>
+            {% elseif entry.currentVersion.state == 1 %}
+                <span title="{{ 'state.review.done'|trans }}">
+                    <i class="fa fa-search fa-4x"></i><i class="fa fa-check status-done fa-4x"></i>
+                </span>
+                <i class="fa fa-angle-right"></i>
+                <span title="{{ 'state.approve.pending'|trans }}">
+                        <i class="fa fa-gavel fa-4x"></i><i class="fa fa-question status-pending fa-4x"></i>
+                </span>
+            {% endif %}
+        </div>
+    {% endif %}
     <div class="well well-sm">
         {% if permissions.is_owner or permissions.is_manager %}
             {{ m.link_button('', 'plus', 'btn-success', 'form.entry.new_revision'|trans) }}
@@ -13,18 +34,6 @@
             {{ m.link_button('', 'trash', 'btn-danger', 'form.entry.retire'|trans) }}
         {% endif %}
     </div>
-    {% if permissions.is_reviewer or permissions.is_approver %}
-    <div class="well well-sm">
-            {% if permissions.is_reviewer %}
-                {{ m.link_button('', 'check', 'btn-success', 'form.entry.review.ok'|trans) }}
-                {{ m.link_button('', 'times', 'btn-danger', 'form.entry.review.reject'|trans) }}
-            {% endif %}
-            {% if permissions.is_approver %}
-                {{ m.link_button('', 'thumbs-up', 'btn-success', 'form.entry.approve.ok'|trans) }}
-                {{ m.link_button('', 'thumbs-down', 'btn-danger', 'form.entry.approve.reject'|trans) }}
-            {% endif %}
-        </div>
-    {% endif %}
     {{ form_start(form) }}
     {{ form_widget(form) }}
     {{ m.start_button() }}

@@ -298,6 +298,7 @@ class EntryController extends Controller
                 'is_reviewer' => $this->isGranted(FolderVoter::REVIEW, $folder),
                 'is_approver' => $this->isGranted(FolderVoter::APPROVE, $folder)
             ],
+            'entry' => $entry,
             'form' => $form->createView()
         ]);
     }
