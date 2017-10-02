@@ -27,6 +27,9 @@ menu.organization.import.unit.detail: Importar unidades desde Séneca
 menu.organization.import.subject: Asignaturas
 menu.organization.import.subject.detail: Importar asignaturas desde Séneca
 
+menu.organization.import.department: Departamentos
+menu.organization.import.department.detail: Importar departamentos desde Séneca
+
 menu.teaching: Docencia
 menu.teaching.detail: Tareas relacionadas con la docencia
 

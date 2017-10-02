@@ -1,6 +1,7 @@
 title.teacher_import: Importación de profesorado
 title.unit_import: Importación de unidades
 title.subject_import: Importación de asignaturas/módulos
+title.department_import: Importación de departamentos
 title.import_result: Resultado de la importación
 
 form.file: "Fichero .CSV de Séneca"
@@ -58,3 +59,7 @@ report.new_subjects: Nuevas asignaturas/módulos
 report.welcome: Docentes nuevos dados de alta en la plataforma
 report.units: Unidades resultantes
 report.subjects: Asignaturas/módulos incluidos
+report.departments: Departamentos resultantes
+
+report.existing_departments: Departamentos ya existentes
+report.new_departments: Nuevos departamentos
