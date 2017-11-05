@@ -25,7 +25,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 
 /**
- * @ORM\Entity(repositoryClass="ProfileRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ProfileRepository")
  * @Gedmo\SoftDeleteable(timeAware=false)
  */
 class Profile

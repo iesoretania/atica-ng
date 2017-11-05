@@ -18,9 +18,12 @@
   along with this program.  If not, see [http://www.gnu.org/licenses/].
 */
 
-namespace AppBundle\Entity;
+namespace AppBundle\Repository;
 
 use AppBundle\Entity\Documentation\Folder;
+use AppBundle\Entity\Element;
+use AppBundle\Entity\Organization;
+use AppBundle\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\QueryBuilder;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;

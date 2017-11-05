@@ -18,7 +18,7 @@
   along with this program.  If not, see [http://www.gnu.org/licenses/].
 */
 
-namespace AppBundle\Entity\Documentation;
+namespace AppBundle\Repository\Documentation;
 
 use Doctrine\ORM\EntityRepository;
 

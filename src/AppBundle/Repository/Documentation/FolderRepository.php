@@ -18,8 +18,9 @@
   along with this program.  If not, see [http://www.gnu.org/licenses/].
 */
 
-namespace AppBundle\Entity\Documentation;
+namespace AppBundle\Repository\Documentation;
 
+use AppBundle\Entity\Documentation\FolderPermission;
 use AppBundle\Entity\Organization;
 use AppBundle\Entity\User;
 

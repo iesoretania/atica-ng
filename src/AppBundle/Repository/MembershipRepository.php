@@ -18,17 +18,11 @@
   along with this program.  If not, see [http://www.gnu.org/licenses/].
 */
 
-namespace AppBundle\Entity;
+namespace AppBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-class ProfileRepository extends EntityRepository
+class MembershipRepository extends EntityRepository
 {
-    public function findOneByOrganizationAndCode(Organization $organization, $code)
-    {
-        return $this->findOneBy([
-            'organization' => $organization,
-            'code' => $code
-        ]);
-    }
+
 }

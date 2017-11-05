@@ -19,6 +19,7 @@
 */
 
 namespace AppBundle\Form\Type\Documentation;
+
 use AppBundle\Entity\Element;
 use AppBundle\Form\Model\DocumentUpload;
 use AppBundle\Service\UserExtensionService;

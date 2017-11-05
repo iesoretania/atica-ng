@@ -30,7 +30,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @Gedmo\Tree(type="nested")
- * @ORM\Entity(repositoryClass="ElementRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ElementRepository")
  * @UniqueEntity(fields={"parent", "name"})
  */
 class Element

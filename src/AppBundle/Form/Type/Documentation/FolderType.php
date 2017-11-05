@@ -22,7 +22,7 @@ namespace AppBundle\Form\Type\Documentation;
 
 use AppBundle\Entity\Documentation\Folder;
 use AppBundle\Entity\Element;
-use AppBundle\Entity\ElementRepository;
+use AppBundle\Repository\ElementRepository;
 use AppBundle\Service\UserExtensionService;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;

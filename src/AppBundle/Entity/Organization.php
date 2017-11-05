@@ -26,7 +26,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass="OrganizationRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\OrganizationRepository")
  * @UniqueEntity("code")
  */
 class Organization

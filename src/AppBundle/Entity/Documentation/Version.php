@@ -26,7 +26,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 /**
- * @ORM\Entity(repositoryClass="VersionRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\Documentation\VersionRepository")
  * @ORM\Table(name="documentation_version")
  */
 class Version

@@ -23,7 +23,7 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="MembershipRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\MembershipRepository")
  */
 class Membership
 {
