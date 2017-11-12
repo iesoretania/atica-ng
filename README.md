@@ -15,7 +15,7 @@ Para facilitar el desarrollo se proporciona un entorno [Vagrant] con todas las d
 
 ## Requisitos
 
-- PHP 5.5.9 o superior.
+- PHP 5.6 o superior.
 - Servidor web Apache2 (podría funcionar con nginx, pero no se ha probado aún).
 - Servidor de base de datos MySQL 5 o derivado (como MariaDB, Percona, etc).
 - PHP [Composer].
