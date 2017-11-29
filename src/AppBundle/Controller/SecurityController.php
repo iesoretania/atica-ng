@@ -21,8 +21,8 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Organization;
-use AppBundle\Entity\OrganizationRepository;
 use AppBundle\Entity\User;
+use AppBundle\Repository\OrganizationRepository;
 use AppBundle\Service\MailerService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
