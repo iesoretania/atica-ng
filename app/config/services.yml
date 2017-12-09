@@ -31,3 +31,12 @@ services:
     AppBundle\Service\SenecaAuthenticatorService:
         autowire: false
         arguments: ["%external.url%", "%external.url.force_security%", "%external.enabled%"]
+
+    # Entidades usadas como servicios
+    AppBundle\Entity\User: ~
+
+    AppBundle\Entity\Organization: ~
+
+    AppBundle\Entity\Documentation\Entry: ~
+
+    AppBundle\Entity\Documentation\Folder: ~

@@ -62,11 +62,23 @@ class FormAuthenticator extends AbstractGuardAuthenticator
     /**
      * Constructor
      */
-    public function __construct(RouterInterface $router, UserPasswordEncoderInterface $encoder, SenecaAuthenticatorService $senecaAuthenticator, ManagerRegistry $managerRegistry) {
+    public function __construct(RouterInterface $router, UserPasswordEncoderInterface $encoder, SenecaAuthenticatorService $senecaAuthenticator, ManagerRegistry $managerRegistry)
+    {
         $this->router = $router;
         $this->encoder = $encoder;
         $this->senecaAuthenticator = $senecaAuthenticator;
         $this->managerRegistry = $managerRegistry;
+    }
+
+    public function supports(Request $request)
+    {
+        $session = $request->getSession();
+
+        if ($request->attributes->get('_route') !== 'login_check' || !$request->isMethod('POST') || !$session) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -76,10 +88,6 @@ class FormAuthenticator extends AbstractGuardAuthenticator
     {
         $username = $request->request->get('_username');
         $session = $request->getSession();
-
-        if ($request->attributes->get('_route') !== 'login_check' || !$request->isMethod('POST') || !$session) {
-            return null;
-        }
 
         $session->set(Security::LAST_USERNAME, $username);
 

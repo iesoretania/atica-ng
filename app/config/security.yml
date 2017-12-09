@@ -24,8 +24,11 @@ security:
         login:
             pattern:  ^/(entrar|restablecer|publico)
             anonymous: ~
+            logout_on_user_change: true
 
         main:
+            logout_on_user_change: true
+
             guard:
                 authenticators:
                   - AppBundle\Security\FormAuthenticator
@@ -33,6 +36,7 @@ security:
             logout:
                 path: logout
                 target: /
+
             switch_user:
                 role: ROLE_ALLOWED_TO_SWITCH
                 parameter: _switch_user
