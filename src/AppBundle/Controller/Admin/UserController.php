@@ -42,26 +42,26 @@ class UserController extends Controller
      * @Route("/nuevo", name="admin_user_form_new", methods={"GET", "POST"})
      * @Route("/{id}", name="admin_user_form_edit", requirements={"id" = "\d+"}, methods={"GET", "POST"})
      */
-    public function indexAction(User $user = null, Request $request)
+    public function indexAction(User $localUser = null, Request $request)
     {
         $em = $this->getDoctrine()->getManager();
 
-        if (null === $user) {
-            $user = new User();
-            $em->persist($user);
+        if (null === $localUser) {
+            $localUser = new User();
+            $em->persist($localUser);
         }
 
-        $form = $this->createForm(UserType::class, $user, [
-            'own' => $this->getUser()->getId() === $user->getId(),
+        $form = $this->createForm(UserType::class, $localUser, [
+            'own' => $this->getUser()->getId() === $localUser->getId(),
             'admin' => $this->getUser()->isGlobalAdministrator(),
-            'new' => $user->getId() === null
+            'new' => $localUser->getId() === null
         ]);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $message = $this->processPasswordChange($user, $form);
+            $message = $this->processPasswordChange($localUser, $form);
 
             try {
                 $em->flush();
@@ -72,17 +72,17 @@ class UserController extends Controller
             }
         }
 
-        $title = $this->get('translator')->trans($user->getId() ? 'title.edit' : 'title.new', [], 'user');
+        $title = $this->get('translator')->trans($localUser->getId() ? 'title.edit' : 'title.new', [], 'user');
 
 
-        $breadcrumb = [$user->getId() ? ['fixed' => (string) $user] : ['fixed' => $this->get('translator')->trans('title.new', [], 'user')]];
+        $breadcrumb = [$localUser->getId() ? ['fixed' => (string) $localUser] : ['fixed' => $this->get('translator')->trans('title.new', [], 'user')]];
 
         return $this->render('admin/user/user_form.html.twig', [
             'menu_path' => 'admin_user_list',
             'breadcrumb' => $breadcrumb,
             'title' => $title,
             'form' => $form->createView(),
-            'user' => $user
+            'user' => $localUser
         ]);
     }
 
