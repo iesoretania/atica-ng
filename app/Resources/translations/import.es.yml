@@ -28,6 +28,7 @@ form.remove_old_teachers.yes: Retirar aquellos profesores que no están en el li
 
 form.submit: Importar
 
+form.department_import: Importar departamentos
 form.teacher_import: Importar profesorado
 form.unit_import: Importar unidades
 form.subject_import: Importar asignaturas/módulos
