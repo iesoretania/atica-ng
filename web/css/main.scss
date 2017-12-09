@@ -166,7 +166,7 @@ p#breadcrumb a.navbar-breadcrumb {
 
 .navbar-toggle {
   float: left;
-  margin-right: 0;
+  margin-right: 5px;
   margin-left: 15px;
 }
 
@@ -177,6 +177,7 @@ p#breadcrumb a.navbar-breadcrumb {
 @media (min-width: 768px) {
   .navbar-toggle {
     margin-left: 0;
+    margin-right: 0;
   }
 }
 
